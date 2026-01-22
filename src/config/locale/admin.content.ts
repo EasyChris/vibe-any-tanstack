@@ -6,6 +6,8 @@ export default {
     title: t({ en: "Admin Dashboard", zh: "管理后台" }),
     welcome: t({ en: "Welcome to the admin panel", zh: "欢迎来到管理面板" }),
     sidebar: {
+      management: t({ en: "Management", zh: "管理" }),
+      system: t({ en: "System", zh: "系统" }),
       users: t({ en: "Users", zh: "用户管理" }),
       products: t({ en: "Products", zh: "产品管理" }),
       creditPackages: t({ en: "Credit Packages", zh: "积分包" }),
@@ -46,7 +48,10 @@ export default {
         en: "Manage purchasable credit packages",
         zh: "管理可购买的积分包",
       }),
-      creditNotEnabled: t({ en: "Credit is not enabled", zh: "积分功能未启用" }),
+      creditNotEnabled: t({
+        en: "Credit is not enabled, Please check the settings",
+        zh: "积分功能未启用，请检查设置",
+      }),
       count: t({ en: "packages", zh: "个积分包" }),
       empty: t({ en: "No credit packages", zh: "暂无积分包" }),
       emptyDesc: t({

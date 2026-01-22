@@ -27,7 +27,13 @@ import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Switch } from "@/shared/components/ui/switch"
 import { Textarea } from "@/shared/components/ui/textarea"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip"
-import type { ConfigGroup, ConfigMeta, ConfigSubGroup, SelectOption } from "@/shared/lib/config/helper"
+import type {
+  ConfigGroup,
+  ConfigMeta,
+  ConfigSubGroup,
+  SelectOption,
+} from "@/shared/lib/config/helper"
+import { useGlobalStore } from "@/shared/store/global"
 
 export const Route = createFileRoute("/{-$locale}/admin/config")({
   component: ConfigPage,
@@ -80,7 +86,6 @@ function ConfigPage() {
       return results
     },
     onSuccess: (_, changes) => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "configs"] })
       setPendingChanges((prev) => {
         const next = { ...prev }
         for (const { key } of changes) {
@@ -88,6 +93,7 @@ function ConfigPage() {
         }
         return next
       })
+      useGlobalStore.getState().refreshConfig()
       toast.success(content.config.saveSuccess)
     },
     onError: (error) => {
@@ -96,10 +102,14 @@ function ConfigPage() {
   })
 
   const getConfigValue = (config: ConfigMeta) => {
-    return config.key in pendingChanges ? pendingChanges[config.key] : config.value
+    return config.value
   }
 
   const handleChange = (key: string, value: unknown) => {
+    queryClient.setQueryData(["admin", "configs"], (old: ConfigMeta[] | undefined) => {
+      if (!old) return old
+      return old.map((config) => (config.key === key ? { ...config, value } : config))
+    })
     setPendingChanges((prev) => ({ ...prev, [key]: value }))
   }
 
@@ -121,6 +131,7 @@ function ConfigPage() {
   }
 
   const handleCancelGroup = (prefixes: string[]) => {
+    queryClient.invalidateQueries({ queryKey: ["admin", "configs"] })
     setPendingChanges((prev) => {
       const next = { ...prev }
       for (const key of Object.keys(next)) {
@@ -135,7 +146,10 @@ function ConfigPage() {
   if (isLoading) {
     return (
       <>
-        <PageHeader title={content.config.title.value} description={content.config.description.value} />
+        <PageHeader
+          title={content.config.title.value}
+          description={content.config.description.value}
+        />
         <ConfigSkeleton />
       </>
     )
@@ -143,10 +157,17 @@ function ConfigPage() {
 
   return (
     <>
-      <PageHeader title={content.config.title.value} description={content.config.description.value}>
+      <PageHeader
+        title={content.config.title.value}
+        description={content.config.description.value}
+      >
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={toggleShowValues}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleShowValues}
+            >
               {showValues ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
             </Button>
           </TooltipTrigger>
@@ -245,7 +266,12 @@ function ConfigGroupCard({
   )
 
   return (
-    <Card className="shadow-none">
+    <Card className="relative shadow-none">
+      {isSaving && (
+        <div className="absolute inset-0 z-10 overflow-hidden rounded-xl bg-muted/30">
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.2s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/10" />
+        </div>
+      )}
       <CardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
@@ -277,30 +303,27 @@ function ConfigGroupCard({
         {group.subGroups && group.subGroups.length > 0 ? (
           <>
             {getUngroupedItems().length > 0 && (
-              <div className="grid gap-4">
-                {renderConfigItems(getUngroupedItems())}
-              </div>
+              <div className="grid gap-4">{renderConfigItems(getUngroupedItems())}</div>
             )}
             {group.subGroups.map((subGroup) => {
               const subGroupItems = getSubGroupItems(subGroup)
               if (subGroupItems.length === 0) return null
               const subGroupI18n = getSubGroupI18n(subGroup.labelKey)
               return (
-                <div key={subGroup.id} className="space-y-3">
+                <div
+                  key={subGroup.id}
+                  className="space-y-3"
+                >
                   <h4 className="text-sm font-medium text-muted-foreground">
                     {subGroupI18n?.title?.value ?? subGroup.labelKey}
                   </h4>
-                  <div className="grid gap-4">
-                    {renderConfigItems(subGroupItems)}
-                  </div>
+                  <div className="grid gap-4">{renderConfigItems(subGroupItems)}</div>
                 </div>
               )
             })}
           </>
         ) : (
-          <div className="grid gap-4">
-            {renderConfigItems(items)}
-          </div>
+          <div className="grid gap-4">{renderConfigItems(items)}</div>
         )}
       </CardContent>
     </Card>

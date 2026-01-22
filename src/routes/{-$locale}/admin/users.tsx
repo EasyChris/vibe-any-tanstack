@@ -43,7 +43,7 @@ function UsersPage() {
   return (
     <>
       <PageHeader title={content.users.title.value} description={content.users.description.value} />
-      <div className="rounded-xl border bg-card">
+      <div className="overflow-hidden rounded-xl border bg-card">
         <div className="flex items-center gap-3 border-b px-6 py-4">
           <Users className="size-5 text-muted-foreground" />
           <h2 className="text-base font-medium">{content.users.title}</h2>
@@ -59,7 +59,7 @@ function UsersPage() {
 
         {isLoading ? (
           <div className="overflow-x-auto">
-            <Table className="shadow-none!">
+            <Table className="min-w-160 shadow-none!">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-16 pl-6" />
@@ -102,7 +102,7 @@ function UsersPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <Table className="shadow-none!">
+            <Table className="min-w-160 shadow-none!">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-16 pl-6" />

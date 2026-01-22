@@ -88,6 +88,12 @@ code {
 }
 
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 @layer components {
   /* Disable image drag and text selection for hero images */
   .hero-base img {
