@@ -390,6 +390,13 @@ function ConfigField({
             disabled={isLocked}
             onChange={onChange}
           />
+        ) : config.type === "time_hour" ? (
+          <TimeHourField
+            id={config.key}
+            value={value as number}
+            disabled={isLocked}
+            onChange={onChange}
+          />
         ) : config.type === "textarea" ? (
           <Textarea
             id={config.key}
@@ -462,6 +469,49 @@ function SelectField({
             value={option.value}
           >
             {getOptionLabel(option)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+function TimeHourField({
+  id,
+  value,
+  disabled,
+  onChange,
+}: {
+  id: string
+  value: number
+  disabled: boolean
+  onChange: (value: unknown) => void
+}) {
+  const hours = Array.from({ length: 24 }, (_, i) => i)
+
+  const formatHour = (hour: number) => {
+    return `${hour.toString().padStart(2, "0")}:00`
+  }
+
+  return (
+    <Select
+      value={String(value)}
+      onValueChange={(v) => onChange(Number(v))}
+      disabled={disabled}
+    >
+      <SelectTrigger
+        id={id}
+        className="w-full sm:w-32"
+      >
+        <SelectValue>{formatHour(value)}</SelectValue>
+      </SelectTrigger>
+      <SelectContent position="popper" className="max-h-56">
+        {hours.map((hour) => (
+          <SelectItem
+            key={hour}
+            value={String(hour)}
+          >
+            {formatHour(hour)}
           </SelectItem>
         ))}
       </SelectContent>

@@ -9,4 +9,8 @@ export type UserInfo = {
     activePlan: PlanWithPrice | null
     activeSubscription: Subscription | null
   }
+  credits: {
+    userCredits: number
+    dailyBonusCredits: number
+  }
 }

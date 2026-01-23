@@ -3,6 +3,7 @@ export enum CreditsType {
   ADD_FIRST_REGISTRATION = "add_first_registration", // initial credits for first registration
   ADD_SUBSCRIPTION_PAYMENT = "add_subscription_payment", // user pay for credits
   ADD_ONE_TIME_PAYMENT = "add_one_time_payment", // user pay for credits
+  ADD_DAILY_BONUS = "add_daily_bonus", // daily bonus credits
   ADD_ADMIN = "add_admin", // admin add credits
   ADD_REFUND = "add_refund", // refund credits
   // deduct

@@ -6,6 +6,7 @@ import { configResolver, type PublicConfig } from "@/config/schema"
 import { db, user } from "@/db"
 import { payment } from "@/db/payment.schema"
 import { subscription } from "@/db/subscription.schema"
+import { CreditService } from "@/services/credits.service"
 import { auth } from "@/shared/lib/auth/auth-server"
 import { getConfigs } from "@/shared/model/config.model"
 import type { PaymentProvider, PlanWithPrice, Subscription } from "@/shared/types/payment"
@@ -30,17 +31,21 @@ export const getUserInfoFn = createServerFn({ method: "GET" }).handler(
       return {
         user: null,
         payment: { activePlan: null, activeSubscription: null },
+        credits: { userCredits: 0, dailyBonusCredits: 0 },
       }
     }
 
-    const [[userData], paymentInfo] = await Promise.all([
+    const creditService = new CreditService()
+    const [[userData], paymentInfo, credits] = await Promise.all([
       db.select().from(user).where(eq(user.id, userId)).limit(1),
       getPaymentInfo(userId),
+      creditService.getUserCredits(userId),
     ])
 
     return {
       user: userData ?? null,
       payment: paymentInfo,
+      credits,
     }
   }
 )

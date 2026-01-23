@@ -14,6 +14,9 @@ export type PublicConfig = Pick<
   | "public_credit_signup_bonus_enabled"
   | "public_credit_signup_bonus_amount"
   | "public_credit_signup_bonus_expire_days"
+  | "public_credit_daily_enabled"
+  | "public_credit_daily_amount"
+  | "public_credit_daily_refresh_hour"
 >
 
 export const configSchema = defineConfig({
@@ -205,6 +208,29 @@ export const configSchema = defineConfig({
     labelKey: "creditSignupBonusExpireDays",
     descriptionKey: "creditSignupBonusExpireDays",
   },
+  // daily free credits
+  public_credit_daily_enabled: {
+    type: "boolean",
+    default: false,
+    env: "VITE_CREDIT_DAILY_ENABLED",
+    labelKey: "creditDailyEnabled",
+    descriptionKey: "creditDailyEnabled",
+  },
+  public_credit_daily_amount: {
+    type: "number",
+    default: 100,
+    env: "VITE_CREDIT_DAILY_AMOUNT",
+    labelKey: "creditDailyAmount",
+    descriptionKey: "creditDailyAmount",
+  },
+  public_credit_daily_refresh_hour: {
+    type: "time_hour",
+    default: 8,
+    env: "VITE_CREDIT_DAILY_REFRESH_HOUR",
+    labelKey: "creditDailyRefreshHour",
+    descriptionKey: "creditDailyRefreshHour",
+    validation: z.number().min(0).max(23),
+  },
   // mail
   mail_provider: {
     type: "select",
@@ -307,6 +333,15 @@ export const configGroups = [
           "public_credit_signup_bonus_enabled",
           "public_credit_signup_bonus_amount",
           "public_credit_signup_bonus_expire_days",
+        ],
+      }),
+      defineSubGroup({
+        id: "credit-daily",
+        labelKey: "creditDaily",
+        keys: [
+          "public_credit_daily_enabled",
+          "public_credit_daily_amount",
+          "public_credit_daily_refresh_hour",
         ],
       }),
     ],

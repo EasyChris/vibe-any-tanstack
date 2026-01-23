@@ -21,8 +21,12 @@ export function AccountPanel({ user, planName }: AccountPanelProps) {
     .join("")
     .toUpperCase()
     .slice(0, 2)
-  const { config } = useGlobalContext()
+  const { config, userInfo } = useGlobalContext()
   const creditEnabled = config?.public_credit_enable
+  const dailyEnabled = config?.public_credit_daily_enabled
+  const userCredits = userInfo?.credits?.userCredits ?? 0
+  const dailyBonusCredits = userInfo?.credits?.dailyBonusCredits ?? 0
+  const totalCredits = userCredits + dailyBonusCredits
 
   return (
     <div className="space-y-6">
@@ -77,30 +81,35 @@ export function AccountPanel({ user, planName }: AccountPanelProps) {
 
             <Separator className="border-dashed" />
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm">
                   <SparklesIcon className="size-4" />
-                  <span>积分</span>
+                  <span>总积分</span>
                 </div>
-                <span className="font-medium">0</span>
+                <span className="font-medium">{totalCredits}</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground text-sm">
-                <span>免费积分</span>
-                <span>0</span>
+                <span className="pl-6">购买积分/赠送积分（不包含每日赠送）</span>
+                <span>{userCredits}</span>
               </div>
             </div>
 
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <RefreshCwIcon className="size-4" />
-                  <span>每日刷新积分</span>
+            {dailyEnabled && (
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm">
+                    <RefreshCwIcon className="size-4" />
+                    <span>每日赠送积分</span>
+                  </div>
+                  <span className="font-medium">{dailyBonusCredits}</span>
                 </div>
-                <span className="font-medium">300</span>
+                <div className="text-muted-foreground text-xs">
+                  每天 {String(config?.public_credit_daily_refresh_hour).padStart(2, "0")}:00 刷新为{" "}
+                  {config?.public_credit_daily_amount}
+                </div>
               </div>
-              <div className="text-muted-foreground text-xs">每天 08:00 刷新为 300</div>
-            </div>
+            )}
           </div>
         )}
 

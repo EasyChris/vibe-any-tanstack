@@ -81,7 +81,10 @@ export default {
     },
     paymentPaypalSandbox: {
       label: t({ zh: "PayPal 沙盒模式", en: "PayPal Sandbox Mode" }),
-      description: t({ zh: "是否使用 PayPal 沙盒环境", en: "Whether to use PayPal sandbox environment" }),
+      description: t({
+        zh: "是否使用 PayPal 沙盒环境",
+        en: "Whether to use PayPal sandbox environment",
+      }),
     },
     // WeChat Pay
     paymentWechatAppId: {
@@ -123,7 +126,10 @@ export default {
     },
     paymentAlipaySandbox: {
       label: t({ zh: "支付宝沙盒模式", en: "Alipay Sandbox Mode" }),
-      description: t({ zh: "是否使用支付宝沙盒环境", en: "Whether to use Alipay sandbox environment" }),
+      description: t({
+        zh: "是否使用支付宝沙盒环境",
+        en: "Whether to use Alipay sandbox environment",
+      }),
     },
     creditEnable: {
       label: t({ zh: "启用积分系统", en: "Enable Credit System" }),
@@ -155,6 +161,27 @@ export default {
       description: t({
         zh: "注册赠送积分的有效天数",
         en: "Number of days signup bonus credits are valid",
+      }),
+    },
+    creditDailyEnabled: {
+      label: t({ zh: "启用每日赠送", en: "Enable Daily Bonus" }),
+      description: t({
+        zh: "是否启用每日赠送积分",
+        en: "Whether to enable daily bonus credits",
+      }),
+    },
+    creditDailyAmount: {
+      label: t({ zh: "每日赠送积分数量", en: "Daily Bonus Amount" }),
+      description: t({
+        zh: "每日赠送积分数量",
+        en: "Daily bonus credits amount",
+      }),
+    },
+    creditDailyRefreshHour: {
+      label: t({ zh: "每日赠送积分刷新时间", en: "Daily Bonus Refresh Hour" }),
+      description: t({
+        zh: "每日赠送积分刷新时间",
+        en: "Daily bonus credits refresh hour",
       }),
     },
     groups: {
@@ -192,6 +219,9 @@ export default {
       },
       creditSignupBonus: {
         title: t({ zh: "注册赠送", en: "Signup Bonus" }),
+      },
+      creditDaily: {
+        title: t({ zh: "每日赠送", en: "Daily Bonus" }),
       },
     },
   },

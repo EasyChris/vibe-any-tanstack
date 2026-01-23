@@ -2,7 +2,7 @@ import type { DbTransaction } from "@/db"
 import type { credits as creditsTable } from "@/db/credit.schema"
 import { logger } from "@/shared/lib/tools/logger"
 import { getCreditsByUserId, getUserValidCredits, insertCredits } from "@/shared/model/credit.model"
-import type { CreditsType } from "@/shared/types/credit"
+import { CreditsType } from "@/shared/types/credit"
 
 export interface IncreaseCreditsParams {
   userId: string
@@ -35,21 +35,28 @@ export class InsufficientCreditsError extends Error {
 }
 
 export class CreditService {
-  public async getUserCredits(userId: string): Promise<number> {
-    let userCredits = 0
-
+  public async getUserCredits(userId: string): Promise<{ userCredits: number; dailyBonusCredits: number }> {
+    const creditData = {
+      userCredits: 0,
+      dailyBonusCredits: 0,
+    }
     try {
       const credits = await getUserValidCredits(userId)
+
       if (credits) {
         credits.forEach((c) => {
-          userCredits += c.credits || 0
+          if (c.creditsType !== CreditsType.ADD_DAILY_BONUS) {
+            creditData.userCredits += c.credits || 0
+          } else {
+            creditData.dailyBonusCredits += c.credits || 0
+          }
         })
       }
 
-      return userCredits
+      return creditData
     } catch (e) {
       console.log("get user credits failed: ", e)
-      return userCredits
+      return creditData
     }
   }
 
@@ -98,36 +105,59 @@ export class CreditService {
 
     try {
       // Quick check: get total available credits first
-      const totalCredits = await this.getUserCredits(userId)
+      const { userCredits: normalCredits, dailyBonusCredits } = await this.getUserCredits(userId)
+      const totalCredits = normalCredits + dailyBonusCredits
       if (totalCredits < credits) {
         throw new InsufficientCreditsError(credits, totalCredits)
       }
 
       // Get detailed credits for proper deduction strategy
-      const userCredits = await getUserValidCredits(userId)
-      if (!userCredits || userCredits.length === 0) {
+      const allCredits = await getUserValidCredits(userId)
+      if (!allCredits || allCredits.length === 0) {
         throw new InsufficientCreditsError(credits, 0)
       }
 
-      // Strategy: Use expiring credits first, then permanent credits
-      // Since getUserValidCredits already orders correctly (expiring first, permanent last),
-      // we can process them in order
+      // Strategy: Use daily bonus credits first, then other credits (expiring first, permanent last)
+      const dailyBonusCreditRecords = allCredits.filter(
+        (c) => c.creditsType === CreditsType.ADD_DAILY_BONUS && c.credits > 0
+      )
+      const otherCreditRecords = allCredits.filter(
+        (c) => c.creditsType !== CreditsType.ADD_DAILY_BONUS && c.credits > 0
+      )
+
       let remainingToDeduct = credits
       const deductionRecords: Array<{
         paymentId: string
         expiresAt: Date | null
         amount: number
+        creditsType: string
       }> = []
 
-      for (const credit of userCredits) {
+      // First: deduct from daily bonus credits
+      for (const credit of dailyBonusCreditRecords) {
         if (remainingToDeduct <= 0) break
-        if (credit.credits <= 0) continue // Skip debit records
 
         const deductAmount = Math.min(credit.credits, remainingToDeduct)
         deductionRecords.push({
           paymentId: credit.paymentId || "",
           expiresAt: credit.expiresAt,
           amount: deductAmount,
+          creditsType: credit.creditsType,
+        })
+
+        remainingToDeduct -= deductAmount
+      }
+
+      // Second: deduct from other credits
+      for (const credit of otherCreditRecords) {
+        if (remainingToDeduct <= 0) break
+
+        const deductAmount = Math.min(credit.credits, remainingToDeduct)
+        deductionRecords.push({
+          paymentId: credit.paymentId || "",
+          expiresAt: credit.expiresAt,
+          amount: deductAmount,
+          creditsType: credit.creditsType,
         })
 
         remainingToDeduct -= deductAmount
@@ -138,22 +168,20 @@ export class CreditService {
       }
 
       // Create deduction record
-      // For debit transactions, expiresAt should be null as the deduction itself doesn't expire
-      // We track the source information in the description for audit purposes
       const sourceInfo = deductionRecords
         .map(
           (record) =>
-            `${record.amount} from ${record.paymentId || "admin"}${record.expiresAt ? ` (expires: ${record.expiresAt.toISOString()})` : " (permanent)"}`
+            `${record.amount} from ${record.creditsType}${record.expiresAt ? ` (expires: ${record.expiresAt.toISOString()})` : ""}`
         )
         .join("; ")
 
       const data: typeof creditsTable.$inferInsert = {
         userId,
-        paymentId: deductionRecords[0]?.paymentId || null, // Primary source for reference
-        credits: -credits, // Negative value for debit
+        paymentId: deductionRecords[0]?.paymentId || null,
+        credits: -credits,
         transactionType: "debit",
         creditsType,
-        expiresAt: null, // Debit records don't expire - they're permanent consumption records
+        expiresAt: null,
         description: description || `Sources: ${sourceInfo}`,
       }
 

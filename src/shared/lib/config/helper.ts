@@ -2,7 +2,7 @@ import type { z } from "zod"
 
 // ==================== 类型定义 ====================
 
-type ConfigType = "string" | "number" | "boolean" | "select" | "textarea"
+type ConfigType = "string" | "number" | "boolean" | "select" | "textarea" | "time_hour"
 
 type SelectOption = { value: string; labelKey?: string }
 
@@ -17,7 +17,7 @@ type BaseConfigDef = {
 // 根据 type 推导 default 的类型
 type ConfigDef =
   | (BaseConfigDef & { type: "string" | "textarea"; default: string })
-  | (BaseConfigDef & { type: "number"; default: number })
+  | (BaseConfigDef & { type: "number" | "time_hour"; default: number })
   | (BaseConfigDef & { type: "boolean"; default: boolean })
   | (BaseConfigDef & { type: "select"; default: string; options: SelectOption[] })
 
