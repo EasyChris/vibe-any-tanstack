@@ -110,6 +110,24 @@ export interface CustomerPortalResult {
 }
 
 /**
+ * Update subscription params
+ */
+export interface UpdateSubscriptionParams {
+  providerSubscriptionId: string
+  newPriceId: string
+  planId: string
+  prorationBehavior?: "create_prorations" | "none" | "always_invoice"
+}
+
+/**
+ * Update subscription result
+ */
+export interface UpdateSubscriptionResult {
+  providerSubscriptionId: string
+  status: SubscriptionStatus
+}
+
+/**
  * Payment adapter interface
  */
 export interface PaymentAdapter {
@@ -121,6 +139,8 @@ export interface PaymentAdapter {
   handleWebhook(request: Request): Promise<WebhookEvent>
 
   cancelSubscription?(providerSubscriptionId: string): Promise<void>
+
+  updateSubscription?(params: UpdateSubscriptionParams): Promise<UpdateSubscriptionResult>
 
   getCustomerPortalUrl?(providerCustomerId: string, returnUrl: string): Promise<string>
 }

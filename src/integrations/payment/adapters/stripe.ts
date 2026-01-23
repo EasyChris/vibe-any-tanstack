@@ -5,6 +5,8 @@ import type {
   CheckoutResult,
   CreateCheckoutParams,
   PaymentAdapter,
+  UpdateSubscriptionParams,
+  UpdateSubscriptionResult,
   WebhookEvent,
   WebhookEventType,
   WebhookPaymentInfo,
@@ -107,6 +109,37 @@ export class StripeAdapter implements PaymentAdapter {
 
   async cancelSubscription(providerSubscriptionId: string): Promise<void> {
     await this.stripe.subscriptions.cancel(providerSubscriptionId)
+  }
+
+  async updateSubscription(params: UpdateSubscriptionParams): Promise<UpdateSubscriptionResult> {
+    const { providerSubscriptionId, newPriceId, planId, prorationBehavior = "create_prorations" } = params
+
+    const subscription = await this.stripe.subscriptions.retrieve(providerSubscriptionId)
+    const itemId = subscription.items.data[0]?.id
+
+    if (!itemId) {
+      throw new Error("Subscription has no items")
+    }
+
+    const updatedSubscription = await this.stripe.subscriptions.update(providerSubscriptionId, {
+      items: [
+        {
+          id: itemId,
+          price: newPriceId,
+        },
+      ],
+      proration_behavior: prorationBehavior,
+      metadata: {
+        ...subscription.metadata,
+        planId,
+        priceId: newPriceId,
+      },
+    })
+
+    return {
+      providerSubscriptionId: updatedSubscription.id,
+      status: this.mapSubscriptionStatus(updatedSubscription.status),
+    }
   }
 
   async getCustomerPortalUrl(providerCustomerId: string, returnUrl: string): Promise<string> {

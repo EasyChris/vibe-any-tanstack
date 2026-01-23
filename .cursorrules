@@ -6,7 +6,7 @@ Use the latest version of Shadcn to install new components, like this command to
 pnpm dlx shadcn@latest add button
 ```
 
-# 禁止使用 className 的参数拼接
+# 禁止使用 className 的参数拼接，请你使用 cn 函数来拼接类名
 
 错误：
 ```tsx

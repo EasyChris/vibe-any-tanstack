@@ -30,6 +30,8 @@ export const GlobalContextProvider = ({ children }: { children: ReactNode }) => 
   const { data: config, isLoading: isLoadingConfig } = useQuery({
     queryKey: ["config"],
     queryFn: () => getConfigFn(),
+    staleTime: 0,
+    gcTime: 0,
   })
 
   const { data: userInfo, isLoading: isLoadingUserInfo } = useQuery({
@@ -41,6 +43,7 @@ export const GlobalContextProvider = ({ children }: { children: ReactNode }) => 
   const refreshConfig = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: ["config"] })
   }, [queryClient])
+
   const refreshUserInfo = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: ["userInfo"] })
   }, [queryClient])
