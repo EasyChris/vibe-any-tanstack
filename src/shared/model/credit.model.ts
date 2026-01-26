@@ -42,16 +42,9 @@ export async function getUserValidCredits(userId: string, tx?: DbTransaction) {
  * Update the remaining credits of a credit record
  * Used for FIFO consumption - directly decrements the source credit record
  */
-export async function updateCreditBalance(
-  id: string,
-  newCredits: number,
-  tx?: DbTransaction
-) {
+export async function updateCreditBalance(id: string, newCredits: number, tx?: DbTransaction) {
   const dbInstance = tx || db
-  await dbInstance
-    .update(credits)
-    .set({ credits: newCredits })
-    .where(eq(credits.id, id))
+  await dbInstance.update(credits).set({ credits: newCredits }).where(eq(credits.id, id))
 }
 
 export async function getCreditsByUserId(
@@ -110,4 +103,29 @@ export async function getCreditsByUserId(
 export async function getCreditsByTransactionId(transactionId: string) {
   const data = await db.select().from(credits).where(eq(credits.transactionId, transactionId))
   return data
+}
+
+/**
+ * Get user's latest daily bonus record
+ */
+export async function getUserLatestDailyBonus(
+  userId: string,
+  creditsType: string,
+  tx?: DbTransaction
+) {
+  const dbInstance = tx || db
+  const data = await dbInstance
+    .select()
+    .from(credits)
+    .where(
+      and(
+        eq(credits.userId, userId),
+        eq(credits.creditsType, creditsType),
+        eq(credits.transactionType, "credit")
+      )
+    )
+    .orderBy(desc(credits.createdAt))
+    .limit(1)
+
+  return data.length > 0 ? data[0] : null
 }

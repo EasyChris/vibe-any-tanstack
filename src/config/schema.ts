@@ -16,7 +16,7 @@ export type PublicConfig = Pick<
   | "public_credit_signup_bonus_expire_days"
   | "public_credit_daily_enabled"
   | "public_credit_daily_amount"
-  | "public_credit_daily_refresh_hour"
+  | "public_credit_daily_expire_enabled"
 >
 
 export const configSchema = defineConfig({
@@ -223,13 +223,12 @@ export const configSchema = defineConfig({
     labelKey: "creditDailyAmount",
     descriptionKey: "creditDailyAmount",
   },
-  public_credit_daily_refresh_hour: {
-    type: "time_hour",
-    default: 8,
-    env: "VITE_CREDIT_DAILY_REFRESH_HOUR",
-    labelKey: "creditDailyRefreshHour",
-    descriptionKey: "creditDailyRefreshHour",
-    validation: z.number().min(0).max(23),
+  public_credit_daily_expire_enabled: {
+    type: "boolean",
+    default: true,
+    env: "VITE_CREDIT_DAILY_EXPIRE_ENABLED",
+    labelKey: "creditDailyExpireEnabled",
+    descriptionKey: "creditDailyExpireEnabled",
   },
   // mail
   mail_provider: {
@@ -341,7 +340,7 @@ export const configGroups = [
         keys: [
           "public_credit_daily_enabled",
           "public_credit_daily_amount",
-          "public_credit_daily_refresh_hour",
+          "public_credit_daily_expire_enabled",
         ],
       }),
     ],

@@ -1,8 +1,10 @@
 import { type DbTransaction, db } from "@/db"
 import type { credits as creditsTable } from "@/db/credit.schema"
 import { logger } from "@/shared/lib/tools/logger"
+import { getConfig } from "@/shared/model/config.model"
 import {
   getCreditsByUserId,
+  getUserLatestDailyBonus,
   getUserValidCredits,
   insertCredits,
   updateCreditBalance,
@@ -39,18 +41,27 @@ export class InsufficientCreditsError extends Error {
   }
 }
 
+/** Minimum interval between daily bonus grants (24 hours in milliseconds) */
+const DAILY_BONUS_INTERVAL_MS = 24 * 60 * 60 * 1000
+
 export class CreditService {
   /**
    * Get user's available credits
    * - Real-time filtering: expired credits are excluded at query time
    * - No status update needed for expired credits
+   * - Automatically grants daily bonus if enabled and eligible
    */
-  public async getUserCredits(userId: string): Promise<{ userCredits: number; dailyBonusCredits: number }> {
+  public async getUserCredits(
+    userId: string
+  ): Promise<{ userCredits: number; dailyBonusCredits: number }> {
     const creditData = {
       userCredits: 0,
       dailyBonusCredits: 0,
     }
+
     try {
+      await this.tryGrantDailyBonus(userId)
+
       const credits = await getUserValidCredits(userId)
 
       if (credits) {
@@ -67,6 +78,58 @@ export class CreditService {
     } catch (e) {
       console.log("get user credits failed: ", e)
       return creditData
+    }
+  }
+
+  /**
+   * Try to grant daily bonus credits to user if:
+   * - Daily bonus feature is enabled
+   * - User hasn't received daily bonus in the last 24 hours
+   *
+   */
+  private async tryGrantDailyBonus(userId: string): Promise<boolean> {
+    try {
+      // Check if daily bonus feature is enabled
+      const dailyEnabled = await getConfig("public_credit_daily_enabled")
+      if (!dailyEnabled) {
+        return false
+      }
+
+      // Validate bonus amount is configured
+      const dailyAmount = await getConfig("public_credit_daily_amount")
+      if (dailyAmount <= 0) {
+        return false
+      }
+
+      // Get user's most recent daily bonus record
+      const latestBonus = await getUserLatestDailyBonus(userId, CreditsType.ADD_DAILY_BONUS)
+
+      // Skip if user already received bonus within the last 24 hours
+      if (latestBonus) {
+        const timeSinceLastBonus = Date.now() - latestBonus.createdAt.getTime()
+        if (timeSinceLastBonus < DAILY_BONUS_INTERVAL_MS) {
+          return false
+        }
+      }
+
+      // Determine expiration: 24 hours from now if expiration is enabled, otherwise never expires
+      const dailyExpireEnabled = await getConfig("public_credit_daily_expire_enabled")
+      const expiresAt = dailyExpireEnabled ? new Date(Date.now() + DAILY_BONUS_INTERVAL_MS) : null
+
+      // Grant the daily bonus credits
+      await this.increaseCredits({
+        userId,
+        credits: dailyAmount,
+        creditsType: CreditsType.ADD_DAILY_BONUS,
+        expiresAt: expiresAt ?? undefined,
+        description: `Daily bonus (${new Date().toISOString().split("T")[0]})`,
+      })
+
+      logger.info(`Granted daily bonus of ${dailyAmount} credits to user ${userId}`)
+      return true
+    } catch (error) {
+      logger.error(`Failed to grant daily bonus to user ${userId}: ${error}`)
+      return false
     }
   }
 
@@ -134,9 +197,7 @@ export class CreditService {
       const dailyBonusCredits = allCredits.filter(
         (c) => c.creditsType === CreditsType.ADD_DAILY_BONUS
       )
-      const otherCredits = allCredits.filter(
-        (c) => c.creditsType !== CreditsType.ADD_DAILY_BONUS
-      )
+      const otherCredits = allCredits.filter((c) => c.creditsType !== CreditsType.ADD_DAILY_BONUS)
       const sortedCredits = [...dailyBonusCredits, ...otherCredits]
 
       let remainingToDeduct = amount
