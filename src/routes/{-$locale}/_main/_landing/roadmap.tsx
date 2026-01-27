@@ -30,9 +30,9 @@ function RoadmapPage() {
       aria-label="Roadmap"
       className={cn(
         "roadmap",
-        "relative z-1 outline-none",
-        "pt-6 md:pt-10",
-        "md:h-[calc(100dvh-0px)]"
+        "relative outline-none",
+        "pt-6 md:pt-10 pb-10",
+        "md:min-h-[calc(100dvh-4rem)]"
       )}
     >
       <div className={cn("mx-auto w-full max-w-7xl", "px-6 lg:px-8")}>
@@ -45,8 +45,7 @@ function RoadmapPage() {
         className={cn(
           "mx-auto w-full max-w-7xl",
           "px-6 lg:px-8",
-          "mt-6",
-          "md:h-[calc(100%-6rem)] md:min-h-0"
+          "mt-6"
         )}
       >
         <Board columns={columns} />

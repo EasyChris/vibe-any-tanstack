@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { ArrowRightIcon, CheckIcon, ClockIcon, Loader2Icon, SparklesIcon } from "lucide-react"
 import { motion } from "motion/react"
-import { useEffect, useState } from "react"
+import { type FormEvent, useEffect, useState } from "react"
 import { useIntlayer } from "react-intlayer"
+import { z } from "zod"
 import { GlowingEffect } from "@/shared/components/motion-primitives/glowing-effect"
 import { TextEffect } from "@/shared/components/motion-primitives/text-effect"
 import { Badge } from "@/shared/components/ui/badge"
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/{-$locale}/_main/_landing/waitlist")({
 })
 
 const EARLY_BIRD_END_DATE = new Date("2026-02-28T23:59:59")
+const waitlistEmailSchema = z.email().trim()
 
 function useCountdown(targetDate: Date) {
   const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft(targetDate))
@@ -64,10 +66,11 @@ function WaitlistPage() {
   const [errorMessage, setErrorMessage] = useState("")
   const timeLeft = useCountdown(EARLY_BIRD_END_DATE)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const parsed = waitlistEmailSchema.safeParse(email)
+    if (!parsed.success) {
       setStatus("error")
       setErrorMessage(content.invalidEmail.value)
       return
@@ -160,7 +163,10 @@ function WaitlistPage() {
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value)
-                      if (status === "error") setStatus("idle")
+                      if (status === "error") {
+                        setStatus("idle")
+                        setErrorMessage("")
+                      }
                     }}
                     className={cn(
                       "h-11 flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0",

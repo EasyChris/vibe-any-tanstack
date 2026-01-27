@@ -40,6 +40,7 @@ export const categories = defineCollections({
 
 const roadmapItemSchema = z.object({
   title: z.string(),
+  description: z.string().optional(),
 })
 
 const roadmapColumnSchema = z.object({

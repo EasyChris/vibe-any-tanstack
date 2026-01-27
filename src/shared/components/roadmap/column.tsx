@@ -21,15 +21,9 @@ function hexToRGBA(hex: string, alpha: number): string {
 export function Column({ title, icon, color, items }: ColumnProps) {
   const IconComp = (Icons as Record<string, any>)[icon]
   return (
-    <section className={cn("bg-card border rounded-xl shadow-sm")}>
+    <section className={cn("bg-card border rounded-xl")}>
       <header
-        className={cn(
-          "flex items-center justify-between",
-          "md:sticky md:top-0 md:z-10",
-          "h-12 px-3",
-          "bg-card/95 supports-[backdrop-filter]:bg-card/80 backdrop-blur",
-          "border-b rounded-t-xl"
-        )}
+        className={cn("flex items-center justify-between", "h-12 px-3", "border-b rounded-t-xl")}
       >
         <div className="flex items-center gap-2">
           <p
@@ -64,7 +58,7 @@ export function Column({ title, icon, color, items }: ColumnProps) {
         </span>
       </header>
 
-      <div className="p-4 md:max-h-[calc(100%-3rem)] md:overflow-y-auto md:no-scrollbar space-y-4">
+      <div className="p-4 space-y-4">
         {items.map((item, idx) => (
           <ItemCard
             key={`${item.title}-${idx}`}
