@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router"
 import { env } from "@/config/env"
 import { getPlanById, getPriceById } from "@/config/payment-config"
 import { getDefaultPaymentAdapter, getPaymentAdapter } from "@/integrations/payment/"
-import { auth } from "@/shared/lib/auth/auth-server"
 import { logger } from "@/shared/lib/tools/logger"
 import { Resp } from "@/shared/lib/tools/response"
 import { strictAuthMiddleware } from "@/shared/middleware/auth.middleware"
@@ -12,15 +11,10 @@ export const Route = createFileRoute("/api/payment/checkout")({
   server: {
     middleware: [strictAuthMiddleware],
     handlers: {
-      POST: async ({ request }: { request: Request }) => {
+      POST: async ({ context, request }) => {
         try {
-          const session = await auth.api.getSession({
-            headers: request.headers,
-          })
-
-          if (!session?.user) {
-            return Resp.error("Unauthorized", 401)
-          }
+          const { user } = context.session
+          const userId = user.id
 
           const body = await request.json()
           const { planId, priceId, provider, successUrl, cancelUrl, metadata } = body
@@ -57,8 +51,8 @@ export const Route = createFileRoute("/api/payment/checkout")({
             type: paymentType,
             planId,
             priceId,
-            email: session.user.email,
-            userId: session.user.id,
+            email: user.email,
+            userId,
             successUrl: successUrl || `${env.BETTER_AUTH_URL}/dashboard?success=true`,
             cancelUrl: cancelUrl || `${env.BETTER_AUTH_URL}/pricing`,
             metadata: {

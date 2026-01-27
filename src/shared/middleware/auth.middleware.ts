@@ -37,7 +37,7 @@ export const strictAuthMiddleware = createMiddleware()
     if (!context.session) {
       throw redirect({ to: "/{-$locale}/login" })
     }
-    return await next()
+    return await next({ context: { session: context.session as NonNullable<Session> } })
   })
 
 export const adminMiddleware = createMiddleware()
