@@ -79,14 +79,14 @@ interface CreditDetailProps {
 }
 
 export function CreditDetail({ planName, onUpgradeClick }: CreditDetailProps) {
-  const { config, userInfo } = useGlobalContext()
+  const { config, credits } = useGlobalContext()
   const { credits: t } = useIntlayer("user-dashboard")
   const creditEnabled = config?.public_credit_enable
   const dailyEnabled = config?.public_credit_daily_enabled
   const dailyAmount = config?.public_credit_daily_amount ?? 0
-  const userCredits = userInfo?.credits?.userCredits ?? 0
-  const dailyBonusCredits = userInfo?.credits?.dailyBonusCredits ?? 0
-  const nextRefreshTime = userInfo?.credits?.nextRefreshTime
+  const userCredits = credits?.userCredits ?? 0
+  const dailyBonusCredits = credits?.dailyBonusCredits ?? 0
+  const nextRefreshTime = credits?.nextRefreshTime
   const totalCredits = userCredits + dailyBonusCredits
 
   const formatNextRefreshTime = (isoString: string | null | undefined): string => {

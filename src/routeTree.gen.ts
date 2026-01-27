@@ -218,7 +218,7 @@ export interface FileRoutesByFullPath {
   '/api/credit/packages': typeof ApiCreditPackagesRoute
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
-  '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
+  '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
   '/{-$locale}/chat': typeof Char123LocaleChar125MainLandingChatRoute
@@ -231,7 +231,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/': typeof Char123LocaleChar125MainLandingIndexRoute
   '/{-$locale}/admin/': typeof Char123LocaleChar125MainAdminIndexRoute
   '/{-$locale}/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
-  '/{-$locale}/blog': typeof Char123LocaleChar125MainLandingBlogIndexRoute
+  '/{-$locale}/blog/': typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/{-$locale}': typeof Char123LocaleChar125MainLandingIndexRoute
@@ -308,7 +308,7 @@ export interface FileRouteTypes {
     | '/api/credit/packages'
     | '/api/payment/checkout'
     | '/{-$locale}/docs/$'
-    | '/{-$locale}/login'
+    | '/{-$locale}/login/'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/changelog'
     | '/{-$locale}/chat'
@@ -321,7 +321,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/'
     | '/{-$locale}/admin/'
     | '/{-$locale}/blog/$slug'
-    | '/{-$locale}/blog'
+    | '/{-$locale}/blog/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/{-$locale}'
@@ -434,7 +434,7 @@ declare module '@tanstack/react-router' {
     '/{-$locale}/login/': {
       id: '/{-$locale}/login/'
       path: '/login'
-      fullPath: '/{-$locale}/login'
+      fullPath: '/{-$locale}/login/'
       preLoaderRoute: typeof Char123LocaleChar125LoginIndexRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
     }
@@ -588,7 +588,7 @@ declare module '@tanstack/react-router' {
     '/{-$locale}/_main/_landing/blog/': {
       id: '/{-$locale}/_main/_landing/blog/'
       path: '/blog'
-      fullPath: '/{-$locale}/blog'
+      fullPath: '/{-$locale}/blog/'
       preLoaderRoute: typeof Char123LocaleChar125MainLandingBlogIndexRouteImport
       parentRoute: typeof Char123LocaleChar125MainLandingRouteRoute
     }

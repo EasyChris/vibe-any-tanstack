@@ -1,9 +1,24 @@
-import { eq } from "drizzle-orm"
+import { and, eq, or } from "drizzle-orm"
 import { type DbTransaction, db } from "@/db"
 import { subscription } from "@/db/subscription.schema"
 
 export type SubscriptionInsert = typeof subscription.$inferInsert
 export type SubscriptionSelect = typeof subscription.$inferSelect
+
+export async function findActiveSubscriptionByUserId(userId: string, tx?: DbTransaction) {
+  const dbInstance = tx || db
+  const [result] = await dbInstance
+    .select()
+    .from(subscription)
+    .where(
+      and(
+        eq(subscription.userId, userId),
+        or(eq(subscription.status, "active"), eq(subscription.status, "trialing"))
+      )
+    )
+    .limit(1)
+  return result ?? null
+}
 
 export async function findSubscriptionByProviderId(
   providerSubscriptionId: string,

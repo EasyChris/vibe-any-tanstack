@@ -5,6 +5,7 @@ import { LandingHeader } from "@/shared/components/landing/header"
 
 export const Route = createFileRoute("/{-$locale}/_main/_landing")({
   component: RouteComponent,
+  ssr: true,
 })
 
 function RouteComponent() {

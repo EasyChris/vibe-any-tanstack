@@ -217,7 +217,7 @@ export const configSchema = defineConfig({
   },
   public_credit_daily_amount: {
     type: "number",
-    default: 100,
+    default: 0,
     env: "VITE_CREDIT_DAILY_AMOUNT",
     labelKey: "creditDailyAmount",
     descriptionKey: "creditDailyAmount",

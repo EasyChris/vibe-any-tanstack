@@ -1,9 +1,23 @@
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { type DbTransaction, db } from "@/db"
 import { payment } from "@/db/payment.schema"
 
 export type PaymentInsert = typeof payment.$inferInsert
 export type PaymentSelect = typeof payment.$inferSelect
+
+export async function findSucceededOneTimePayments(userId: string, tx?: DbTransaction) {
+  const dbInstance = tx || db
+  return dbInstance
+    .select({ priceId: payment.priceId })
+    .from(payment)
+    .where(
+      and(
+        eq(payment.userId, userId),
+        eq(payment.paymentType, "one_time"),
+        eq(payment.status, "succeeded")
+      )
+    )
+}
 
 export async function findPaymentByProviderId(providerPaymentId: string, tx?: DbTransaction) {
   const dbInstance = tx || db
