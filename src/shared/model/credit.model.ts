@@ -100,9 +100,9 @@ export async function getCreditsByUserId(
   }
 }
 
-export async function getCreditsByTransactionId(transactionId: string) {
-  const data = await db.select().from(credits).where(eq(credits.transactionId, transactionId))
-  return data
+export async function getCreditsById(id: string) {
+  const [data] = await db.select().from(credits).where(eq(credits.id, id))
+  return data ?? null
 }
 
 /**

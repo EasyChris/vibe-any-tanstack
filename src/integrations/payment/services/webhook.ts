@@ -1,12 +1,10 @@
 import { eq } from "drizzle-orm"
 import { db } from "@/db"
 import { type ProviderCustomers, user } from "@/db/auth.schema"
+import { OrderService } from "@/services/order.service"
 import { logger } from "@/shared/lib/tools/logger"
-import {
-  findPaymentByProviderId,
-  insertPayment,
-  updatePayment,
-} from "@/shared/model/payment.model"
+import { findOrderById } from "@/shared/model/order.model"
+import { findPaymentByProviderId, insertPayment, updatePayment } from "@/shared/model/payment.model"
 import {
   findSubscriptionByProviderId,
   insertSubscription,
@@ -125,11 +123,31 @@ async function handlePaymentSucceeded(event: WebhookEvent): Promise<void> {
     // Determine payment type
     let paymentType: "subscription_create" | "subscription_renewal" | "one_time" = "one_time"
     let subscriptionId: string | undefined
+    let orderId: string | undefined = paymentInfo.orderId
 
     if (paymentInfo.cycleType === "create") {
       paymentType = "subscription_create"
     } else if (paymentInfo.cycleType === "renewal") {
       paymentType = "subscription_renewal"
+    }
+
+    // Validate and update order status
+    if (orderId) {
+      const order = await findOrderById(orderId, tx)
+      if (order) {
+        if (order.status === "pending") {
+          const orderService = new OrderService()
+          await orderService.markOrderPaid(orderId, tx)
+          logger.info(`Order marked as paid: ${orderId}`)
+        } else if (order.status === "paid") {
+          logger.info(`Order already paid: ${orderId}`)
+        } else {
+          logger.warn(`Order ${orderId} has unexpected status: ${order.status}`)
+        }
+      } else {
+        logger.warn(`Order not found: ${orderId}`)
+        orderId = undefined
+      }
     }
 
     // Handle subscription if present
@@ -157,13 +175,14 @@ async function handlePaymentSucceeded(event: WebhookEvent): Promise<void> {
       }
     }
 
-    // Create payment record
+    // Create payment record with orderId
     const newPayment = await insertPayment(
       {
         provider: event.provider,
         providerPaymentId: paymentInfo.providerPaymentId,
         providerInvoiceId: paymentInfo.providerInvoiceId,
         userId: paymentInfo.userId || "",
+        orderId,
         subscriptionId,
         paymentType,
         amount: paymentInfo.amount,
@@ -176,7 +195,7 @@ async function handlePaymentSucceeded(event: WebhookEvent): Promise<void> {
       tx
     )
 
-    logger.info(`Payment created: ${newPayment.id} (${paymentType})`)
+    logger.info(`Payment created: ${newPayment.id} (${paymentType}) for order ${orderId || "N/A"}`)
 
     // Process credits
     if (paymentInfo.planId && paymentInfo.userId) {
@@ -314,6 +333,13 @@ async function handleRefundCreated(event: WebhookEvent): Promise<void> {
 
   if (result) {
     logger.info(`Payment refunded: ${result.id}`)
+
+    // Update order status to refunded if orderId exists
+    if (result.orderId) {
+      const orderService = new OrderService()
+      await orderService.markOrderRefunded(result.orderId)
+    }
+
     // TODO: Handle credit deduction for refunds
   } else {
     logger.warn(`Payment not found for refund: ${paymentInfo.providerPaymentId}`)

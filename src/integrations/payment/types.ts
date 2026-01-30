@@ -21,6 +21,7 @@ export interface AdapterCapabilities {
  */
 export interface CreateCheckoutParams {
   type: "subscription" | "one_time"
+  orderId: string
   planId: string
   priceId: string
   email: string
@@ -49,6 +50,7 @@ export interface WebhookPaymentInfo {
   currency: string
   status: PaymentStatus
   cycleType?: SubscriptionCycleType
+  orderId?: string
   planId?: string
   priceId?: string
   userId?: string

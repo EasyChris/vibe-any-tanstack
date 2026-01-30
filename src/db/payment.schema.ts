@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm"
 import { index, integer, jsonb, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 import { user } from "./auth.schema"
+import { order } from "./order.schema"
 import { paymentProviderEnum, subscription } from "./subscription.schema"
 
 export const paymentTypeEnum = pgEnum("payment_type", [
@@ -31,6 +32,9 @@ export const payment = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    orderId: text("order_id").references(() => order.id, {
+      onDelete: "set null",
+    }),
     subscriptionId: text("subscription_id").references(() => subscription.id, {
       onDelete: "set null",
     }),
@@ -57,6 +61,7 @@ export const payment = pgTable(
   },
   (table) => [
     index("payment_user_id_idx").on(table.userId),
+    index("payment_order_id_idx").on(table.orderId),
     index("payment_subscription_id_idx").on(table.subscriptionId),
     index("payment_provider_payment_id_idx").on(table.providerPaymentId),
     index("payment_status_idx").on(table.status),
@@ -67,6 +72,10 @@ export const paymentRelations = relations(payment, ({ one }) => ({
   user: one(user, {
     fields: [payment.userId],
     references: [user.id],
+  }),
+  order: one(order, {
+    fields: [payment.orderId],
+    references: [order.id],
   }),
   subscription: one(subscription, {
     fields: [payment.subscriptionId],

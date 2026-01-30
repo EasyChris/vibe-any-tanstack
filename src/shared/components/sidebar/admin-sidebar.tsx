@@ -9,6 +9,7 @@ import {
   Languages,
   LogOut,
   Package,
+  ReceiptIcon,
   Users,
 } from "lucide-react"
 import { useIntlayer, useLocale } from "react-intlayer"
@@ -54,7 +55,7 @@ export default function AdminSidebar() {
   const content = useIntlayer("admin")
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
-  const { userInfo, isLoadingUserInfo } = useGlobalContext()
+  const { userInfo } = useGlobalContext()
   const { pathname } = useLocation()
   const { availableLocales, locale, setLocale } = useLocale()
   const pathWithoutLocale = getPathWithoutLocale(pathname)
@@ -65,6 +66,12 @@ export default function AdminSidebar() {
       url: "/admin/users",
       icon: Users,
       match: "/admin/users",
+    },
+    {
+      title: String(content.sidebar.orders.value),
+      url: "/admin/orders",
+      icon: ReceiptIcon,
+      match: "/admin/orders",
     },
     {
       title: String(content.sidebar.products.value),

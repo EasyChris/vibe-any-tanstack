@@ -42,3 +42,19 @@ export type PaginatedResponse<T> = {
     totalPages: number
   }
 }
+
+export type AdminOrderListItem = {
+  id: string
+  userId: string
+  orderType: "subscription" | "credit_package"
+  status: "pending" | "paid" | "canceled" | "expired" | "refunded"
+  productId: string | null
+  productName: string | null
+  amount: number
+  currency: string
+  expireAt: Date | null
+  paidAt: Date | null
+  createdAt: Date
+  userName: string | null
+  userEmail: string | null
+}

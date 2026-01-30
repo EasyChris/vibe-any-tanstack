@@ -24,6 +24,7 @@ import { Route as ApiCreditHistoryRouteImport } from './routes/api/credit/histor
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
 import { Route as ApiAdminRolesRouteImport } from './routes/api/admin/roles'
+import { Route as ApiAdminOrdersRouteImport } from './routes/api/admin/orders'
 import { Route as ApiAdminCreditPackagesRouteImport } from './routes/api/admin/credit-packages'
 import { Route as ApiAdminConfigRouteImport } from './routes/api/admin/config'
 import { Route as Char123LocaleChar125MainAdminRouteRouteImport } from './routes/{-$locale}/_main/admin/route'
@@ -33,6 +34,7 @@ import { Route as Char123LocaleChar125MainAdminIndexRouteImport } from './routes
 import { Route as Char123LocaleChar125MainLandingIndexRouteImport } from './routes/{-$locale}/_main/_landing/index'
 import { Route as Char123LocaleChar125MainAdminUsersRouteImport } from './routes/{-$locale}/_main/admin/users'
 import { Route as Char123LocaleChar125MainAdminProductsRouteImport } from './routes/{-$locale}/_main/admin/products'
+import { Route as Char123LocaleChar125MainAdminOrdersRouteImport } from './routes/{-$locale}/_main/admin/orders'
 import { Route as Char123LocaleChar125MainAdminCreditPackagesRouteImport } from './routes/{-$locale}/_main/admin/credit-packages'
 import { Route as Char123LocaleChar125MainAdminConfigRouteImport } from './routes/{-$locale}/_main/admin/config'
 import { Route as Char123LocaleChar125MainLandingWaitlistRouteImport } from './routes/{-$locale}/_main/_landing/waitlist'
@@ -126,6 +128,11 @@ const ApiAdminRolesRoute = ApiAdminRolesRouteImport.update({
   path: '/roles',
   getParentRoute: () => ApiAdminRouteRoute,
 } as any)
+const ApiAdminOrdersRoute = ApiAdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => ApiAdminRouteRoute,
+} as any)
 const ApiAdminCreditPackagesRoute = ApiAdminCreditPackagesRouteImport.update({
   id: '/credit-packages',
   path: '/credit-packages',
@@ -175,6 +182,12 @@ const Char123LocaleChar125MainAdminProductsRoute =
   Char123LocaleChar125MainAdminProductsRouteImport.update({
     id: '/products',
     path: '/products',
+    getParentRoute: () => Char123LocaleChar125MainAdminRouteRoute,
+  } as any)
+const Char123LocaleChar125MainAdminOrdersRoute =
+  Char123LocaleChar125MainAdminOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
     getParentRoute: () => Char123LocaleChar125MainAdminRouteRoute,
   } as any)
 const Char123LocaleChar125MainAdminCreditPackagesRoute =
@@ -256,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/admin': typeof Char123LocaleChar125MainAdminRouteRouteWithChildren
   '/api/admin/config': typeof ApiAdminConfigRoute
   '/api/admin/credit-packages': typeof ApiAdminCreditPackagesRoute
+  '/api/admin/orders': typeof ApiAdminOrdersRoute
   '/api/admin/roles': typeof ApiAdminRolesRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -273,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/waitlist': typeof Char123LocaleChar125MainLandingWaitlistRoute
   '/{-$locale}/admin/config': typeof Char123LocaleChar125MainAdminConfigRoute
   '/{-$locale}/admin/credit-packages': typeof Char123LocaleChar125MainAdminCreditPackagesRoute
+  '/{-$locale}/admin/orders': typeof Char123LocaleChar125MainAdminOrdersRoute
   '/{-$locale}/admin/products': typeof Char123LocaleChar125MainAdminProductsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125MainAdminUsersRoute
   '/{-$locale}/': typeof Char123LocaleChar125MainLandingIndexRoute
@@ -291,6 +306,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/404': typeof Char123LocaleChar125404Route
   '/api/admin/config': typeof ApiAdminConfigRoute
   '/api/admin/credit-packages': typeof ApiAdminCreditPackagesRoute
+  '/api/admin/orders': typeof ApiAdminOrdersRoute
   '/api/admin/roles': typeof ApiAdminRolesRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -308,6 +324,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/waitlist': typeof Char123LocaleChar125MainLandingWaitlistRoute
   '/{-$locale}/admin/config': typeof Char123LocaleChar125MainAdminConfigRoute
   '/{-$locale}/admin/credit-packages': typeof Char123LocaleChar125MainAdminCreditPackagesRoute
+  '/{-$locale}/admin/orders': typeof Char123LocaleChar125MainAdminOrdersRoute
   '/{-$locale}/admin/products': typeof Char123LocaleChar125MainAdminProductsRoute
   '/{-$locale}/admin/users': typeof Char123LocaleChar125MainAdminUsersRoute
   '/{-$locale}/admin': typeof Char123LocaleChar125MainAdminIndexRoute
@@ -328,6 +345,7 @@ export interface FileRoutesById {
   '/{-$locale}/_main/admin': typeof Char123LocaleChar125MainAdminRouteRouteWithChildren
   '/api/admin/config': typeof ApiAdminConfigRoute
   '/api/admin/credit-packages': typeof ApiAdminCreditPackagesRoute
+  '/api/admin/orders': typeof ApiAdminOrdersRoute
   '/api/admin/roles': typeof ApiAdminRolesRoute
   '/api/admin/users': typeof ApiAdminUsersRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -345,6 +363,7 @@ export interface FileRoutesById {
   '/{-$locale}/_main/_landing/waitlist': typeof Char123LocaleChar125MainLandingWaitlistRoute
   '/{-$locale}/_main/admin/config': typeof Char123LocaleChar125MainAdminConfigRoute
   '/{-$locale}/_main/admin/credit-packages': typeof Char123LocaleChar125MainAdminCreditPackagesRoute
+  '/{-$locale}/_main/admin/orders': typeof Char123LocaleChar125MainAdminOrdersRoute
   '/{-$locale}/_main/admin/products': typeof Char123LocaleChar125MainAdminProductsRoute
   '/{-$locale}/_main/admin/users': typeof Char123LocaleChar125MainAdminUsersRoute
   '/{-$locale}/_main/_landing/': typeof Char123LocaleChar125MainLandingIndexRoute
@@ -366,6 +385,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/admin'
     | '/api/admin/config'
     | '/api/admin/credit-packages'
+    | '/api/admin/orders'
     | '/api/admin/roles'
     | '/api/admin/users'
     | '/api/auth/$'
@@ -383,6 +403,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/waitlist'
     | '/{-$locale}/admin/config'
     | '/{-$locale}/admin/credit-packages'
+    | '/{-$locale}/admin/orders'
     | '/{-$locale}/admin/products'
     | '/{-$locale}/admin/users'
     | '/{-$locale}/'
@@ -401,6 +422,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/404'
     | '/api/admin/config'
     | '/api/admin/credit-packages'
+    | '/api/admin/orders'
     | '/api/admin/roles'
     | '/api/admin/users'
     | '/api/auth/$'
@@ -418,6 +440,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/waitlist'
     | '/{-$locale}/admin/config'
     | '/{-$locale}/admin/credit-packages'
+    | '/{-$locale}/admin/orders'
     | '/{-$locale}/admin/products'
     | '/{-$locale}/admin/users'
     | '/{-$locale}/admin'
@@ -437,6 +460,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/_main/admin'
     | '/api/admin/config'
     | '/api/admin/credit-packages'
+    | '/api/admin/orders'
     | '/api/admin/roles'
     | '/api/admin/users'
     | '/api/auth/$'
@@ -454,6 +478,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/_main/_landing/waitlist'
     | '/{-$locale}/_main/admin/config'
     | '/{-$locale}/_main/admin/credit-packages'
+    | '/{-$locale}/_main/admin/orders'
     | '/{-$locale}/_main/admin/products'
     | '/{-$locale}/_main/admin/users'
     | '/{-$locale}/_main/_landing/'
@@ -583,6 +608,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminRolesRouteImport
       parentRoute: typeof ApiAdminRouteRoute
     }
+    '/api/admin/orders': {
+      id: '/api/admin/orders'
+      path: '/orders'
+      fullPath: '/api/admin/orders'
+      preLoaderRoute: typeof ApiAdminOrdersRouteImport
+      parentRoute: typeof ApiAdminRouteRoute
+    }
     '/api/admin/credit-packages': {
       id: '/api/admin/credit-packages'
       path: '/credit-packages'
@@ -644,6 +676,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/{-$locale}/admin/products'
       preLoaderRoute: typeof Char123LocaleChar125MainAdminProductsRouteImport
+      parentRoute: typeof Char123LocaleChar125MainAdminRouteRoute
+    }
+    '/{-$locale}/_main/admin/orders': {
+      id: '/{-$locale}/_main/admin/orders'
+      path: '/orders'
+      fullPath: '/{-$locale}/admin/orders'
+      preLoaderRoute: typeof Char123LocaleChar125MainAdminOrdersRouteImport
       parentRoute: typeof Char123LocaleChar125MainAdminRouteRoute
     }
     '/{-$locale}/_main/admin/credit-packages': {
@@ -769,6 +808,7 @@ const Char123LocaleChar125MainLandingRouteRouteWithChildren =
 interface Char123LocaleChar125MainAdminRouteRouteChildren {
   Char123LocaleChar125MainAdminConfigRoute: typeof Char123LocaleChar125MainAdminConfigRoute
   Char123LocaleChar125MainAdminCreditPackagesRoute: typeof Char123LocaleChar125MainAdminCreditPackagesRoute
+  Char123LocaleChar125MainAdminOrdersRoute: typeof Char123LocaleChar125MainAdminOrdersRoute
   Char123LocaleChar125MainAdminProductsRoute: typeof Char123LocaleChar125MainAdminProductsRoute
   Char123LocaleChar125MainAdminUsersRoute: typeof Char123LocaleChar125MainAdminUsersRoute
   Char123LocaleChar125MainAdminIndexRoute: typeof Char123LocaleChar125MainAdminIndexRoute
@@ -780,6 +820,8 @@ const Char123LocaleChar125MainAdminRouteRouteChildren: Char123LocaleChar125MainA
       Char123LocaleChar125MainAdminConfigRoute,
     Char123LocaleChar125MainAdminCreditPackagesRoute:
       Char123LocaleChar125MainAdminCreditPackagesRoute,
+    Char123LocaleChar125MainAdminOrdersRoute:
+      Char123LocaleChar125MainAdminOrdersRoute,
     Char123LocaleChar125MainAdminProductsRoute:
       Char123LocaleChar125MainAdminProductsRoute,
     Char123LocaleChar125MainAdminUsersRoute:
@@ -881,6 +923,7 @@ const ApiAdminUsersRouteWithChildren = ApiAdminUsersRoute._addFileChildren(
 interface ApiAdminRouteRouteChildren {
   ApiAdminConfigRoute: typeof ApiAdminConfigRoute
   ApiAdminCreditPackagesRoute: typeof ApiAdminCreditPackagesRoute
+  ApiAdminOrdersRoute: typeof ApiAdminOrdersRoute
   ApiAdminRolesRoute: typeof ApiAdminRolesRoute
   ApiAdminUsersRoute: typeof ApiAdminUsersRouteWithChildren
 }
@@ -888,6 +931,7 @@ interface ApiAdminRouteRouteChildren {
 const ApiAdminRouteRouteChildren: ApiAdminRouteRouteChildren = {
   ApiAdminConfigRoute: ApiAdminConfigRoute,
   ApiAdminCreditPackagesRoute: ApiAdminCreditPackagesRoute,
+  ApiAdminOrdersRoute: ApiAdminOrdersRoute,
   ApiAdminRolesRoute: ApiAdminRolesRoute,
   ApiAdminUsersRoute: ApiAdminUsersRouteWithChildren,
 }

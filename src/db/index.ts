@@ -4,6 +4,7 @@ import type { Pool } from "pg"
 export * from "./auth.schema"
 export * from "./config.schema"
 export * from "./credit.schema"
+export * from "./order.schema"
 export * from "./payment.schema"
 export * from "./rbac.schema"
 export * from "./subscription.schema"
@@ -11,6 +12,7 @@ export * from "./subscription.schema"
 import * as authSchema from "./auth.schema"
 import * as configSchema from "./config.schema"
 import * as creditSchema from "./credit.schema"
+import * as orderSchema from "./order.schema"
 import * as paymentSchema from "./payment.schema"
 import * as rbacSchema from "./rbac.schema"
 import * as subscriptionSchema from "./subscription.schema"
@@ -19,6 +21,7 @@ const schema = {
   ...authSchema,
   ...configSchema,
   ...creditSchema,
+  ...orderSchema,
   ...subscriptionSchema,
   ...paymentSchema,
   ...rbacSchema,

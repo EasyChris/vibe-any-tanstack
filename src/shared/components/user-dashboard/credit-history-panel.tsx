@@ -27,7 +27,6 @@ import { CreditDetail } from "./account-panel"
 
 interface CreditRecord {
   id: string
-  transactionId: string
   credits: number
   creditsType: string
   transactionType: string

@@ -1,45 +1,27 @@
 import { relations } from "drizzle-orm"
 import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core"
-import { getSnowId } from "@/shared/lib/tools/hash"
 import { user } from "./auth.schema"
 import { payment } from "./payment.schema"
 
-/**
- * Credit transaction records
- * Tracks all credit changes for users (purchases, usage, grants, etc.)
- */
 export const credits = pgTable("credits", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
 
-  /** Unique transaction ID for tracking */
-  transactionId: text("transaction_id")
-    .notNull()
-    .unique()
-    .$defaultFn(() => getSnowId()),
-
-  /** User who owns this credit record */
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  /** Reference to payment record, null for admin grants */
   paymentId: text("payment_id"),
 
-  /** Transaction type: "credit" (add) or "debit" (subtract) */
   transactionType: text("transaction_type").notNull(),
 
-  /** Source type: "purchase", "subscription", "grant", "usage", etc. */
   creditsType: text("credits_type").notNull(),
 
-  /** Amount of credits (positive for credit, negative for debit) */
   credits: integer("credits").notNull(),
 
-  /** Optional description of the transaction */
   description: text("description"),
 
-  /** When these credits expire, null means never */
   expiresAt: timestamp("expires_at"),
 
   createdAt: timestamp("created_at")

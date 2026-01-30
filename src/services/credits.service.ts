@@ -31,7 +31,7 @@ export interface DecreaseCreditsParams {
 
 export interface DecreaseCreditsResult {
   remainingCredits: number
-  transactionId: string
+  creditId: string
 }
 
 export class InsufficientCreditsError extends Error {
@@ -261,7 +261,7 @@ export class CreditService {
 
       return {
         remainingCredits: totalAvailable - amount,
-        transactionId: result.transactionId,
+        creditId: result.id,
       }
     }
 

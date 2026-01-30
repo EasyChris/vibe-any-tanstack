@@ -43,9 +43,18 @@ export class StripeAdapter implements PaymentAdapter {
   }
 
   async createCheckout(params: CreateCheckoutParams): Promise<CheckoutResult> {
-    const { type, priceId, planId, email, userId, successUrl, cancelUrl, metadata } = params
+    const { type, orderId, priceId, planId, email, userId, successUrl, cancelUrl, metadata } =
+      params
 
     const customerId = await this.getOrCreateCustomer(email, userId)
+
+    const commonMetadata = {
+      ...metadata,
+      orderId,
+      userId,
+      planId,
+      priceId,
+    }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
@@ -53,31 +62,16 @@ export class StripeAdapter implements PaymentAdapter {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: successUrl,
       cancel_url: cancelUrl,
-      metadata: {
-        ...metadata,
-        userId,
-        planId,
-        priceId,
-      },
+      metadata: commonMetadata,
     }
 
     if (type === "subscription") {
       sessionParams.subscription_data = {
-        metadata: {
-          ...metadata,
-          userId,
-          planId,
-          priceId,
-        },
+        metadata: commonMetadata,
       }
     } else {
       sessionParams.payment_intent_data = {
-        metadata: {
-          ...metadata,
-          userId,
-          planId,
-          priceId,
-        },
+        metadata: commonMetadata,
       }
       sessionParams.invoice_creation = { enabled: true }
     }
@@ -112,7 +106,12 @@ export class StripeAdapter implements PaymentAdapter {
   }
 
   async updateSubscription(params: UpdateSubscriptionParams): Promise<UpdateSubscriptionResult> {
-    const { providerSubscriptionId, newPriceId, planId, prorationBehavior = "create_prorations" } = params
+    const {
+      providerSubscriptionId,
+      newPriceId,
+      planId,
+      prorationBehavior = "create_prorations",
+    } = params
 
     const subscription = await this.stripe.subscriptions.retrieve(providerSubscriptionId)
     const itemId = subscription.items.data[0]?.id
@@ -262,6 +261,7 @@ export class StripeAdapter implements PaymentAdapter {
       currency: session.currency || "usd",
       status: this.mapPaymentStatus(session.payment_status),
       cycleType: session.mode === "subscription" ? "create" : undefined,
+      orderId: session.metadata?.orderId,
       planId: session.metadata?.planId,
       priceId: session.metadata?.priceId,
       userId: session.metadata?.userId,
@@ -308,6 +308,7 @@ export class StripeAdapter implements PaymentAdapter {
       currency: invoice.currency,
       status: forceStatus || (invoice.status === "paid" ? "succeeded" : "pending"),
       cycleType,
+      orderId: metadata.orderId,
       planId: metadata.planId,
       priceId: metadata.priceId,
       userId: metadata.userId,

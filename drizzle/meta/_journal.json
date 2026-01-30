@@ -15,6 +15,13 @@
       "when": 1769587316374,
       "tag": "0001_lame_spencer_smythe",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769743053391,
+      "tag": "0002_perpetual_the_twelve",
+      "breakpoints": true
     }
   ]
 }

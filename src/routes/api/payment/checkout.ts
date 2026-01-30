@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { getPlanById, getPriceById } from "@/config/payment-config"
 import { getDefaultPaymentAdapter, getPaymentAdapter } from "@/integrations/payment/"
+import { OrderService } from "@/services/order.service"
 import { logger } from "@/shared/lib/tools/logger"
 import { Resp } from "@/shared/lib/tools/response"
 import { strictAuthMiddleware } from "@/shared/middleware/auth.middleware"
@@ -46,14 +47,14 @@ export const Route = createFileRoute("/api/payment/checkout")({
             return Resp.error(`Provider ${adapter.name} does not support one-time payments`, 400)
           }
 
-          const result = await adapter.createCheckout({
-            type: paymentType,
-            planId,
-            priceId,
-            email: user.email,
+          const orderService = new OrderService()
+          const order = await orderService.createOrder({
             userId,
-            successUrl: successUrl || `${process.env.BETTER_AUTH_URL}/dashboard?success=true`,
-            cancelUrl: cancelUrl || `${process.env.BETTER_AUTH_URL}/pricing`,
+            orderType: paymentType === "subscription" ? "subscription" : "credit_package",
+            productId: priceId,
+            productName: `${plan.name} - ${price.name}`,
+            amount: price.amount,
+            currency: price.currency,
             metadata: {
               ...metadata,
               planId,
@@ -61,10 +62,29 @@ export const Route = createFileRoute("/api/payment/checkout")({
             },
           })
 
-          logger.info(`Checkout created: ${adapter.name} - ${result.sessionId}`)
+          const result = await adapter.createCheckout({
+            type: paymentType,
+            orderId: order.id,
+            planId,
+            priceId,
+            email: user.email,
+            userId,
+            successUrl: successUrl || `${process.env.VITE_BETTER_AUTH_URL}/dashboard?success=true`,
+            cancelUrl: cancelUrl || `${process.env.VITE_BETTER_AUTH_URL}/pricing`,
+            metadata: {
+              ...metadata,
+              planId,
+              priceId,
+            },
+          })
+
+          logger.info(
+            `Checkout created: ${adapter.name} - ${result.sessionId} for order ${order.id}`
+          )
 
           return Resp.success({
             provider: adapter.name,
+            orderId: order.id,
             ...result,
           })
         } catch (error) {
