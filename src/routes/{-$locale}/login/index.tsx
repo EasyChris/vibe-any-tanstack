@@ -27,6 +27,8 @@ export const Route = createFileRoute("/{-$locale}/login/")({
   },
 })
 
+const isCaptchaEnabled = import.meta.env.VITE_TURNSTILE_CAPTCHA_ENABLED === "true"
+
 function RouteComponent() {
   const nameId = useId()
   const emailId = useId()
@@ -135,7 +137,7 @@ function RouteComponent() {
               size="lg"
               variant="outline"
               onClick={() => googleMutation.mutate()}
-              disabled={isLoading || !turnstileToken}
+              disabled={isLoading || (isCaptchaEnabled && !turnstileToken)}
             >
               {googleMutation.isPending ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -150,7 +152,7 @@ function RouteComponent() {
               size="lg"
               variant="outline"
               onClick={() => githubMutation.mutate()}
-              disabled={isLoading || !turnstileToken}
+              disabled={isLoading || (isCaptchaEnabled && !turnstileToken)}
             >
               {githubMutation.isPending ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -229,24 +231,26 @@ function RouteComponent() {
               </div>
             </div>
 
-            <Turnstile
-              ref={(instance: TurnstileInstance | null) => {
-                turnstileResetRef.current = () => instance?.reset()
-              }}
-              siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-              onSuccess={setTurnstileToken}
-              onExpire={() => setTurnstileToken(null)}
-              onError={() => setTurnstileToken(null)}
-              options={{
-                theme: "auto",
-              }}
-            />
+            {isCaptchaEnabled && (
+              <Turnstile
+                ref={(instance: TurnstileInstance | null) => {
+                  turnstileResetRef.current = () => instance?.reset()
+                }}
+                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                onSuccess={setTurnstileToken}
+                onExpire={() => setTurnstileToken(null)}
+                onError={() => setTurnstileToken(null)}
+                options={{
+                  theme: "auto",
+                }}
+              />
+            )}
 
             <Button
               className="w-full"
               size="lg"
               type="submit"
-              disabled={isLoading || !turnstileToken}
+              disabled={isLoading || (isCaptchaEnabled && !turnstileToken)}
             >
               {signInMutation.isPending || signUpMutation.isPending ? (
                 <Loader2 className="size-4 animate-spin" />

@@ -8,6 +8,8 @@ import { verificationEmailTranslations } from "@/config/locale/auth.content"
 import { db } from "@/db"
 import { sendEmail } from "@/shared/lib/email/send-email"
 
+const isCaptchaEnabled = process.env.TURNSTILE_CAPTCHA_ENABLED === "true"
+
 function getLocaleFromUrl(url: string): string {
   try {
     const urlObj = new URL(url)
@@ -26,10 +28,14 @@ export const auth = betterAuth({
   baseURL: import.meta.env.VITE_BETTER_AUTH_URL,
   database: drizzleAdapter(db, { provider: "pg" }),
   plugins: [
-    captcha({
-      provider: "cloudflare-turnstile",
-      secretKey: process.env.TURNSTILE_SECRET_KEY!,
-    }),
+    ...(isCaptchaEnabled
+      ? [
+          captcha({
+            provider: "cloudflare-turnstile",
+            secretKey: process.env.TURNSTILE_SECRET_KEY!,
+          }),
+        ]
+      : []),
     tanstackStartCookies(),
   ],
   emailAndPassword: {
