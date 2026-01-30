@@ -3,6 +3,7 @@
 import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
+import { useCachedAvatar } from "@/shared/hooks/use-cached-avatar"
 import { cn } from "@/shared/lib/utils"
 
 function Avatar({
@@ -21,14 +22,18 @@ function Avatar({
   )
 }
 
-function AvatarImage({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+type AvatarImageProps = React.ComponentProps<typeof AvatarPrimitive.Image> & {
+  cache?: boolean
+}
+
+function AvatarImage({ className, src, cache = false, ...props }: AvatarImageProps) {
+  const { cachedSrc } = useCachedAvatar(cache ? src : undefined)
+
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
       className={cn("aspect-square size-full", className)}
+      src={cache ? cachedSrc : src}
       {...props}
     />
   )

@@ -246,15 +246,6 @@ export const configSchema = defineConfig({
     labelKey: "resendApiKey",
     descriptionKey: "resendApiKey",
   },
-  // user
-  user_avatar_provider: {
-    type: "select",
-    default: "default",
-    env: "VITE_USER_AVATAR_PROVIDER",
-    labelKey: "userAvatarProvider",
-    descriptionKey: "userAvatarProvider",
-    options: [{ value: "default" }, { value: "base64" }, { value: "storage" }],
-  },
   // storage (S3 compatible)
   storage_region: {
     type: "string",

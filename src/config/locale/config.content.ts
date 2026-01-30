@@ -3,13 +3,6 @@ import { type Dictionary, t } from "intlayer"
 export default {
   key: "admin-config",
   content: {
-    userAvatarProvider: {
-      label: t({ zh: "用户头像提供商", en: "User Avatar Provider" }),
-      description: t({
-        zh: "用户头像提供商，默认使用 OAuth 头像，也可以选择 Base64 编码或存储头像，如果选择存储头像，则需要配置存储服务",
-        en: "User avatar provider, default is OAuth avatar, you can also choose Base64 encoded or storage avatar, if you choose storage avatar, you need to configure storage service",
-      }),
-    },
     mailProvider: {
       label: t({ zh: "邮件服务商", en: "Mail Provider" }),
       description: t({ zh: "用于发送邮件的服务", en: "Service for sending emails" }),
@@ -235,10 +228,6 @@ export default {
       }),
     },
     groups: {
-      user: {
-        title: t({ zh: "用户设置", en: "User Settings" }),
-        description: t({ zh: "用户配置", en: "User configuration" }),
-      },
       storage: {
         title: t({ zh: "存储设置", en: "Storage Settings" }),
         description: t({

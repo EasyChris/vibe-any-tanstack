@@ -31,6 +31,7 @@ export function AccountPanel() {
           <AvatarImage
             src={user.image ?? undefined}
             alt={user.name ?? "User"}
+            cache
           />
           <AvatarFallback className="text-lg md:text-xl bg-amber-400 text-white">
             {initials || "U"}

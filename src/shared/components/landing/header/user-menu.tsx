@@ -63,6 +63,7 @@ export function UserMenu() {
               <AvatarImage
                 src={user.image ?? undefined}
                 alt={user.name ?? userMenu.avatarAlt.value}
+                cache
               />
               <AvatarFallback className="text-xs">{getInitials(user.name)}</AvatarFallback>
             </Avatar>
@@ -77,6 +78,7 @@ export function UserMenu() {
               <AvatarImage
                 src={user.image ?? undefined}
                 alt={user.name ?? userMenu.avatarAlt.value}
+                cache
               />
               <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
             </Avatar>

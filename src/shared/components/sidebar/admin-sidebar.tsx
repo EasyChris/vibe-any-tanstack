@@ -240,6 +240,7 @@ export default function AdminSidebar() {
                         <AvatarImage
                           src={userInfo.user.image ?? undefined}
                           alt={userInfo.user.name ?? ""}
+                          cache
                         />
                         <AvatarFallback className="rounded-lg text-xs">
                           {getInitials(userInfo.user.name)}
@@ -265,6 +266,7 @@ export default function AdminSidebar() {
                         <AvatarImage
                           src={userInfo.user.image ?? undefined}
                           alt={userInfo.user.name ?? ""}
+                          cache
                         />
                         <AvatarFallback className="rounded-lg">
                           {getInitials(userInfo.user.name)}
