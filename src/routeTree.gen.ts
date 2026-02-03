@@ -15,6 +15,7 @@ import { Route as Char123LocaleChar125SplatRouteImport } from './routes/{-$local
 import { Route as Char123LocaleChar125DocsRouteRouteImport } from './routes/{-$locale}/docs/route'
 import { Route as Char123LocaleChar125MainRouteRouteImport } from './routes/{-$locale}/_main/route'
 import { Route as ApiAdminRouteRouteImport } from './routes/api/admin/route'
+import { Route as Char123LocaleChar125TestIndexRouteImport } from './routes/{-$locale}/test/index'
 import { Route as Char123LocaleChar125LoginIndexRouteImport } from './routes/{-$locale}/login/index'
 import { Route as Char123LocaleChar125DocsSplatRouteImport } from './routes/{-$locale}/docs/$'
 import { Route as ApiPaymentCreditCheckoutRouteImport } from './routes/api/payment/credit-checkout'
@@ -81,6 +82,12 @@ const ApiAdminRouteRoute = ApiAdminRouteRouteImport.update({
   path: '/api/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char123LocaleChar125TestIndexRoute =
+  Char123LocaleChar125TestIndexRouteImport.update({
+    id: '/test/',
+    path: '/test/',
+    getParentRoute: () => Char123LocaleChar125RouteRoute,
+  } as any)
 const Char123LocaleChar125LoginIndexRoute =
   Char123LocaleChar125LoginIndexRouteImport.update({
     id: '/login/',
@@ -280,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
+  '/{-$locale}/test/': typeof Char123LocaleChar125TestIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
@@ -317,6 +325,7 @@ export interface FileRoutesByTo {
   '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
+  '/{-$locale}/test': typeof Char123LocaleChar125TestIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
@@ -356,6 +365,7 @@ export interface FileRoutesById {
   '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
+  '/{-$locale}/test/': typeof Char123LocaleChar125TestIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/_main/_landing/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
@@ -396,6 +406,7 @@ export interface FileRouteTypes {
     | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
+    | '/{-$locale}/test/'
     | '/api/admin/users/$id'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/changelog'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login'
+    | '/{-$locale}/test'
     | '/api/admin/users/$id'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/changelog'
@@ -471,6 +483,7 @@ export interface FileRouteTypes {
     | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
     | '/{-$locale}/login/'
+    | '/{-$locale}/test/'
     | '/api/admin/users/$id'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/_main/_landing/changelog'
@@ -545,6 +558,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/admin'
       preLoaderRoute: typeof ApiAdminRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/{-$locale}/test/': {
+      id: '/{-$locale}/test/'
+      path: '/test'
+      fullPath: '/{-$locale}/test/'
+      preLoaderRoute: typeof Char123LocaleChar125TestIndexRouteImport
+      parentRoute: typeof Char123LocaleChar125RouteRoute
     }
     '/{-$locale}/login/': {
       id: '/{-$locale}/login/'
@@ -874,6 +894,7 @@ interface Char123LocaleChar125RouteRouteChildren {
   Char123LocaleChar125SplatRoute: typeof Char123LocaleChar125SplatRoute
   Char123LocaleChar125404Route: typeof Char123LocaleChar125404Route
   Char123LocaleChar125LoginIndexRoute: typeof Char123LocaleChar125LoginIndexRoute
+  Char123LocaleChar125TestIndexRoute: typeof Char123LocaleChar125TestIndexRoute
 }
 
 const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChildren =
@@ -885,6 +906,7 @@ const Char123LocaleChar125RouteRouteChildren: Char123LocaleChar125RouteRouteChil
     Char123LocaleChar125SplatRoute: Char123LocaleChar125SplatRoute,
     Char123LocaleChar125404Route: Char123LocaleChar125404Route,
     Char123LocaleChar125LoginIndexRoute: Char123LocaleChar125LoginIndexRoute,
+    Char123LocaleChar125TestIndexRoute: Char123LocaleChar125TestIndexRoute,
   }
 
 const Char123LocaleChar125RouteRouteWithChildren =

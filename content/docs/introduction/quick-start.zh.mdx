@@ -3,9 +3,7 @@ title: 快速开始
 description: VibeAny 快速上手指南
 ---
 
-# VibeAny 使用指南
-
-VibeAny 是一个现代化的 AI 开发脚手架，基于 Next.js 构建，内置用户系统、AI 能力、支付与管理后台，帮助你更快把点子上线。
+VibeAny 是一个现代化的 AI 开发脚手架，基于 Next.js 构建，内置用户系统、AI 能力、支付与管理后台，帮助你更快把想法上线。
 
 ## 前提条件（开始前，先准备好这些）
 
@@ -13,16 +11,26 @@ VibeAny 是一个现代化的 AI 开发脚手架，基于 Next.js 构建，内�
   <div className="fd-step">
     ### 1. Node.js
     Node.js 是一个运行时环境，用来在本地执行 JavaScript 代码。
-    如果未安装，请前往 [Node.js 官方网站](https://nodejs.org/) 下载 LTS 版本。
+    如果未安装， mac 用户可以使用 brew 安装：
+    ```bash
+    brew install node
+    ```
 
+    或者请前往 [Node.js 官方网站](https://nodejs.org/) 下载 LTS 版本。
+
+    安装成功后使用该命令行工具查看版本号，如果显示版本号，则安装成功（建议版本在`v20.19.0`以上）：
     ```bash
     node --version
     ```
+
   </div>
   <div className="fd-step">
     ### 2. Git
     Git 是版本控制工具，用来跟踪代码历史、协作开发。
-    如果未安装，请前往 [Git 官方网站](https://git-scm.com/) 下载。
+
+    mac 用户可以安装 [xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12)，（ git 是 xcode 的一部分，安装 xcode 会自动安装 git）
+
+    或者前往 [Git 官方网站](https://git-scm.com/) 下载。
 
     ```bash
     git --version
@@ -35,9 +43,14 @@ VibeAny 是一个现代化的 AI 开发脚手架，基于 Next.js 构建，内�
     ```bash
     # 使用 npm 安装 pnpm
     npm install -g pnpm
+    # 查看版本号
+    pnpm -v
     ```
   </div>
 </div>
+
+> 小贴士：如果您需要一个好用的终端界面，可以尝试使用[Warp](https://www.warp.dev/)终端，它支持多标签页、主题切换、命令补全等特性，可以让你更高效地使用终端。
+
 
 ## 开始动手（3 步）
 
@@ -59,16 +72,26 @@ VibeAny 是一个现代化的 AI 开发脚手架，基于 Next.js 构建，内�
     ### 2. 安装依赖
     <p>选择一个包管理器执行安装。以下四种命令任选其一：</p>
 
-    ```bash
-    bun install
-    npm install
+    ```bash tab="pnpm"
     pnpm install
+    ```
+
+    ```bash tab="npm"
+    npm install
+    ```
+
+    ```bash tab="yarn"
     yarn install
     ```
+
+    ```bash tab="bun"
+    bun install
+    ```
+
   </div>
   <div className="fd-step" >
     ### 3. 设置环境变量
-    <p><code>.env</code> 用来存放项目运行所需的“钥匙”（例如数据库、第三方服务密钥）。先复制示例文件，再按注释填写。</p>
+    <p><code>.env</code> 用来存放项目运行所需的变量（例如数据库、第三方服务密钥）。先复制示例文件，再按注释填写。</p>
 
     ```bash
     cp .env.example .env
@@ -76,4 +99,4 @@ VibeAny 是一个现代化的 AI 开发脚手架，基于 Next.js 构建，内�
   </div>
 </div>
 
-> 小贴士：常见变量包括 <code>DATABASE_URL</code>、OAuth（GitHub/Google）配置、以及支付相关密钥。详见文档“环境变量”。
+> 小贴士：常见变量包括 <code>DATABASE_URL</code>、OAuth（GitHub/Google）配置、以及支付相关密钥。详见文档《[环境变量](../03-environment)》。

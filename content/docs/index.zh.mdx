@@ -50,28 +50,34 @@ Hi, 我是 Jayden，一名全栈开发工程师。过去一段时间里，我和
 
 ## 适用场景
 
-VibeAny 特别适合以下类型的项目：
-
 ### AI 应用开发
 
-- Chat 对话与流式响应
-- 写作助手与内容生成（文本/图像/视频/音频）
-- 智能客服与知识库问答
+<Callout type="warn" title="痛点">
+接入多个 AI Provider（OpenAI、Claude、Gemini、DeepSeek 等）需要分别对接不同的 SDK 和 API 格式；AI 能力的计费管理复杂，难以追踪用户消耗和成本。
+</Callout>
 
-### SaaS 产品
+VibeAny 通过 Vercel AI SDK 统一抽象多 Provider 调用，支持流式响应、文本/图像/视频/音频生成。内置积分系统采用 FIFO 消费策略，支持每日奖励、过期管理，让你轻松落地 AI 能力的商业化。
 
-- 订阅与一次性付费方案
-- 用户认证与管理
-- 数据埋点与监控集成
+### 商业化产品
 
-### 电商/增值业务
+<Callout type="warn" title="痛点">
+从零搭建一个 SaaS 产品，需要自己实现用户认证、订阅管理、支付对接、管理后台，这些"基础设施"往往要花费数周时间。
+</Callout>
 
-- 数字商品与会员权益
-- 积分消耗型功能
-- Stripe 与 Creem 支付
+VibeAny 提供完整的 SaaS 基础设施：Better Auth 驱动的认证系统（邮箱/Google/GitHub 登录）、多支付平台支持（Stripe/Creem/PayPal/微信/支付宝）、订阅与一次性付费方案、用户管理后台，让你跳过重复劳动，专注产品核心功能。
 
-### 内容与网站
+### 出海业务
 
-- 博客、文档与知识库
-- 基于 MDX + Fumadocs 的内容系统
-- 多语言站点（next-intl）
+<Callout type="warn" title="痛点">
+国际化配置繁琐，传统方案（如 next-intl）缺乏类型安全，翻译 key 拼写错误只能在运行时发现；海外支付渠道对接需要理解各平台的 Webhook 机制和状态管理。
+</Callout>
+
+VibeAny 采用 Intlayer 实现类型安全的国际化，编译时即可捕获翻译 key 错误。支付系统抽象了 Stripe、Creem 等平台的差异，统一处理 Webhook 和订单状态，让出海产品开发更加顺畅。
+
+### 内容网站
+
+<Callout type="warn" title="痛点">
+搭建文档或博客系统，需要自己配置 MDX 解析、目录生成、搜索功能、多语言路由，往往需要大量的胶水代码。
+</Callout>
+
+VibeAny 集成 Fumadocs，MDX 内容系统开箱即用，自动生成文档导航、支持全文搜索、完美适配多语言路由。无论是产品文档、技术博客还是知识库，都能快速上线。

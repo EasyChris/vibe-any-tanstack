@@ -15,8 +15,8 @@ export default {
     banner: {
       show: true,
       text: t({
-        en: "Open Sourced in 2025: Production-grade AI SaaS template available! Join our developer ecosystem today.",
-        zh: "2025 年开源：生产级 AI SaaS 模板现已发布！立即加入我们的开发者生态系统。",
+        en: "Open Sourced in 2026: Production-grade AI SaaS template available! Join our developer ecosystem today.",
+        zh: "2026 年开源：生产级 AI SaaS 模板现已发布！立即加入我们的开发者生态系统。",
       }),
       button: {
         text: t({ en: "View on GitHub", zh: "在 GitHub 上查看" }),

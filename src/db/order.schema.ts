@@ -3,7 +3,7 @@ import { index, integer, jsonb, pgEnum, pgTable, text, timestamp } from "drizzle
 import { getSnowId } from "@/shared/lib/tools/hash"
 import { user } from "./auth.schema"
 
-export const orderTypeEnum = pgEnum("order_type", ["subscription", "credit_package"])
+export const orderTypeEnum = pgEnum("order_type", ["subscription", "credit_package", "lifetime"])
 
 export const orderStatusEnum = pgEnum("order_status", [
   "pending",

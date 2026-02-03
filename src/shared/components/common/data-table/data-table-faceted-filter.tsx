@@ -17,7 +17,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/components/ui/popover"
 import { Separator } from "@/shared/components/ui/separator"
 import { cn } from "@/shared/lib/utils"
-import type { Option } from "@/types/data-table"
+import type { Option } from "@/shared/types/data-table"
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>

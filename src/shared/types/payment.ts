@@ -149,6 +149,7 @@ export interface PlanDisplay {
  */
 export interface PlanWithPrice {
   id: string
+  name?: string
   planType: PlanType
   credit?: Credit
   prices: PlanPrice[]

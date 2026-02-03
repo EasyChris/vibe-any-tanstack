@@ -1,71 +1,159 @@
 ---
-title: 为何是 Tanstack Start
-description: 为何是 Tanstack Start，而不是 Next.js
----
-Next.js 无疑是优秀的框架，VibeAny 最初也基于 Next.js 构建。但随着项目演进和技术生态变化，我们最终选择重构至 TanStack Start。这不是对 Next.js 的否定，而是基于实际开发痛点的深思熟虑的技术决策。
-
+title: 为何是 TanStack Start
+description: 我们选择 TanStack Start 而非 Next.js 的原因
 ---
 
-## 1. **终结"黑盒魔法"：拥抱显式与可控**
+Next.js 是成熟的框架，生态完善。我们选择 TanStack Start，主要是因为它在渲染策略和类型安全上更符合我们的需求。
 
-Next.js 的核心哲学是"约定优于配置"，但近年来逐渐演变成了"隐式魔法"的困境：
-- **缓存策略的反复横跳**：从 Next.js 15 到 16，缓存策略从"默认缓存"切换到"默认不缓存"，再引入复杂的 `use cache` 指令。开发者常常发现自己不仅在与代码作斗争，还在与框架不透明的行为作斗争。
-- **调试黑洞**：当页面未按预期刷新时，你很难判断问题出在路由缓存、数据缓存还是组件缓存。
-
-**TanStack Start 的选择：显式优于隐式**
-- 数据加载（Loaders）、缓存配置和中间件都在代码中**显式定义**，而非隐藏在框架内部。
-- 正如社区开发者所言："它是无聊的（褒义）——简单的路由、清晰的数据加载、没有隐藏的魔法。"
-- **结果**：更少的意外行为，更短的调试时间，更高的可维护性。
+<Callout type="info">
+这不是一篇批评 Next.js 的文章。Next.js 的向后兼容性做得很好。
+</Callout>
 
 ---
 
-## 2. **真正的类型安全：不仅仅是"支持 TypeScript"**
+## TanStack Start 2026：不只是 SPA 框架
 
-在 2026 年，全栈类型安全的标准已从"支持 TypeScript"进化为**端到端类型保障**（从 URL 到数据库）。
+很多人对 TanStack Start 的印象还停留在"客户端优先的 SPA 框架"。2026 年的 TanStack Start 已经支持完整的服务端渲染能力：
 
-**Next.js 的局限**：
-- 类型安全在边界处容易断裂（如搜索参数 `searchParams`、服务器操作 `Server Actions`）。
-- `typedRoutes` 仍是实验性功能，且需要手动类型断言来弥补缺失。
+- **Full-document SSR**：完整的服务端渲染
+- **Streaming**：流式渲染
+- **Static Prerendering**：静态预渲染
+- **ISR（增量静态再生成）**：动态内容的静态化方案
+- **Selective SSR**：按需选择哪些页面需要 SSR
+- **SPA Mode**：纯客户端渲染模式
+- **Server Functions**：类型安全的服务端函数调用
+- **LLM Optimization (LLMO)**：针对 AI 爬虫的优化
 
-**TanStack Start 的优势**：
-- 基于 **TanStack Router**，提供业界领先的类型安全路由系统。
-- **100% 类型推断**：路由参数、搜索参数、Loader 返回数据全链路类型校验。
-- **编译时捕获错误**：链接拼写错误或参数类型不匹配会在 `tsc` 编译时报错，而非运行时崩溃。
+Next.js 能做的渲染方式，TanStack Start 基本都支持了。那我们为什么还是选了它？
 
-**示例对比**：
+---
+
+## Next.js 的学习曲线
+
+先说说 Next.js 的学习成本。新手往往只是想把产品做出来，但 App Router 引入的概念确实不少。
+
+### 概念复杂度
+
+Next.js App Router 引入了这些概念：
+
+- **Server Components vs Client Components**：默认是服务端组件，需要 `"use client"` 切换
+- **序列化边界**：不能在 Server Component 中传递函数、类实例给 Client Component
+- **水合错误（Hydration Mismatch）**：服务端和客户端渲染不一致时很难调试
+- **`"use server"` 指令**：一个字符串变成服务器组件或者服务端函数
+
+新手光是理解"这行代码在哪里执行"就够头疼的。
+
+### 缓存机制
+
+Next.js 的缓存系统比较复杂：
+
 ```tsx
-// Next.js：类型容易丢失
-const params = await searchParams; // 类型: any
-const id = params.id; // 需要手动验证
+// 这个 fetch 会被缓存吗？
+const data = await fetch('/api/data');
 
-// TanStack Start：完全类型推断
-const { id } = Route.useSearch(); // 类型: string (根据 schema 自动推断)
+// 加上这个呢？
+const data = await fetch('/api/data', { cache: 'no-store' });
+
+// 还是需要这个？
+export const dynamic = 'force-dynamic';
+
+// 或者用 revalidate？
+export const revalidate = 60;
 ```
 
+Next.js 有多层缓存：Data Cache、Full Route Cache、Router Cache... 它们的交互方式连资深开发者也经常搞混。v14 默认缓存，v15 又改成默认不缓存，这种变化增加了理解成本。
+
+### 两套路由系统
+
+Next.js 同时存在 Pages Router 和 App Router：
+
+- 网上教程混杂，新手不知道该学哪个
+- 两套系统的概念和 API 差异大
+- 从 Pages Router 迁移到 App Router 需要改动不少代码
+
+### 调试
+
+Next.js 的隐式行为让调试变得麻烦：
+
+- 页面没更新？可能是缓存问题，但不知道是哪层
+- 组件报错？可能是服务端/客户端边界问题，错误信息不够清晰
+- 性能问题？不确定是 SSR、水合还是客户端渲染的问题
+
 ---
 
-## 3. **Server Functions vs Server Actions：理念之争**
+## TanStack Start 的特点
 
-虽然两者都允许从客户端调用服务器代码,但设计哲学截然不同。
+TanStack Start 的学习曲线相对平缓：
 
-**Next.js Server Actions 的问题**：
-- 深度绑定表单场景，作为通用数据获取手段时存在缺陷。
-- **默认顺序执行**，无法并行调用多个 Actions。
-- 缺乏内置的类型安全输入验证。
-- `use server` 指令的隐式行为易引发困惑（如意外暴露 API 端点）。
+- **没有 Server Components**：所有组件都是你熟悉的 React 组件
+- **显式的渲染策略**：每个路由的 SSR/SPA/静态行为在代码中明确定义
+- **熟悉的数据获取**：TanStack Query 的 `useQuery` 模式
+- **类型系统帮你检查**：错误在编译时暴露
 
-**TanStack Server Functions 的设计**：
-- 更像**类型安全的 RPC**（远程过程调用）。
-- 内置 Validator、中间件支持、完整类型推断。
-- 调用方式如同普通函数，无需担心序列化边界或类型丢失。
+TanStack Start 也有学习成本，但它的心智模型更接近传统 React 开发。
 
-**示例**：
+---
+
+## 我们选择它的原因
+
+### 1. 渲染策略由你决定
+
+Next.js 的设计是"服务端优先"——默认所有组件都是 Server Components，需要显式声明 `"use client"` 切换到客户端。
+
+TanStack Start 不同：你来决定每个页面的渲染策略。
+
 ```tsx
-// TanStack Start
+// 纯 SPA 模式：适合仪表盘、AI 聊天等高交互应用
+export const Route = createFileRoute('/dashboard')({
+  ssr: false,
+  component: Dashboard,
+});
+
+// SSR 模式：适合需要 SEO 的页面
+export const Route = createFileRoute('/blog/$slug')({
+  loader: async ({ params }) => fetchPost(params.slug),
+  component: BlogPost,
+});
+
+// 静态预渲染：适合内容不常变化的页面
+export const Route = createFileRoute('/about')({
+  preload: 'intent',
+  component: About,
+});
+```
+
+你可以在同一个应用中混用不同的渲染策略，不被框架的默认行为限制。
+
+### 2. 类型安全的路由系统
+
+TanStack Router 的类型安全做得很好：
+
+```tsx
+// 文件名：$threadId.tsx
+export const Route = createFileRoute('/chat/$threadId')({
+  loader: async ({ params }) => {
+    // params.threadId 的类型自动推断为 string
+    return fetchThread(params.threadId);
+  },
+  component: () => {
+    const { threadId } = Route.useParams();
+    // 编译时就知道 threadId 一定存在
+  }
+});
+```
+
+重命名文件时，开发服务器会自动更新相关代码。链接拼错或参数类型不匹配会在编译时报错。
+
+### 3. Server Functions vs Server Actions
+
+两者都允许从客户端调用服务器代码，设计上有区别：
+
+```tsx
+// TanStack Server Function：类型安全的 RPC
 export const updateUser = createServerFn()
   .validator((data: { name: string; age: number }) => data)
   .handler(async ({ data }) => {
-    // data 的类型自动推断为 { name: string; age: number }
+    // data 的类型自动推断
     return db.users.update(data);
   });
 
@@ -73,73 +161,72 @@ export const updateUser = createServerFn()
 await updateUser({ name: 'Alice', age: 30 });
 ```
 
----
+Server Functions 更像类型安全的 RPC，内置验证器和中间件支持，调用方式和普通函数一样。
 
-## 4. **客户端优先 vs 强制 RSC：架构理念的分歧**
+### 4. Vite 构建
 
-**Next.js 的"服务器优先"困境**：
-- 默认所有组件为 React Server Components (RSC)。
-- 对于高交互性应用（SaaS 工具、仪表盘），需频繁添加 `"use client"`。
-- 水合错误（Hydration Errors）、序列化限制等问题带来额外心智负担。
+TanStack Start 基于 Vite 构建，开发体验比 Webpack 时代好不少：
 
-**TanStack Start 的"客户端优先"策略**：
-- 默认构建流畅的 SPA 体验，同时支持 SSR 和流式渲染。
-- 仅在需要 SEO、数据预加载或隐藏密钥时主动利用服务器能力。
-- **更符合开发者直觉**：应用主要在客户端运行，服务器作为增强层而非默认层。
-
----
-
-## 5. **开发体验：Vite 的极速 vs Turbopack 的追赶**
-
-尽管 Next.js 16 将 Turbopack 设为默认，但 **Vite 仍是 2026 年开发体验的黄金标准**。
-
-**实际痛点对比**：
 | 维度 | Next.js + Turbopack | TanStack Start + Vite |
 |------|---------------------|----------------------|
 | 启动速度 | 大型项目 5-10 秒 | 毫秒级 |
-| 内存占用 | 10-12GB（M4 Pro） | 3-5GB |
-| HMR 稳定性 | 偶尔卡顿，需重启 | 闪电般即时更新 |
-| 生态兼容 | 部分插件需适配 | 庞大的 Vite 插件生态 |
-
-**开发者心流保护**：
-- 修改代码后即刻可见，无需等待编译器。
-- 减少上下文切换，保持专注状态。
+| HMR 响应 | 偶尔卡顿 | 基本即时 |
+| 插件生态 | 需适配 | 直接使用 Vite 插件 |
 
 ---
 
-## 6. **数据获取与缓存：拥抱经过实战检验的方案**
+## 技术基础
 
-**Next.js 的缓存争议**：
-- 自定义 `fetch` 缓存机制在 v15/16 中引发大量困惑。
-- 需要手动配置 `dynamic`、`revalidate` 才能获得预期行为。
-- 与现有生态（如 React Query）割裂。
+TanStack Start 是新框架，但构建在成熟的技术上：
 
-**TanStack Start 的集成方案**：
-- 直接集成 **TanStack Query**（原 React Query），基于成熟的 SWR 模式。
-- **细粒度控制**：`staleTime`、`gcTime`、乐观更新、无限加载、后台轮询。
-- **零学习成本**：对于已熟悉 React Query 的团队，数据流是自然且强大的。
-
-**示例**：
-```tsx
-// 声明式数据获取，自动处理缓存、重试、加载状态
-const { data, isLoading } = useSuspenseQuery({
-  queryKey: ['users'],
-  queryFn: fetchUsers,
-  staleTime: 5 * 60 * 1000, // 5 分钟后数据过期
-});
-```
+- **TanStack Router**：类型安全路由
+- **TanStack Query**：React 数据获取库
+- **Vite**：快速的开发构建
+- **Nitro**：来自 Nuxt 团队的服务端基础设施
 
 ---
 
-# 结论：选择适合你的工具
+## 挑战
 
-我们的迁移并非"黑" Next.js，而是基于以下现实：
-- **显式控制 > 隐式魔法**：在复杂项目中，透明性比便利性更重要。
-- **类型安全是刚需**：端到端类型保障显著减少运行时错误。
-- **开发体验直接影响生产力**：Vite 的极速反馈让团队保持高效。
+<Callout type="warn" title="早期框架的代价">
+TanStack Start 是较新的框架，API 已稳定但可能存在边缘情况。
+</Callout>
 
-**我们的建议**：
-- ✅ **继续使用 Next.js**：如果你的团队已熟悉 Next.js 且项目运行良好。
-- ✅ **尝试 TanStack Start**：如果你正在启动新的交互密集型项目，或对 Next.js 的隐式行为感到困扰。
+相比 Next.js 多年积累的文档和社区解答，TanStack Start 的资料还在完善中。遇到问题时，你可能需要直接看源码或在 Discord 里提问。
 
-技术选型没有银弹，只有最适合当前场景的工具。对我们而言,TanStack Start 提供了更现代、更简洁、更灵活的开发体验。
+---
+
+## Next.js 的优点
+
+Next.js 仍然是好框架：
+
+- **向后兼容性好**：Next 10 的应用可以升级到 Next 16，改动不大
+- **稳定**：多年持续维护
+- **生态成熟**：部署、监控、边缘计算都有成熟方案
+
+---
+
+## 建议
+
+**继续用 Next.js**：
+- 团队熟悉 Next.js，项目运行正常
+- 需要 React Server Components
+- 不想踩新框架的坑
+
+**考虑 TanStack Start**：
+- 构建交互密集型应用（仪表盘、AI 聊天、协作工具）
+- 看重端到端的类型安全
+- 想要更灵活的渲染策略
+- 能接受早期框架的文档和生态不完善
+
+---
+
+## 总结
+
+我们选 TanStack Start 不是因为 Next.js 不好，而是它更符合我们的需求：
+
+- 灵活的渲染策略，同一应用可以混用 SSR、SPA、静态预渲染
+- 端到端的类型安全
+- 行为显式，没有隐藏的魔法
+
+选什么框架取决于你的需求。了解清楚需求，选合适的工具就行。

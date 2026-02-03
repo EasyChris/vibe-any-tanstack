@@ -1,8 +1,8 @@
 import { getPlanById } from "@/config/payment-config"
 import type { DbTransaction } from "@/db"
+import { getCreditsType, isSubscriptionPayment } from "@/integrations/payment/utils"
 import { CreditService } from "@/services/credits.service"
 import { logger } from "@/shared/lib/tools/logger"
-import { CreditsType } from "@/shared/types/credit"
 
 export interface ProcessCreditsParams {
   userId: string
@@ -29,7 +29,7 @@ export async function processCredits(params: ProcessCreditsParams): Promise<void
 
   // Calculate expiry date
   let expiresAt: Date | undefined
-  if (paymentType === "subscription_create" || paymentType === "subscription_renewal") {
+  if (isSubscriptionPayment(paymentType)) {
     // Subscription credits expire at the end of the billing period
     expiresAt = periodEnd
   } else if (plan.credit.expireDays) {
@@ -38,11 +38,7 @@ export async function processCredits(params: ProcessCreditsParams): Promise<void
     expiresAt.setDate(expiresAt.getDate() + plan.credit.expireDays)
   }
 
-  // Determine credit type
-  const creditsType =
-    paymentType === "one_time"
-      ? CreditsType.ADD_ONE_TIME_PAYMENT
-      : CreditsType.ADD_SUBSCRIPTION_PAYMENT
+  const creditsType = getCreditsType(paymentType)
 
   await creditService.increaseCredits({
     userId,

@@ -3,10 +3,6 @@ import type { WebsiteConfig } from "@/shared/types/config"
 const currency = import.meta.env.VITE_CURRENCY || "USD"
 
 export const websiteConfig: WebsiteConfig = {
-  blog: {
-    initialLoadSize: 12,
-    relatedPostsSize: 3,
-  },
   newsletter: {
     provider: "resend",
     autoSubscribeAfterSignUp: true,

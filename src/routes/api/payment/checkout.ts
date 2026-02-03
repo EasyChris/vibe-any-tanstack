@@ -1,6 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { getPlanById, getPriceById } from "@/config/payment-config"
 import { getDefaultPaymentAdapter, getPaymentAdapter } from "@/integrations/payment/"
+import {
+  generateProductName,
+  getCheckoutPaymentType,
+  getOrderTypeFromPlan,
+} from "@/integrations/payment/utils"
 import { OrderService } from "@/services/order.service"
 import { logger } from "@/shared/lib/tools/logger"
 import { Resp } from "@/shared/lib/tools/response"
@@ -37,7 +42,7 @@ export const Route = createFileRoute("/api/payment/checkout")({
             ? await getPaymentAdapter(provider as PaymentProvider)
             : await getDefaultPaymentAdapter()
 
-          const paymentType = plan.planType === "subscription" ? "subscription" : "one_time"
+          const paymentType = getCheckoutPaymentType(plan.planType)
 
           if (paymentType === "subscription" && !adapter.capabilities.subscription) {
             return Resp.error(`Provider ${adapter.name} does not support subscriptions`, 400)
@@ -50,9 +55,9 @@ export const Route = createFileRoute("/api/payment/checkout")({
           const orderService = new OrderService()
           const order = await orderService.createOrder({
             userId,
-            orderType: paymentType === "subscription" ? "subscription" : "credit_package",
+            orderType: getOrderTypeFromPlan(plan),
             productId: priceId,
-            productName: `${plan.id} - ${price.interval || "one-time"}`,
+            productName: generateProductName(plan.name || plan.id, price.interval),
             amount: price.amount,
             currency: price.currency,
             metadata: {

@@ -1,4 +1,5 @@
 import { getPlanByPriceId, getPlans } from "@/config/payment-config"
+import { isFreePlan, isLifetimePlan, isSubscriptionPlan } from "@/integrations/payment/utils"
 import { findSucceededOneTimePayments } from "@/shared/model/payment.model"
 import { findActiveSubscriptionByUserId } from "@/shared/model/subscription.model"
 import { findUserById } from "@/shared/model/user.model"
@@ -23,9 +24,9 @@ export class UserService {
     activeSubscription: Subscription | null
   }> {
     const plans = getPlans()
-    const freePlans = plans.filter((plan) => plan.planType === "free")
-    const subscriptionPlans = plans.filter((plan) => plan.planType === "subscription")
-    const lifetimePlans = plans.filter((plan) => plan.planType === "lifetime")
+    const freePlans = plans.filter((plan) => isFreePlan(plan.planType))
+    const subscriptionPlans = plans.filter((plan) => isSubscriptionPlan(plan.planType))
+    const lifetimePlans = plans.filter((plan) => isLifetimePlan(plan.planType))
 
     const defaultFreePlan = freePlans[0] ?? null
 

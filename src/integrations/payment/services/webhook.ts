@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm"
 import { db } from "@/db"
 import { type ProviderCustomers, user } from "@/db/auth.schema"
+import { isOneTimePayment } from "@/integrations/payment/utils"
 import { OrderService } from "@/services/order.service"
 import { logger } from "@/shared/lib/tools/logger"
 import { findOrderById } from "@/shared/model/order.model"
@@ -249,7 +250,7 @@ async function handlePaymentSucceeded(event: WebhookEvent): Promise<void> {
     }
 
     // For one-time payments without userId (already handled by checkout.completed), skip
-    if (!userId && paymentType === "one_time") {
+    if (!userId && isOneTimePayment(paymentType)) {
       logger.info(`Skipping one-time payment without userId (likely handled by checkout.completed)`)
       return
     }

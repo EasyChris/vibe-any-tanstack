@@ -1,13 +1,13 @@
 import { getPlanByPriceId, getPlans } from "@/config/payment-config"
+import { isLifetimePlan } from "@/integrations/payment/utils"
 import { findSucceededOneTimePayments } from "@/shared/model/payment.model"
 import { findActiveSubscriptionByUserId } from "@/shared/model/subscription.model"
-import type { PlanType } from "@/shared/types/payment"
 
 export class PaymentService {
   async checkUserLifetimePurchase(userId: string) {
     const plans = getPlans()
     const lifetimePlanIds = plans
-      .filter((plan) => plan.planType === ("lifetime" satisfies PlanType))
+      .filter((plan) => isLifetimePlan(plan.planType))
       .map((plan) => plan.id)
 
     if (lifetimePlanIds.length === 0) {
