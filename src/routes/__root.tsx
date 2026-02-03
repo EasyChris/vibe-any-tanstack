@@ -4,6 +4,7 @@ import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router"
 import { ThemeProvider } from "tanstack-theme-kit"
+import { siteConfig } from "@/config/site-config"
 import appCss from "@/config/style/global.css?url"
 import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools"
 import { ErrorToaster } from "@/shared/components/error-toaster"
@@ -24,7 +25,50 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: siteConfig.title,
+        description: siteConfig.description,
+      },
+      // Open Graph
+      {
+        property: "og:title",
+        content: siteConfig.title,
+      },
+      {
+        property: "og:description",
+        content: siteConfig.description,
+      },
+      {
+        property: "og:image",
+        content: siteConfig.images.ogImage,
+      },
+      {
+        property: "og:url",
+        content: import.meta.env.VITE_APP_URL,
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      // Twitter Card
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        name: "twitter:title",
+        content: siteConfig.title,
+      },
+      {
+        name: "twitter:description",
+        content: siteConfig.description,
+      },
+      {
+        name: "twitter:image",
+        content: siteConfig.images.ogImage,
+      },
+      {
+        name: "twitter:url",
+        content: import.meta.env.VITE_APP_URL,
       },
     ],
     links: [
@@ -49,7 +93,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme={siteConfig.theme.defaultTheme}
           enableSystem
         >
           <NuqsAdapter>

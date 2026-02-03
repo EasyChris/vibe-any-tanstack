@@ -23,6 +23,6 @@ export const env = {
     return getEnv("BETTER_AUTH_SECRET")
   },
   get BETTER_AUTH_URL() {
-    return getEnv("VITE_BETTER_AUTH_URL")
+    return getEnv("VITE_APP_URL")
   },
 } as const

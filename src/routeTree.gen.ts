@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as Char123LocaleChar125404RouteImport } from './routes/{-$locale}/404'
 import { Route as Char123LocaleChar125SplatRouteImport } from './routes/{-$locale}/$'
@@ -45,10 +46,16 @@ import { Route as Char123LocaleChar125MainLandingChangelogRouteImport } from './
 import { Route as ApiPaymentWebhookProviderRouteImport } from './routes/api/payment/webhook.$provider'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users/$id'
 import { Route as Char123LocaleChar125MainLandingBlogIndexRouteImport } from './routes/{-$locale}/_main/_landing/blog/index'
+import { Route as Char123LocaleChar125MainLandingLegalSlugRouteImport } from './routes/{-$locale}/_main/_landing/legal.$slug'
 import { Route as Char123LocaleChar125MainLandingBlogSlugRouteImport } from './routes/{-$locale}/_main/_landing/blog/$slug'
 import { Route as ApiAdminUsersIdRolesRouteImport } from './routes/api/admin/users/$id/roles'
 import { Route as ApiAdminUsersIdBanRouteImport } from './routes/api/admin/users/$id/ban'
 
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char123LocaleChar125RouteRoute =
   Char123LocaleChar125RouteRouteImport.update({
     id: '/{-$locale}',
@@ -250,6 +257,12 @@ const Char123LocaleChar125MainLandingBlogIndexRoute =
     path: '/blog/',
     getParentRoute: () => Char123LocaleChar125MainLandingRouteRoute,
   } as any)
+const Char123LocaleChar125MainLandingLegalSlugRoute =
+  Char123LocaleChar125MainLandingLegalSlugRouteImport.update({
+    id: '/legal/$slug',
+    path: '/legal/$slug',
+    getParentRoute: () => Char123LocaleChar125MainLandingRouteRoute,
+  } as any)
 const Char123LocaleChar125MainLandingBlogSlugRoute =
   Char123LocaleChar125MainLandingBlogSlugRouteImport.update({
     id: '/blog/$slug',
@@ -269,6 +282,7 @@ const ApiAdminUsersIdBanRoute = ApiAdminUsersIdBanRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125MainLandingRouteRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
   '/api/admin': typeof ApiAdminRouteRouteWithChildren
   '/{-$locale}/docs': typeof Char123LocaleChar125DocsRouteRouteWithChildren
   '/{-$locale}/$': typeof Char123LocaleChar125SplatRoute
@@ -304,10 +318,12 @@ export interface FileRoutesByFullPath {
   '/api/admin/users/$id/ban': typeof ApiAdminUsersIdBanRoute
   '/api/admin/users/$id/roles': typeof ApiAdminUsersIdRolesRoute
   '/{-$locale}/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
+  '/{-$locale}/legal/$slug': typeof Char123LocaleChar125MainLandingLegalSlugRoute
   '/{-$locale}/blog/': typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
 export interface FileRoutesByTo {
   '/{-$locale}': typeof Char123LocaleChar125MainLandingIndexRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/api/admin': typeof ApiAdminRouteRouteWithChildren
   '/{-$locale}/docs': typeof Char123LocaleChar125DocsRouteRouteWithChildren
   '/{-$locale}/$': typeof Char123LocaleChar125SplatRoute
@@ -340,11 +356,13 @@ export interface FileRoutesByTo {
   '/api/admin/users/$id/ban': typeof ApiAdminUsersIdBanRoute
   '/api/admin/users/$id/roles': typeof ApiAdminUsersIdRolesRoute
   '/{-$locale}/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
+  '/{-$locale}/legal/$slug': typeof Char123LocaleChar125MainLandingLegalSlugRoute
   '/{-$locale}/blog': typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
   '/api/admin': typeof ApiAdminRouteRouteWithChildren
   '/{-$locale}/_main': typeof Char123LocaleChar125MainRouteRouteWithChildren
   '/{-$locale}/docs': typeof Char123LocaleChar125DocsRouteRouteWithChildren
@@ -382,12 +400,14 @@ export interface FileRoutesById {
   '/api/admin/users/$id/ban': typeof ApiAdminUsersIdBanRoute
   '/api/admin/users/$id/roles': typeof ApiAdminUsersIdRolesRoute
   '/{-$locale}/_main/_landing/blog/$slug': typeof Char123LocaleChar125MainLandingBlogSlugRoute
+  '/{-$locale}/_main/_landing/legal/$slug': typeof Char123LocaleChar125MainLandingLegalSlugRoute
   '/{-$locale}/_main/_landing/blog/': typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/{-$locale}'
+    | '/robots.txt'
     | '/api/admin'
     | '/{-$locale}/docs'
     | '/{-$locale}/$'
@@ -423,10 +443,12 @@ export interface FileRouteTypes {
     | '/api/admin/users/$id/ban'
     | '/api/admin/users/$id/roles'
     | '/{-$locale}/blog/$slug'
+    | '/{-$locale}/legal/$slug'
     | '/{-$locale}/blog/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/{-$locale}'
+    | '/robots.txt'
     | '/api/admin'
     | '/{-$locale}/docs'
     | '/{-$locale}/$'
@@ -459,10 +481,12 @@ export interface FileRouteTypes {
     | '/api/admin/users/$id/ban'
     | '/api/admin/users/$id/roles'
     | '/{-$locale}/blog/$slug'
+    | '/{-$locale}/legal/$slug'
     | '/{-$locale}/blog'
   id:
     | '__root__'
     | '/{-$locale}'
+    | '/robots.txt'
     | '/api/admin'
     | '/{-$locale}/_main'
     | '/{-$locale}/docs'
@@ -500,11 +524,13 @@ export interface FileRouteTypes {
     | '/api/admin/users/$id/ban'
     | '/api/admin/users/$id/roles'
     | '/{-$locale}/_main/_landing/blog/$slug'
+    | '/{-$locale}/_main/_landing/legal/$slug'
     | '/{-$locale}/_main/_landing/blog/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   ApiAdminRouteRoute: typeof ApiAdminRouteRouteWithChildren
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCreditHistoryRoute: typeof ApiCreditHistoryRoute
@@ -517,6 +543,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/{-$locale}': {
       id: '/{-$locale}'
       path: '/{-$locale}'
@@ -769,6 +802,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125MainLandingBlogIndexRouteImport
       parentRoute: typeof Char123LocaleChar125MainLandingRouteRoute
     }
+    '/{-$locale}/_main/_landing/legal/$slug': {
+      id: '/{-$locale}/_main/_landing/legal/$slug'
+      path: '/legal/$slug'
+      fullPath: '/{-$locale}/legal/$slug'
+      preLoaderRoute: typeof Char123LocaleChar125MainLandingLegalSlugRouteImport
+      parentRoute: typeof Char123LocaleChar125MainLandingRouteRoute
+    }
     '/{-$locale}/_main/_landing/blog/$slug': {
       id: '/{-$locale}/_main/_landing/blog/$slug'
       path: '/blog/$slug'
@@ -800,6 +840,7 @@ interface Char123LocaleChar125MainLandingRouteRouteChildren {
   Char123LocaleChar125MainLandingWaitlistRoute: typeof Char123LocaleChar125MainLandingWaitlistRoute
   Char123LocaleChar125MainLandingIndexRoute: typeof Char123LocaleChar125MainLandingIndexRoute
   Char123LocaleChar125MainLandingBlogSlugRoute: typeof Char123LocaleChar125MainLandingBlogSlugRoute
+  Char123LocaleChar125MainLandingLegalSlugRoute: typeof Char123LocaleChar125MainLandingLegalSlugRoute
   Char123LocaleChar125MainLandingBlogIndexRoute: typeof Char123LocaleChar125MainLandingBlogIndexRoute
 }
 
@@ -817,6 +858,8 @@ const Char123LocaleChar125MainLandingRouteRouteChildren: Char123LocaleChar125Mai
       Char123LocaleChar125MainLandingIndexRoute,
     Char123LocaleChar125MainLandingBlogSlugRoute:
       Char123LocaleChar125MainLandingBlogSlugRoute,
+    Char123LocaleChar125MainLandingLegalSlugRoute:
+      Char123LocaleChar125MainLandingLegalSlugRoute,
     Char123LocaleChar125MainLandingBlogIndexRoute:
       Char123LocaleChar125MainLandingBlogIndexRoute,
   }
@@ -962,6 +1005,7 @@ const ApiAdminRouteRouteWithChildren = ApiAdminRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   ApiAdminRouteRoute: ApiAdminRouteRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCreditHistoryRoute: ApiCreditHistoryRoute,

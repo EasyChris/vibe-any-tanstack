@@ -4,6 +4,7 @@ import defaultMdxComponents from "fumadocs-ui/mdx"
 import type { MDXComponents } from "mdx/types"
 import { CommandTab } from "./command-tab"
 import { GridItem } from "./grid-item"
+import { SecretGenerator } from "./secret-generator"
 import { TechStack } from "./tech-stack"
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
@@ -12,7 +13,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     // Custom Image Component
     img: (props) => (
       <ImageZoom
-        className="p-2 bg-gray-200 dark:bg-gray-400 rounded-md"
+        className="rounded-md"
         {...(props as any)}
       />
     ),
@@ -29,6 +30,9 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     },
     TechStack: (props) => {
       return <TechStack {...props} />
+    },
+    SecretGenerator: () => {
+      return <SecretGenerator />
     },
     ...components,
   }

@@ -16,13 +16,5 @@ export type PaymentConfig = {
 }
 
 export type WebsiteConfig = {
-  blog?: {
-    initialLoadSize: number
-    relatedPostsSize: number
-  }
-  newsletter?: {
-    provider: "resend" | string
-    autoSubscribeAfterSignUp: boolean
-  }
   plans?: PlanWithPrice[]
 }

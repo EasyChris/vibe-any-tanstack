@@ -1,6 +1,55 @@
 import { logger } from "better-auth"
-import { websiteConfig } from "@/config/website-config"
 import type { PlanPrice, PlanWithPrice } from "@/shared/types/payment"
+
+const currency = import.meta.env.VITE_CURRENCY || "USD"
+
+export const paymentConfig: PlanWithPrice[] = [
+  {
+    id: "free",
+    planType: "free",
+    prices: [],
+  },
+  {
+    id: "pro",
+    planType: "subscription",
+    credit: {
+      amount: 100,
+      expireDays: 31,
+    },
+    prices: [
+      {
+        priceId: import.meta.env.VITE_STRIPE_PRO_MONTHLY_PRICE_ID!,
+        amount: 990,
+        currency,
+        interval: "month",
+      },
+      {
+        priceId: import.meta.env.VITE_STRIPE_PRO_YEARLY_PRICE_ID!,
+        amount: 9900,
+        currency,
+        interval: "year",
+      },
+    ],
+    display: {
+      isRecommended: true,
+      group: "subscription",
+    },
+  },
+  {
+    id: "lifetime",
+    planType: "lifetime",
+    prices: [
+      {
+        priceId: import.meta.env.VITE_STRIPE_LIFETIME_PRICE_ID!,
+        amount: 19900,
+        currency,
+      },
+    ],
+    display: {
+      group: "one-time",
+    },
+  },
+]
 
 /**
  * System currency (ISO 4217 code)
@@ -17,7 +66,7 @@ export const CURRENCY = import.meta.env.VITE_CURRENCY || "USD"
  * @returns Array of plans with price information
  */
 export function getPlans(): PlanWithPrice[] {
-  return websiteConfig.plans ?? []
+  return paymentConfig ?? []
 }
 
 /**
@@ -27,7 +76,7 @@ export function getPlans(): PlanWithPrice[] {
  * @returns The matching plan or undefined if not found
  */
 export function getPlanById(planId: string): PlanWithPrice | undefined {
-  return websiteConfig.plans?.find((plan) => plan.id === planId)
+  return paymentConfig?.find((plan) => plan.id === planId)
 }
 
 /**
@@ -37,7 +86,7 @@ export function getPlanById(planId: string): PlanWithPrice | undefined {
  * @returns The matching plan or undefined if not found
  */
 export function getPlanByPriceId(priceId: string): PlanWithPrice | undefined {
-  return websiteConfig.plans?.find((plan) => plan.prices.some((price) => price.priceId === priceId))
+  return paymentConfig?.find((plan) => plan.prices.some((price) => price.priceId === priceId))
 }
 
 /**

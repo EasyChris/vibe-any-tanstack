@@ -1,0 +1,178 @@
+---
+title: 自定义主题
+description: 自定义应用的颜色、样式和视觉风格
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+## 主题系统概述
+
+VibeAny 使用 CSS 变量和 Tailwind CSS 构建主题系统，支持亮色/暗色模式切换。主题配置文件位于 `src/config/style/theme.css`。
+
+## 颜色变量
+
+主题使用 OKLCH 色彩空间定义颜色，提供更好的色彩感知一致性。
+
+### 亮色模式
+
+```css title="src/config/style/theme.css"
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.871 0.006 286.286);
+  --radius: 0.625rem;
+}
+```
+
+### 暗色模式
+
+```css title="src/config/style/theme.css"
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  /* ...其他变量 */
+}
+```
+
+## 颜色变量说明
+
+| 变量 | 用途 |
+| --- | --- |
+| `--background` | 页面背景色 |
+| `--foreground` | 主要文本颜色 |
+| `--card` | 卡片背景色 |
+| `--card-foreground` | 卡片文本颜色 |
+| `--popover` | 弹出层背景色 |
+| `--primary` | 主色调，用于按钮、链接等 |
+| `--primary-foreground` | 主色调上的文本颜色 |
+| `--secondary` | 次要色调 |
+| `--muted` | 柔和背景色 |
+| `--muted-foreground` | 柔和文本颜色 |
+| `--accent` | 强调色 |
+| `--destructive` | 危险/删除操作的颜色 |
+| `--border` | 边框颜色 |
+| `--input` | 输入框边框颜色 |
+| `--ring` | 焦点环颜色 |
+| `--radius` | 圆角大小 |
+
+## 自定义主色调
+
+要更改应用的主色调：
+
+1. 选择你想要的颜色，转换为 OKLCH 格式
+2. 修改 `--primary` 和 `--primary-foreground` 变量
+
+```css
+:root {
+  /* 蓝色主题示例 */
+  --primary: oklch(0.5 0.2 250);
+  --primary-foreground: oklch(0.98 0 0);
+}
+
+.dark {
+  --primary: oklch(0.7 0.15 250);
+  --primary-foreground: oklch(0.1 0 0);
+}
+```
+
+<Callout type="info" title="OKLCH 颜色格式">
+OKLCH 格式为 `oklch(亮度 色度 色相)`。推荐使用 [OKLCH Color Picker](https://oklch.com/) 来选择颜色。
+</Callout>
+
+## Sidebar 颜色
+
+Sidebar 有独立的颜色变量：
+
+```css
+:root {
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: oklch(0.21 0.006 285.885);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+}
+```
+
+## 图表颜色
+
+数据可视化使用独立的图表颜色变量：
+
+```css
+:root {
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+}
+```
+
+## 圆角配置
+
+通过 `--radius` 变量控制全局圆角大小：
+
+```css
+:root {
+  --radius: 0.625rem; /* 默认 10px */
+}
+```
+
+Tailwind 中的圆角类会自动基于此变量计算：
+
+| 类名 | 计算公式 |
+| --- | --- |
+| `rounded-sm` | `calc(var(--radius) - 4px)` |
+| `rounded-md` | `calc(var(--radius) - 2px)` |
+| `rounded-lg` | `var(--radius)` |
+| `rounded-xl` | `calc(var(--radius) + 4px)` |
+
+## 全局样式
+
+`src/config/style/global.css` 包含全局样式配置。
+
+`src/config/style/docs.css` 包含文档页面的特定样式。
+
+## 使用 Tailwind 类
+
+在组件中使用主题变量：
+
+```tsx
+<div className="bg-background text-foreground">
+  <button className="bg-primary text-primary-foreground">
+    点击我
+  </button>
+  <p className="text-muted-foreground">
+    辅助文本
+  </p>
+</div>
+```
+
+## 暗色模式切换
+
+在 `src/config/site-config.ts` 中配置暗色模式：
+
+```ts
+export const siteConfig = {
+  mode: {
+    defaultMode: "system", // "light" | "dark" | "system"
+    enableSwitch: true,    // 是否显示切换按钮
+  },
+}
+```

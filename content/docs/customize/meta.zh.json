@@ -1,0 +1,9 @@
+{
+  "title": "定制化",
+  "pages": [
+    "app",
+    "display",
+    "theme",
+    "i18n"
+  ]
+}

@@ -71,9 +71,8 @@ export const Route = createFileRoute("/api/payment/credit-checkout")({
             priceId: pkg.stripePriceId,
             email: user.email,
             userId,
-            successUrl:
-              data.successUrl || `${process.env.VITE_BETTER_AUTH_URL}/billing?success=true`,
-            cancelUrl: data.cancelUrl || `${process.env.VITE_BETTER_AUTH_URL}/billing`,
+            successUrl: data.successUrl || `${process.env.VITE_APP_URL}/billing?success=true`,
+            cancelUrl: data.cancelUrl || `${process.env.VITE_APP_URL}/billing`,
             metadata: {
               packageId: pkg.id,
               creditAmount: pkg.creditAmount.toString(),

@@ -40,7 +40,16 @@ const config = defineConfig({
       projects: ["./tsconfig.json"],
     }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      prerender: {
+        enabled: true,
+        crawlLinks: true,
+      },
+      sitemap: {
+        enabled: true,
+        host: process.env.VITE_APP_URL,
+      },
+    }),
     viteReact(),
     intlayer(),
     mdx(MdxConfig),

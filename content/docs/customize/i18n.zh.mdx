@@ -1,0 +1,164 @@
+---
+title: 自定义多语言
+description: 配置应用的国际化内容和多语言支持
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+## 国际化系统概述
+
+VibeAny 使用 [Intlayer](https://intlayer.org/) 作为国际化解决方案，支持多语言内容管理和自动路由切换。
+
+## 内容配置文件
+
+所有多语言内容配置文件位于 `src/config/locale/` 目录下：
+
+| 文件 | 用途 |
+| --- | --- |
+| `landing.content.ts` | 落地页内容 |
+| `pricing.content.ts` | 定价页内容 |
+| `auth.content.ts` | 登录/注册页内容 |
+| `admin.content.ts` | 管理后台内容 |
+| `user-dashboard.content.ts` | 用户仪表盘内容 |
+| `app.content.ts` | 通用应用内容 |
+| `404.content.ts` | 404 页面内容 |
+| `error.content.ts` | 错误页面内容 |
+| `config.content.ts` | 配置页面内容 |
+| `credit-packages.content.ts` | 积分包内容 |
+| `waitlist.content.ts` | 等待列表页内容 |
+
+## 定义多语言内容
+
+使用 `t()` 函数定义多语言文本：
+
+```ts title="src/config/locale/landing.content.ts"
+import { type Dictionary, t } from "intlayer"
+
+export default {
+  key: "landing",
+  content: {
+    hero: {
+      title: t({
+        en: "Vibe Any AI Startups in hours, not days",
+        zh: "VibeAny AI 加速想法落地",
+      }),
+      description: t({
+        en: "VibeAny is a TanStack boilerplate for building AI SaaS startups.",
+        zh: "VibeAny 是一个 TanStack Start 模板，用于构建 AI SaaS 创业项目。",
+      }),
+    },
+  },
+} satisfies Dictionary
+```
+
+## 在组件中使用
+
+使用 `useIntlayer` hook 获取国际化内容：
+
+```tsx
+import { useIntlayer } from "react-intlayer"
+
+function HeroSection() {
+  const { hero } = useIntlayer("landing")
+
+  return (
+    <div>
+      <h1>{hero.title.value}</h1>
+      <p>{hero.description.value}</p>
+    </div>
+  )
+}
+```
+
+<Callout type="warn" title="重要">
+务必使用 `.value` 属性获取文本内容，否则会渲染对象而非字符串。
+</Callout>
+
+## 添加新语言
+
+1. 在内容文件中添加新语言的翻译：
+
+```ts
+title: t({
+  en: "Hello",
+  zh: "你好",
+  ja: "こんにちは", // 添加日语
+}),
+```
+
+2. 配置 Intlayer 支持新语言（参考 Intlayer 文档）
+
+## 路由国际化
+
+VibeAny 使用 `LocalizedLink` 组件处理国际化路由：
+
+```tsx
+import { LocalizedLink } from "@/shared/components/locale/localized-link"
+
+// 自动根据当前语言添加路由前缀
+<LocalizedLink to="/docs">文档</LocalizedLink>
+```
+
+函数式导航使用 `useLocalizedNavigate`：
+
+```tsx
+import { useLocalizedNavigate } from "@/shared/hooks/use-localized-navigate"
+
+function MyComponent() {
+  const navigate = useLocalizedNavigate()
+
+  const handleClick = () => {
+    navigate("/dashboard")
+  }
+}
+```
+
+<Callout type="error" title="禁止">
+不要直接使用 TanStack Router 的 `Link` 组件，它无法正确处理国际化路由前缀。
+</Callout>
+
+## 文档多语言
+
+文档内容使用 MDX 文件，通过文件名后缀区分语言：
+
+```
+content/docs/
+├── introduction/
+│   ├── quick-start.zh.mdx    # 中文版
+│   └── quick-start.en.mdx    # 英文版（可选）
+├── meta.json                  # 英文目录配置
+└── meta.zh.json              # 中文目录配置
+```
+
+## 博客多语言
+
+博客文章同样使用文件名后缀：
+
+```
+content/blog/
+├── my-post.zh.mdx
+└── my-post.en.mdx
+```
+
+## 日期和数字格式化
+
+对于日期和数字的本地化格式，可以使用浏览器原生 API：
+
+```tsx
+const date = new Date()
+const formattedDate = date.toLocaleDateString(locale, {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+})
+
+const number = 1234567.89
+const formattedNumber = number.toLocaleString(locale)
+```
+
+## 最佳实践
+
+1. **保持内容文件结构清晰**：按页面/功能模块组织内容文件
+2. **使用 TypeScript**：利用类型检查确保所有语言的键值一致
+3. **避免硬编码文本**：所有用户可见的文本都应通过国际化系统管理
+4. **测试所有语言**：发布前检查所有语言版本的显示效果

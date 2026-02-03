@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react"
 import { useIntlayer, useLocale } from "react-intlayer"
+import { siteConfig } from "@/config/site-config"
 import { LocalizedLink, type To } from "@/shared/components/locale/localized-link"
 import { AnimatedThemeToggler } from "@/shared/components/ui/animated-theme-toggler"
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar"
@@ -213,7 +214,9 @@ export default function AdminSidebar() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <AnimatedThemeToggler className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground" />
+              {siteConfig.theme.enableSwitch && (
+                <AnimatedThemeToggler className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground" />
+              )}
             </div>
           </SidebarMenuItem>
         </SidebarMenu>

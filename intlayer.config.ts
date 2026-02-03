@@ -13,7 +13,6 @@ const config: IntlayerConfig = {
     watch: true,
     contentDir: ['src/config/locale'],
   },
-
 };
 
 export default config;

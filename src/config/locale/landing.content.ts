@@ -29,8 +29,8 @@ export default {
         zh: "VibeAny AI 加速想法落地",
       }),
       description: t({
-        en: "VibeAny is a TanStack boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
-        zh: "VibeAny 是一个 TanStack Start 模板，用于构建 AI SaaS 创业项目。快速搭建，多种模板和组件可供选择。",
+        en: "VibeAny is a TanStack boilerplate for building AI SaaS startups. Ship Fast with database, authentication, payment, AI, internationalization and more.",
+        zh: "VibeAny 是一个 TanStack Start 模板，用于构建 AI SaaS 创业项目。快速集成数据库、认证、支付、AI、国际化等能力。",
       }),
       announcement: {
         show: true,

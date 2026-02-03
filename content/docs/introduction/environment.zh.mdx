@@ -2,27 +2,44 @@
 title: 环境变量配置
 description: 通过环境变量配置项目，即可启用所有必需的第三方集成服务
 ---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
 ## 环境变量系统介绍
 VibeAny 配置环境变量有两种方式：
 1. 通过环境变量文件配置，对于一些不常变化的环境变量，可以配置在环境变量文件中，比如数据库连接URL、鉴权密钥等。
 2. 通过后台配置面板配置，对于一些常变化的环境变量，VibeAny 为你提供动态配置面板，你可以在后台配置面板中随时修改环境变量，比如支付密钥、邮件服务器配置等。
 
 ## 通过环境变量文件配置
+### 站点链接配置
+| 变量   | 描述 |
+| -------- | ------- |
+| VITE_APP_URL  | 站点URL  |
+
 ### 数据库
+
 在数据库设置文档中查看更加详细的配置说明
+
 | 变量   | 描述 |
 | -------- | ------- |
 | DATABASE_URL  | 数据库连接 URL    |
 
 ### 鉴权
+
 在鉴权设置文档中查看更加详细的配置说明
+
 | 变量   | 描述 |
 | -------- | ------- |
 | ADMIN_EMAILS  |  管理员邮箱    |
-| BETTER_AUTH_SECRET  |  鉴权密钥，可以在[better-auth](https://www.better-auth.com/docs/installation#set-environment-variables)官网生成    |
+| BETTER_AUTH_SECRET  |  鉴权密钥    |
 | BETTER_AUTH_URL  |  鉴权URL    |
 
-如果你想使用OAuth（支持github或者谷歌登入），可以继续配置如下内容：
+`BETTER_AUTH_SECRET` 可以在 [better-auth](https://www.better-auth.com/docs/installation#set-environment-variables) 官网生成，或者点击下方按钮生成：
+
+<SecretGenerator label="生成密钥" />
+
+如果你想使用OAuth（支持github或者谷歌登入），可以继续配置如下内容，并且在 `src/shared/lib/auth/auth-server.ts` 中开启OAuth功能
+
 | 变量   | 描述 |
 | -------- | ------- |
 | GITHUB_CLIENT_ID  |  GitHub OAuth 客户端 ID    |
@@ -30,8 +47,28 @@ VibeAny 配置环境变量有两种方式：
 | GOOGLE_CLIENT_ID  |  Google OAuth 客户端 ID    |
 | GOOGLE_CLIENT_SECRET  |  Google OAuth 客户端密钥    |
 
+### TURNSTILE
+VibeAny 使用 TURNSTILE 作为验证码服务，为你的网站启用验证码保护，你需要在 [TURNSTILE](https://developers.cloudflare.com/turnstile/?preferred-color-scheme=light) 官网注册一个账号，并创建一个站点，获取到站点密钥。在验证码设置文档中查看更加详细的配置说明
+
+| 变量   | 描述 |
+| -------- | ------- |
+| TURNSTILE_SECRET_KEY  |  TURNSTILE 密钥，可以在 [Cloudflare 仪表盘](https://dash.cloudflare.com/)生成    |
+| VITE_TURNSTILE_SITE_KEY  |  TURNSTILE 站点密钥，可以在 [Cloudflare 仪表盘](https://dash.cloudflare.com/)获取    |
+| VITE_TURNSTILE_CAPTCHA_ENABLED  |  TURNSTILE 验证码是否启用，`true` 时启用，`false` 时禁用    |
+
 ### 邮件
-你可以使用自己的邮件服务器，也可以使用 resend 服务。
+你可以使用Resend服务，也可以使用自定义邮件服务器，VibeAny 推荐您使用 resend 服务，在邮件设置文档中查看更加详细的配置说明。
+
+对于 Resend 服务，你需要在 [Resend](https://resend.com/api-keys) 创建一个 API 密钥。
+
+| 变量   | 描述 |
+| -------- | ------- |
+| EMAIL_PROVIDER  | 邮件服务商，`resend` 或 `custom`    |
+| EMAIL_FROM  | 发件人邮箱，例如：`VibeAny <noreply@auth.vibeany.dev>`    |
+| RESEND_API_KEY  |  resend 服务 API 密钥    |
+
+对于自定义邮件服务器，你需要配置以下环境变量，具体请查阅对应邮箱服务商的文档：
+
 | 变量   | 描述 |
 | -------- | ------- |
 | EMAIL_HOST  |  邮件服务器主机    |
@@ -39,36 +76,148 @@ VibeAny 配置环境变量有两种方式：
 | EMAIL_USER  |  发件人用户名    |
 | EMAIL_PASSWORD  |  发件人密码    |
 
-二者择一即可，如果同时配置，默认使用 resend 服务。
-| 变量   | 描述 |
-| -------- | ------- |
-| RESEND_API_KEY  |  resend 服务 API 密钥    |
-### 支付 / 积分
+### 支付
+
+在支付设置文档中查看更加详细的配置说明
 
 #### Stripe 服务
+
 | 变量 | 描述 |
 | -------- | ------- |
-| NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY | Stripe 服务 publishable 密钥 |
+| VITE_STRIPE_PUBLISHABLE_KEY | Stripe 服务 publishable 密钥 |
 | STRIPE_SECRET_KEY | Stripe 服务 API 密钥 |
 | STRIPE_WEBHOOK_SECRET | Stripe 服务 webhook 密钥 |
-| NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID | Stripe 服务 pro 每月价格 ID |
-| NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID | Stripe 服务 pro 每年价格 ID |
-| NEXT_PUBLIC_STRIPE_LIFETIME_PRICE_ID | Stripe 服务 lifetime 价格 ID |
-| NEXT_PUBLIC_STRIPE_100_CREDITS_PRICE_ID | Stripe 服务 100 积分价格 ID(如果不需要积分功能，可以不配置) |
-| NEXT_PUBLIC_STRIPE_200_CREDITS_PRICE_ID | Stripe 服务 200 积分价格 ID(如果不需要积分功能，可以不配置) |
+| VITE_STRIPE_PRO_MONTHLY_PRICE_ID | Stripe 服务 pro 每月价格 ID |
+| VITE_STRIPE_PRO_YEARLY_PRICE_ID | Stripe 服务 pro 每年价格 ID |
+| VITE_STRIPE_LIFETIME_PRICE_ID | Stripe 服务 lifetime 价格 ID |
 
 #### Creem 服务
+
 | 变量 | 描述 |
 | -------- | ------- |
 | CREEM_X_API_KEY | Creem 服务 API 密钥 |
-| CREEM_TEST_MODE | Creem 服务测试模式 |
+| CREEM_TEST_MODE | Creem 服务测试模式，`true` 时启用，`false` 时禁用 |
 | CREEM_WEBHOOK_SECRET | Creem 服务 webhook 密钥 |
-| NEXT_PUBLIC_CREEM_PRO_MONTHLY_PRODUCT_ID | Creem 服务 pro 每月产品 ID |
-| NEXT_PUBLIC_CREEM_LIFETIME_PRODUCT_ID | Creem 服务 lifetime 产品 ID |
-| NEXT_PUBLIC_CREEM_100_CREDITS_PRODUCT_ID | Creem 服务 100 积分产品 ID(如果不需要积分功能，可以不配置) |
-| NEXT_PUBLIC_CREEM_200_CREDITS_PRODUCT_ID | Creem 服务 200 积分产品 ID(如果不需要积分功能，可以不配置) |
+| VITE_CREEM_PRO_MONTHLY_PRODUCT_ID | Creem 服务 pro 每月产品 ID |
+| VITE_CREEM_LIFETIME_PRODUCT_ID | Creem 服务 lifetime 产品 ID |
+
+### 积分
+VibeAny 为了简化开发者的配置，将积分系统优先集成到了后台中，开发者可以在后台配置面板中随时修改积分系统配置，比如积分赠送数量、积分有效期等，在积分设置文档中查看更加详细的配置说明，
+
+### 存储
+
+在存储设置文档中查看更加详细的配置说明
+
+| 变量 | 描述 |
+| -------- | ------- |
+| STORAGE_PROVIDER | 存储服务商，`s3` 或 `custom`    |
+| S3_ACCESS_KEY | S3 服务 access key    |
+| S3_SECRET_KEY | S3 服务 secret key    |
+| S3_REGION | S3 服务 region    |
+| S3_BUCKET | S3 服务 bucket    |
+
+## 通过后台配置面板配置
+
+VibeAny 提供了动态配置面板，你可以在后台随时修改以下配置，无需重启服务。
+
+<Callout type="warn" title="优先级说明">
+环境变量文件中的配置优先级高于后台配置面板：
+- 服务端配置：如果 `.env` 中配置了 `STRIPE_SECRET_KEY=sk_xxx`，后台面板中的 `payment_stripe_secret_key` 将被忽略
+- 客户端配置（`public_` 前缀）：如果 `.env` 中配置了 `VITE_CREDIT_ENABLE=true`，后台面板中的 `public_credit_enable` 将被忽略
+</Callout>
+
+![Environment Variables](/docs/introduction/intro.enviromnent.webp)
 
 
-### 下一步：配置文件
+### 支付
 
-完成环境变量配置后，继续参考以下配置文档：
+在后台可以选择使用的支付服务商：`stripe`、`creem`、`paypal`、`wechat`、`alipay`
+
+#### Stripe
+
+| 配置项 | 环境变量 |
+| -------- | -------- |
+| Stripe Secret Key | `STRIPE_SECRET_KEY` |
+| Stripe Webhook Secret | `STRIPE_WEBHOOK_SECRET` |
+
+#### Creem
+
+| 配置项 | 环境变量 |
+| -------- | -------- |
+| Creem X API Key | `CREEM_X_API_KEY` |
+| Creem Test Mode | `CREEM_TEST_MODE` |
+| Creem Webhook Secret | `CREEM_WEBHOOK_SECRET` |
+
+#### PayPal
+
+| 配置项 | 环境变量 |
+| -------- | -------- |
+| PayPal Client ID | `PAYPAL_CLIENT_ID` |
+| PayPal Client Secret | `PAYPAL_CLIENT_SECRET` |
+| PayPal Webhook ID | `PAYPAL_WEBHOOK_ID` |
+| PayPal 沙盒模式 | `PAYPAL_SANDBOX` |
+
+#### 微信支付
+
+| 配置项 | 环境变量 |
+| -------- | -------- |
+| 微信 App ID | `WECHAT_APP_ID` |
+| 微信商户号 | `WECHAT_MCH_ID` |
+| 微信 API 密钥 | `WECHAT_API_KEY` |
+| 微信 API v3 密钥 | `WECHAT_API_V3_KEY` |
+| 微信证书序列号 | `WECHAT_SERIAL_NO` |
+| 微信私钥 | `WECHAT_PRIVATE_KEY` |
+
+#### 支付宝
+
+| 配置项 | 环境变量 |
+| -------- | -------- |
+| 支付宝 App ID | `ALIPAY_APP_ID` |
+| 支付宝应用私钥 | `ALIPAY_PRIVATE_KEY` |
+| 支付宝公钥 | `ALIPAY_PUBLIC_KEY` |
+| 支付宝沙盒模式 | `ALIPAY_SANDBOX` |
+
+### 积分
+
+#### 基础配置
+
+| 配置项 | 环境变量 | 默认值 |
+| -------- | -------- | ------- |
+| 启用积分系统 | `VITE_CREDIT_ENABLE` | `false` |
+| 允许免费用户购买 | `VITE_CREDIT_ALLOW_FREE_USER_PURCHASE` | `false` |
+
+#### 注册赠送
+
+| 配置项 | 环境变量 | 默认值 |
+| -------- | -------- | ------- |
+| 启用注册赠送 | `VITE_CREDIT_SIGNUP_BONUS_ENABLED` | `false` |
+| 注册赠送数量 | `VITE_CREDIT_SIGNUP_BONUS_AMOUNT` | `0` |
+| 赠送积分有效期（天） | `VITE_CREDIT_SIGNUP_BONUS_EXPIRE_DAYS` | `30` |
+
+#### 每日赠送
+
+| 配置项 | 环境变量 | 默认值 |
+| -------- | -------- | ------- |
+| 启用每日赠送 | `VITE_CREDIT_DAILY_ENABLED` | `false` |
+| 每日赠送积分数量 | `VITE_CREDIT_DAILY_AMOUNT` | `0` |
+
+### 邮件
+
+| 配置项 | 环境变量 | 默认值 |
+| -------- | -------- | ------- |
+| 邮件服务商 | `EMAIL_PROVIDER` | `resend` |
+| 发件邮箱 | `EMAIL_FROM` | - |
+| Resend API Key | `RESEND_API_KEY` | - |
+
+### 存储
+
+VibeAny 支持 S3 兼容的存储服务（如 AWS S3、Cloudflare R2、MinIO 等）。
+
+| 配置项 | 环境变量 | 默认值 |
+| -------- | -------- | ------- |
+| 存储区域 | `STORAGE_REGION` | `auto` |
+| 存储桶名称 | `STORAGE_BUCKET_NAME` | - |
+| Access Key ID | `STORAGE_ACCESS_KEY_ID` | - |
+| Secret Access Key | `STORAGE_SECRET_ACCESS_KEY` | - |
+| 存储端点 | `STORAGE_ENDPOINT` | - |
+| 公开访问 URL | `STORAGE_PUBLIC_URL` | - |

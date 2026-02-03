@@ -2,7 +2,7 @@
   "pages": [
     "index",
     "...introduction",
-    "config",
+    "customize",
     "deployment",
     "---功能集成---",
     "...integration",

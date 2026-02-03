@@ -39,7 +39,7 @@ interface MenuItem {
 export const LandingHeader = () => {
   const { header } = useIntlayer("landing")
   const location = useLocation()
-  const { title, images } = siteConfig
+  const { title, images, theme } = siteConfig
 
   const items: MenuItem[] = header.items.map((item, index) => {
     const children =
@@ -132,7 +132,7 @@ export const LandingHeader = () => {
                     className={navigationMenuTriggerStyle()}
                   >
                     <LocalizedLink
-                      to={item.href ?? "/"}
+                      to={item.href ?? ("/" as To)}
                       className={cn(
                         item.href && isActivePath(item.href) && "text-primary bg-muted/50"
                       )}
@@ -147,7 +147,7 @@ export const LandingHeader = () => {
         </NavigationMenu>
 
         <div className="flex items-center gap-1">
-          <ThemeSwitcher />
+          {theme.enableSwitch && <ThemeSwitcher />}
           <LocaleSwitcher />
           <UserMenu />
 

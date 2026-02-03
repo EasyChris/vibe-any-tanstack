@@ -1,0 +1,9 @@
+{
+  "title": "Customize",
+  "pages": [
+    "app",
+    "display",
+    "theme",
+    "i18n"
+  ]
+}

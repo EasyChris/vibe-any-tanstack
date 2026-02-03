@@ -1,0 +1,125 @@
+---
+title: 自定义应用信息 & SEO
+description: 配置应用的基本信息，包括名称、描述、Logo 和社交链接
+---
+
+## URL
+本地开发环境，在 `.env.development` 中设置：
+```bash title=".env.development"
+VITE_APP_URL="http://localhost:3377"
+```
+
+生产环境，在 `.env.production` 中设置：
+```bash title=".env.production"
+VITE_APP_URL=https://your-domain.com
+```
+
+## 基本信息
+VibeAny 的基本应用信息集中在 `src/config/site-config.ts` 文件中配置。
+
+```ts title="src/config/site-config.ts"
+export const siteConfig = {
+  title: "VibeAny",
+  author: "Jayden & Lingjue",
+  description: "VibeAny ",
+  theme: {
+    defaultTheme: "default", // 默认主题，可以是 "light", "dark", 或 "system"
+    enableSwitch: true, // 是否显示主题切换按钮
+  },
+  images: {
+    ogImage: "/og.jpg", // Open Graph 图片，当分享到社交媒体时显示
+    logo: "/logo.svg", // 网站 Logo
+    isInvert: true, // 是否反转颜色，当 Logo 在暗色模式下需要反转颜色时设置为 true
+  },
+  social: {
+    github: "https://github.com/VibeAny",
+    twitter: "https://x.com/VibeAny",
+    discord: "https://discord.gg/yVwpEtTT",
+    youtube: "https://www.youtube.com/@VibeAny",
+  },
+}
+```
+
+### 替换 Logo
+你可以借助在线工具，生成精美的 Logo，比如：
+- [Logo Maker](https://www.design.com/logo-maker)
+- [Logo Fast](https://shipfa.st/tools/logo-fast)
+
+1. 将你的 Logo 文件放置到 `public/` 目录下
+2. 更新 `siteConfig.images.logo` 为新的路径
+3. 如果 Logo 在暗色模式下需要反转颜色，设置 `isInvert: true`
+
+初次之外还需要设置Favicon 图，这决定了网站在浏览器标签页中的图标，你可以使用以下工具转换为 Favicon 图标，并放置到 `public/` 目录下，命名为 `favicon.ico`
+
+- [CloudConvert](https://cloudconvert.com/png-to-ico)
+
+### 替换 OG 图片
+
+Open Graph 图片会在社交媒体分享时显示
+
+你可以参考他人的 Open Graph 图片，设计精美的 Open Graph Image，也可以使用在线工具生成。
+- [Ricoog](https://ricoog.com/)
+- [Og Image Generator via code](https://og-playground.vercel.app/)
+- [Og Image Generator via UI](https://ogimage.click/)
+
+
+1. 准备一张的图片
+2. 放置到 `public/` 目录
+3. 更新 `siteConfig.images.ogImage` 路径
+
+在本地你可以使用 Tanstack 提供的 Devtools 工具，快速浏览 Open Graph Image 在各个平台的效果。
+![Open Graph Image](/docs/customize/customize.og.webp)
+
+## 隐私协议和服务条款
+
+VibeAny 内置了隐私政策和服务条款页面，内容存放在 `content/legal/` 目录下：
+
+```
+content/legal/
+├── privacy-policy.mdx      # 英文隐私政策
+├── privacy-policy.zh.mdx   # 中文隐私政策
+├── terms-of-service.mdx    # 英文服务条款
+└── terms-of-service.zh.mdx # 中文服务条款
+```
+
+访问路径：
+- `/legal/privacy-policy` - 隐私政策
+- `/legal/terms-of-service` - 服务条款
+
+### 修改内容
+
+直接编辑对应的 MDX 文件即可，支持 Markdown 语法和自定义组件。
+
+```mdx title="content/legal/privacy-policy.zh.mdx"
+---
+title: 隐私政策
+description: 我们如何收集、使用和保护您的个人信息
+lastUpdated: 2025-01-01
+---
+
+## 简介
+
+本隐私政策说明...
+```
+
+> `lastUpdated` 字段会自动显示在页面顶部，建议在每次更新内容时同步更新此日期。
+
+## SiteMap
+站点地图是搜索引擎收录网站的重要方式，它告诉搜索引擎网站的结构和内容，帮助搜索引擎更好地理解网站。
+
+您无需手动配置 SiteMap，VibeAny 会自动生成 SiteMap，这是 Tanstack Start 内置的能力，可以查阅[Tanstack Start 文档](https://tanstack.com/start/latest/docs/framework/react/guide/seo#sitemaps)了解更多。
+
+## Robots.txt
+Robots.txt 是搜索引擎爬取网站的重要方式，它告诉搜索引擎哪些页面可以爬取，哪些页面不能爬取。
+
+VibeAny 的 Robots.txt 配置集中在 `src/config/robots-config.ts` 文件中，VibeAny 会自动生成 Robots.txt 文件。
+```ts title="src/config/robots-config.ts"
+export const robotsConfig = {
+  rules: {
+    userAgent: "*",
+    allow: "/",
+    disallow: ["/*?*q=", "/admin/*", "/api/*"],
+  },
+  sitemap: `${import.meta.env.VITE_APP_URL}/sitemap.xml`,
+}
+```

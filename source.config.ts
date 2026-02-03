@@ -68,3 +68,11 @@ export const changelog = defineCollections({
     tags: z.array(z.string()).default([]),
   }),
 })
+
+export const legal = defineCollections({
+  type: "doc",
+  dir: "content/legal",
+  schema: frontmatterSchema.extend({
+    lastUpdated: z.coerce.date(),
+  }),
+})

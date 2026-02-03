@@ -1,0 +1,221 @@
+---
+title: 自定义落地页
+description: 配置产品介绍、价格计划、常见问题等模块的展示内容
+---
+
+
+## 落地页配置
+
+落地页的所有内容都在 `src/config/locale/landing.content.ts` 中配置，支持多语言。
+
+### Banner 横幅
+
+```ts
+banner: {
+  show: true,
+  text: t({
+    en: "Open Sourced in 2026: Production-grade AI SaaS template available!",
+    zh: "2026 年开源：生产级 AI SaaS 模板现已发布！",
+  }),
+  button: {
+    text: t({ en: "View on GitHub", zh: "在 GitHub 上查看" }),
+    href: github,
+  },
+},
+```
+
+| 配置项 | 说明 |
+| --- | --- |
+| `show` | 是否显示 Banner |
+| `text` | Banner 文本内容 |
+| `button.text` | 按钮文本 |
+| `button.href` | 按钮链接 |
+
+### Hero 区域
+
+```ts
+hero: {
+  title: t({
+    en: "Vibe Any AI Startups in hours, not days",
+    zh: "VibeAny AI 加速想法落地",
+  }),
+  description: t({
+    en: "VibeAny is a TanStack boilerplate...",
+    zh: "VibeAny 是一个 TanStack Start 模板...",
+  }),
+  announcement: {
+    show: true,
+    text: t({ en: "...", zh: "..." }),
+    href: github,
+  },
+  buttons: {
+    start: { text: t({ en: "Get Started", zh: "开始" }), url: "/chat" },
+    docs: { text: t({ en: "Learn More", zh: "了解更多" }), url: "/docs" },
+  },
+  image: {
+    enabled: false,
+    src: "/home/home.avif",
+    width: 2700,
+    height: 1440,
+  },
+},
+```
+
+### 三大优势
+
+```ts
+threeBenefits: {
+  title: t({ en: "Three Key Benefits", zh: "三大核心优势" }),
+  description: t({ en: "Discover why...", zh: "了解为什么..." }),
+  items: [
+    {
+      title: t({ en: "Lightning Fast Startup", zh: "极速启动" }),
+      description: t({ en: "...", zh: "..." }),
+      icon: "Zap",
+    },
+    // ...更多项
+  ],
+},
+```
+
+<Callout type="info" title="图标">
+`icon` 字段使用 Lucide React 图标名称，如 `Zap`、`Shield`、`Code` 等。
+</Callout>
+
+### 功能介绍
+
+`introduction` 数组配置多个带图片的功能介绍区块：
+
+```ts
+introduction: [
+  {
+    type: "image",
+    title: t({ en: "Zero-Config Authentication", zh: "零配置认证系统" }),
+    description: t({ en: "...", zh: "..." }),
+    image: "/landing/introduction/auth.webp",
+    imagePosition: "left", // "left" | "right"
+    features: [
+      {
+        title: t({ en: "One-Click Social Login", zh: "一键社交登录" }),
+        description: t({ en: "...", zh: "..." }),
+      },
+      // ...
+    ],
+  },
+],
+```
+
+### 用户评价
+
+```ts
+userTestimonials: {
+  title: t({ en: "What Our Users Say", zh: "用户评价" }),
+  testimonials: [
+    {
+      text: t({ en: "...", zh: "..." }),
+      image: "/avatars/user1.avif",
+      name: "Sarah Chen",
+      role: t({ en: "CTO, TechStart", zh: "TechStart 首席技术官" }),
+    },
+    // ...
+  ],
+},
+```
+
+### FAQ 常见问题
+
+```ts
+faq: {
+  title: t({ en: "Frequently Asked Questions", zh: "常见问题" }),
+  description: t({ en: "...", zh: "..." }),
+  items: [
+    {
+      question: t({ en: "What is VibeAny?", zh: "什么是 VibeAny？" }),
+      answer: t({ en: "...", zh: "..." }),
+    },
+  ],
+},
+```
+
+### Header 导航
+
+```ts
+header: {
+  items: [
+    { label: t({ en: "Documentation", zh: "文档" }), href: "/docs" },
+    { label: t({ en: "Chat", zh: "聊天" }), href: "/chat" },
+    {
+      label: t({ en: "More Features", zh: "更多功能" }),
+      children: [
+        { label: t({ en: "Blog", zh: "博客" }), href: "/blog" },
+        { label: t({ en: "Roadmap", zh: "路线图" }), href: "/roadmap" },
+      ],
+    },
+  ],
+},
+```
+
+### Footer 页脚
+
+```ts
+footer: {
+  companyName: "VibeAny",
+  scrollToTop: t({ en: "Back to Top", zh: "返回顶部" }),
+  sections: [
+    {
+      title: t({ en: "About", zh: "关于" }),
+      links: [
+        { label: t({ en: "About Us", zh: "关于我们" }), href: "/about" },
+        // ...
+      ],
+    },
+  ],
+},
+```
+
+## 定价页配置
+
+定价页内容在 `src/config/locale/pricing.content.ts` 中配置。
+
+套餐价格和订阅逻辑在 `src/config/website-config.ts` 中配置：
+
+```ts title="src/config/website-config.ts"
+export const websiteConfig: WebsiteConfig = {
+  plans: [
+    {
+      id: "free",
+      planType: "free",
+      prices: [],
+    },
+    {
+      id: "pro",
+      planType: "subscription",
+      credit: { amount: 100, expireDays: 31 },
+      prices: [
+        {
+          priceId: import.meta.env.VITE_STRIPE_PRO_MONTHLY_PRICE_ID!,
+          amount: 990, // $9.90
+          currency: "USD",
+          interval: "month",
+        },
+        // ...
+      ],
+      display: { isRecommended: true, group: "subscription" },
+    },
+  ],
+}
+```
+
+<Callout type="warn" title="注意">
+`priceId` 必须与支付服务商（如 Stripe）中创建的价格 ID 一致。
+</Callout>
+
+## 其他页面配置
+
+| 文件路径 | 页面 |
+| --- | --- |
+| `src/config/locale/auth.content.ts` | 登录/注册页 |
+| `src/config/locale/user-dashboard.content.ts` | 用户仪表盘 |
+| `src/config/locale/admin.content.ts` | 管理后台 |
+| `src/config/locale/404.content.ts` | 404 页面 |
+| `src/config/locale/error.content.ts` | 错误页面 |

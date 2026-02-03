@@ -3,15 +3,11 @@ export const siteConfig = {
   author: "Jayden & Lingjue",
   description: "VibeAny",
   theme: {
-    defaultTheme: "default",
-    enableSwitch: true,
-  },
-  mode: {
-    defaultMode: "system" as const,
+    defaultTheme: "system",
     enableSwitch: true,
   },
   images: {
-    ogImage: "/og.avif",
+    ogImage: "/og.jpg",
     logo: "/logo.svg",
     isInvert: true,
   },

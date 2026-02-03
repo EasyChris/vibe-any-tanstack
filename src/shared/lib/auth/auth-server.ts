@@ -25,7 +25,7 @@ function getLocaleFromUrl(url: string): string {
 }
 
 export const auth = betterAuth({
-  baseURL: import.meta.env.VITE_BETTER_AUTH_URL,
+  baseURL: import.meta.env.VITE_APP_URL,
   database: drizzleAdapter(db, { provider: "pg" }),
   plugins: [
     ...(isCaptchaEnabled
