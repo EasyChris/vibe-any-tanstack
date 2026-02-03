@@ -11,7 +11,7 @@ export function Pricing() {
     >
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl space-y-6 text-center">
-          <h1 className="text-center text-4xl font-semibold lg:text-5xl">{content.title.value}</h1>
+          <h2 className="text-center text-4xl font-semibold lg:text-5xl">{content.title.value}</h2>
           <p>{content.subtitle.value}</p>
         </div>
 

@@ -2,8 +2,8 @@
   "title": "Customize",
   "pages": [
     "app",
-    "display",
     "theme",
-    "i18n"
+    "i18n",
+    "landing"
   ]
 }

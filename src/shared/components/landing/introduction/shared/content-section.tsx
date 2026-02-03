@@ -12,12 +12,12 @@ export const ContentSection = ({ title, description, features }: ContentSectionP
     <div className="flex flex-col justify-center space-y-6">
       {/* Main content header */}
       <header className="space-y-4">
-        <h1
+        <h2
           id={titleId}
           className={cn("text-3xl font-bold tracking-tight", "sm:text-4xl", "lg:text-5xl")}
         >
           {title}
-        </h1>
+        </h2>
 
         <p
           className={cn("text-lg text-muted-foreground", "sm:text-base")}
