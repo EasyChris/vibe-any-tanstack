@@ -15,25 +15,12 @@ export function baseOptions(): BaseLayoutProps {
   return {
     i18n,
     nav: {
-      title: "Docs",
+      title: "Documentation",
     },
   }
 }
 
 export const Route = createFileRoute("/{-$locale}/docs/$")({
-  head: () => ({
-    meta: [
-      {
-        title: "Docs",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: docsCss,
-      },
-    ],
-  }),
   component: Page,
   loader: async ({ params }) => {
     const slugs = params._splat?.split("/") ?? []
@@ -46,6 +33,19 @@ export const Route = createFileRoute("/{-$locale}/docs/$")({
     await clientLoader.preload(data.path)
     return data
   },
+  head: ({ loaderData }) => ({
+    meta: [
+      {
+        title: loaderData?.title ? `${loaderData.title} | Documentation` : "Documentation",
+      },
+    ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: docsCss,
+      },
+    ],
+  }),
 })
 
 const serverLoader = createServerFn({
@@ -58,6 +58,7 @@ const serverLoader = createServerFn({
 
     return {
       path: page.path,
+      title: page.data.title,
       pageTree: await source.serializePageTree(source.getPageTree(lang)),
     }
   })
