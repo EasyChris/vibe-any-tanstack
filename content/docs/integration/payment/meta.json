@@ -3,6 +3,8 @@
   "pages": [
     "stripe",
     "creem",
+    "paypal",
+    "wechat-alipay",
     "custom"
   ]
 }
