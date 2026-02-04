@@ -8,7 +8,14 @@ import { getDb } from "@/db"
 import { sendEmail } from "@/shared/lib/email/send-email"
 import { isAuthEnabled } from "./auth-config"
 
-const isCaptchaEnabled = process.env.TURNSTILE_CAPTCHA_ENABLED === "true"
+const isCaptchaEnabled =
+  process.env.TURNSTILE_CAPTCHA_ENABLED === "true" && !!process.env.TURNSTILE_SECRET_KEY
+
+const isGitHubOAuthEnabled =
+  !!process.env.GITHUB_CLIENT_ID && !!process.env.GITHUB_CLIENT_SECRET
+
+const isGoogleOAuthEnabled =
+  !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
 
 function getLocaleFromUrl(url: string): string {
   try {
@@ -42,7 +49,7 @@ function createAuth() {
         ? [
             captcha({
               provider: "cloudflare-turnstile",
-              secretKey: process.env.TURNSTILE_SECRET_KEY!,
+              secretKey: process.env.TURNSTILE_SECRET_KEY as string,
             }),
           ]
         : []),
@@ -72,14 +79,18 @@ function createAuth() {
       },
     },
     socialProviders: {
-      github: {
-        clientId: process.env.GITHUB_CLIENT_ID as string,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-      },
-      google: {
-        clientId: process.env.GOOGLE_CLIENT_ID as string,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      },
+      ...(isGitHubOAuthEnabled && {
+        github: {
+          clientId: process.env.GITHUB_CLIENT_ID as string,
+          clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+        },
+      }),
+      ...(isGoogleOAuthEnabled && {
+        google: {
+          clientId: process.env.GOOGLE_CLIENT_ID as string,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        },
+      }),
     },
   })
 }
