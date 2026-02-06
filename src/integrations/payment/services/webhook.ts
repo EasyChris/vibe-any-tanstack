@@ -7,6 +7,7 @@ import { logger } from "@/shared/lib/tools/logger"
 import { findOrderById } from "@/shared/model/order.model"
 import { findPaymentByProviderId, insertPayment, updatePayment } from "@/shared/model/payment.model"
 import {
+  cancelOtherActiveSubscriptions,
   findSubscriptionByProviderId,
   insertSubscription,
   updateSubscription,
@@ -358,6 +359,13 @@ async function handleSubscriptionCreated(event: WebhookEvent): Promise<void> {
       subscriptionInfo.userId,
       event.provider,
       subscriptionInfo.providerCustomerId
+    )
+  }
+
+  if (subscriptionInfo.userId) {
+    await cancelOtherActiveSubscriptions(
+      subscriptionInfo.userId,
+      subscriptionInfo.providerSubscriptionId
     )
   }
 

@@ -103,7 +103,9 @@ export class StripeAdapter implements PaymentAdapter {
   }
 
   async cancelSubscription(providerSubscriptionId: string): Promise<void> {
-    await this.stripe.subscriptions.cancel(providerSubscriptionId)
+    await this.stripe.subscriptions.update(providerSubscriptionId, {
+      cancel_at_period_end: true,
+    })
   }
 
   async updateSubscription(params: UpdateSubscriptionParams): Promise<UpdateSubscriptionResult> {

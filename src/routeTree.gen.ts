@@ -45,6 +45,7 @@ import { Route as Char123LocaleChar125MainLandingRoadmapRouteImport } from './ro
 import { Route as Char123LocaleChar125MainLandingChatRouteImport } from './routes/{-$locale}/_main/_landing/chat'
 import { Route as Char123LocaleChar125MainLandingChangelogRouteImport } from './routes/{-$locale}/_main/_landing/changelog'
 import { Route as ApiPaymentWebhookProviderRouteImport } from './routes/api/payment/webhook.$provider'
+import { Route as ApiPaymentSubscriptionCancelRouteImport } from './routes/api/payment/subscription/cancel'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users/$id'
 import { Route as Char123LocaleChar125MainLandingBlogIndexRouteImport } from './routes/{-$locale}/_main/_landing/blog/index'
 import { Route as Char123LocaleChar125MainLandingLegalSlugRouteImport } from './routes/{-$locale}/_main/_landing/legal.$slug'
@@ -252,6 +253,12 @@ const ApiPaymentWebhookProviderRoute =
     path: '/api/payment/webhook/$provider',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPaymentSubscriptionCancelRoute =
+  ApiPaymentSubscriptionCancelRouteImport.update({
+    id: '/api/payment/subscription/cancel',
+    path: '/api/payment/subscription/cancel',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -310,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
   '/{-$locale}/test/': typeof Char123LocaleChar125TestIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
+  '/api/payment/subscription/cancel': typeof ApiPaymentSubscriptionCancelRoute
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
   '/{-$locale}/chat': typeof Char123LocaleChar125MainLandingChatRoute
@@ -351,6 +359,7 @@ export interface FileRoutesByTo {
   '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
   '/{-$locale}/test': typeof Char123LocaleChar125TestIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
+  '/api/payment/subscription/cancel': typeof ApiPaymentSubscriptionCancelRoute
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
   '/{-$locale}/chat': typeof Char123LocaleChar125MainChatIndexRoute
@@ -394,6 +403,7 @@ export interface FileRoutesById {
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
   '/{-$locale}/test/': typeof Char123LocaleChar125TestIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
+  '/api/payment/subscription/cancel': typeof ApiPaymentSubscriptionCancelRoute
   '/api/payment/webhook/$provider': typeof ApiPaymentWebhookProviderRoute
   '/{-$locale}/_main/_landing/changelog': typeof Char123LocaleChar125MainLandingChangelogRoute
   '/{-$locale}/_main/_landing/chat': typeof Char123LocaleChar125MainLandingChatRoute
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/login/'
     | '/{-$locale}/test/'
     | '/api/admin/users/$id'
+    | '/api/payment/subscription/cancel'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/changelog'
     | '/{-$locale}/chat'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/login'
     | '/{-$locale}/test'
     | '/api/admin/users/$id'
+    | '/api/payment/subscription/cancel'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/changelog'
     | '/{-$locale}/chat'
@@ -521,6 +533,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/login/'
     | '/{-$locale}/test/'
     | '/api/admin/users/$id'
+    | '/api/payment/subscription/cancel'
     | '/api/payment/webhook/$provider'
     | '/{-$locale}/_main/_landing/changelog'
     | '/{-$locale}/_main/_landing/chat'
@@ -551,6 +564,7 @@ export interface RootRouteChildren {
   ApiFileUploadRoute: typeof ApiFileUploadRoute
   ApiPaymentCheckoutRoute: typeof ApiPaymentCheckoutRoute
   ApiPaymentCreditCheckoutRoute: typeof ApiPaymentCreditCheckoutRoute
+  ApiPaymentSubscriptionCancelRoute: typeof ApiPaymentSubscriptionCancelRoute
   ApiPaymentWebhookProviderRoute: typeof ApiPaymentWebhookProviderRoute
 }
 
@@ -808,6 +822,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPaymentWebhookProviderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/payment/subscription/cancel': {
+      id: '/api/payment/subscription/cancel'
+      path: '/api/payment/subscription/cancel'
+      fullPath: '/api/payment/subscription/cancel'
+      preLoaderRoute: typeof ApiPaymentSubscriptionCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/users/$id': {
       id: '/api/admin/users/$id'
       path: '/$id'
@@ -1034,6 +1055,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiFileUploadRoute: ApiFileUploadRoute,
   ApiPaymentCheckoutRoute: ApiPaymentCheckoutRoute,
   ApiPaymentCreditCheckoutRoute: ApiPaymentCreditCheckoutRoute,
+  ApiPaymentSubscriptionCancelRoute: ApiPaymentSubscriptionCancelRoute,
   ApiPaymentWebhookProviderRoute: ApiPaymentWebhookProviderRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,4 +1,4 @@
-import { and, eq, or } from "drizzle-orm"
+import { and, eq, ne, or } from "drizzle-orm"
 import { type DbTransaction, db } from "@/db"
 import { subscription } from "@/db/subscription.schema"
 
@@ -66,6 +66,24 @@ export async function updateSubscription(
     .where(eq(subscription.providerSubscriptionId, providerSubscriptionId))
     .returning()
   return result
+}
+
+export async function cancelOtherActiveSubscriptions(
+  userId: string,
+  excludeProviderSubscriptionId: string,
+  tx?: DbTransaction
+) {
+  const dbInstance = tx || db
+  await dbInstance
+    .update(subscription)
+    .set({ status: "canceled", canceledAt: new Date(), updatedAt: new Date() })
+    .where(
+      and(
+        eq(subscription.userId, userId),
+        ne(subscription.providerSubscriptionId, excludeProviderSubscriptionId),
+        or(eq(subscription.status, "active"), eq(subscription.status, "trialing"))
+      )
+    )
 }
 
 export async function updateSubscriptionById(

@@ -214,7 +214,8 @@ export class CreemAdapter implements PaymentAdapter {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          mode: "immediate",
+          mode: "scheduled",
+          onExecute: "cancel",
         }),
       }
     )

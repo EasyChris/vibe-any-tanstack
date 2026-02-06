@@ -1,8 +1,8 @@
 import { getRouteApi } from "@tanstack/react-router"
-import { CoinsIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react"
+import { CoinsIcon, LogOutIcon, UserIcon } from "lucide-react"
 import { useState } from "react"
 import { useIntlayer } from "react-intlayer"
-import { LocalizedLink, type To } from "@/shared/components/locale/localized-link"
+import { LocalizedLink } from "@/shared/components/locale/localized-link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar"
 import { Button } from "@/shared/components/ui/button"
 import {
@@ -125,15 +125,6 @@ export function UserMenu() {
           )}
 
           <DropdownMenuGroup>
-            <DropdownMenuItem asChild>
-              <LocalizedLink
-                to={"/profile" as To}
-                className="cursor-pointer"
-              >
-                <UserIcon className="size-4" />
-                <span>{userMenu.profile.value}</span>
-              </LocalizedLink>
-            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 setDefaultPanel(undefined)
@@ -141,8 +132,8 @@ export function UserMenu() {
               }}
               className="cursor-pointer"
             >
-              <SettingsIcon className="size-4" />
-              <span>{userMenu.settings.value}</span>
+              <UserIcon className="size-4" />
+              <span>{userMenu.profile.value}</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
 
