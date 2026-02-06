@@ -2,10 +2,14 @@ import fs from "node:fs"
 import path from "node:path"
 import { createFileRoute } from "@tanstack/react-router"
 import intlayerConfig from "@/../intlayer.config"
+import { logger } from "@/shared/lib/tools/logger"
 
 const BASE_URL = process.env.VITE_APP_URL || "http://localhost:3377"
 const LOCALES = intlayerConfig.internationalization?.locales ?? ["en", "zh"]
 const DEFAULT_LOCALE = intlayerConfig.internationalization?.defaultLocale ?? "en"
+
+const LOCALE_SUFFIX_RE = new RegExp(`\\.(${LOCALES.join("|")})?\\.mdx$`)
+const SKIP_DIRS = new Set(["categories", "authors", "meta"])
 
 type ChangeFreq = "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never"
 
@@ -35,44 +39,54 @@ const CONTENT_CONFIG: Record<string, { changeFrequency: ChangeFreq; priority: nu
 function scanContentDir(contentType: string, urlPrefix: string): PageInfo[] {
   const contentDir = path.join(process.cwd(), `content/${contentType}`)
   const pages: PageInfo[] = []
-  const config = CONTENT_CONFIG[contentType] ?? { changeFrequency: "monthly", priority: 0.5 }
+  const config = CONTENT_CONFIG[contentType] ?? { changeFrequency: "monthly" as ChangeFreq, priority: 0.5 }
   const seenSlugs = new Set<string>()
 
   if (!fs.existsSync(contentDir)) return pages
 
-  function scan(dir: string, basePath: string = "") {
-    const entries = fs.readdirSync(dir, { withFileTypes: true })
+  function scan(dir: string, basePath = "") {
+    let entries: fs.Dirent[]
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true })
+    } catch (err) {
+      logger.error(`Failed to read directory: ${dir}`, err)
+      return
+    }
 
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name)
-      const name = entry.name
 
       if (entry.isDirectory()) {
-        if (["categories", "authors", "meta"].includes(name)) continue
-        scan(fullPath, basePath ? `${basePath}/${name}` : name)
-      } else if (entry.isFile() && name.endsWith(".mdx")) {
-        // Extract slug: remove .mdx and locale suffix (.en, .zh)
-        const slug = name.replace(/\.(en|zh)?\.mdx$/, "").replace(/\.mdx$/, "")
-        const uniqueKey = basePath ? `${basePath}/${slug}` : slug
+        if (SKIP_DIRS.has(entry.name)) continue
+        scan(fullPath, basePath ? `${basePath}/${entry.name}` : entry.name)
+        continue
+      }
 
-        // Skip if already processed
-        if (seenSlugs.has(uniqueKey)) continue
-        seenSlugs.add(uniqueKey)
+      if (!entry.isFile() || !entry.name.endsWith(".mdx")) continue
 
-        if (slug === "index") {
-          if (basePath) {
-            pages.push({ path: `${urlPrefix}/${basePath}`, ...config })
-          }
-        } else {
-          const pagePath = basePath ? `${urlPrefix}/${basePath}/${slug}` : `${urlPrefix}/${slug}`
-          pages.push({ path: pagePath, ...config })
+      const slug = entry.name.replace(LOCALE_SUFFIX_RE, "").replace(/\.mdx$/, "")
+      const uniqueKey = basePath ? `${basePath}/${slug}` : slug
+
+      if (seenSlugs.has(uniqueKey)) continue
+      seenSlugs.add(uniqueKey)
+
+      if (slug === "index") {
+        if (basePath) {
+          pages.push({ path: `${urlPrefix}/${basePath}`, ...config })
         }
+      } else {
+        const pagePath = basePath ? `${urlPrefix}/${basePath}/${slug}` : `${urlPrefix}/${slug}`
+        pages.push({ path: pagePath, ...config })
       }
     }
   }
 
   scan(contentDir)
   return pages
+}
+
+function buildUrl(locale: string, pagePath: string): string {
+  return pagePath ? `${BASE_URL}/${locale}/${pagePath}` : `${BASE_URL}/${locale}`
 }
 
 function generateSitemap(): string {
@@ -98,27 +112,21 @@ function generateSitemap(): string {
   const urlEntries: string[] = []
 
   for (const page of pages) {
+    const hreflangLinks = LOCALES.map(
+      (l) => `      <xhtml:link rel="alternate" hreflang="${l}" href="${buildUrl(l, page.path)}"/>`
+    )
+    hreflangLinks.push(
+      `      <xhtml:link rel="alternate" hreflang="x-default" href="${buildUrl(DEFAULT_LOCALE, page.path)}"/>`
+    )
+    const hreflangBlock = hreflangLinks.join("\n")
+
     for (const locale of LOCALES) {
-      const loc = page.path ? `${BASE_URL}/${locale}/${page.path}` : `${BASE_URL}/${locale}`
-
-      const hreflangLinks = LOCALES.map((l) => {
-        const href = page.path ? `${BASE_URL}/${l}/${page.path}` : `${BASE_URL}/${l}`
-        return `      <xhtml:link rel="alternate" hreflang="${l}" href="${href}"/>`
-      })
-
-      const defaultHref = page.path
-        ? `${BASE_URL}/${DEFAULT_LOCALE}/${page.path}`
-        : `${BASE_URL}/${DEFAULT_LOCALE}`
-      hreflangLinks.push(
-        `      <xhtml:link rel="alternate" hreflang="x-default" href="${defaultHref}"/>`
-      )
-
       urlEntries.push(`    <url>
-      <loc>${loc}</loc>
+      <loc>${buildUrl(locale, page.path)}</loc>
       <lastmod>${today}</lastmod>
       <changefreq>${page.changeFrequency}</changefreq>
       <priority>${page.priority.toFixed(1)}</priority>
-${hreflangLinks.join("\n")}
+${hreflangBlock}
     </url>`)
     }
   }
