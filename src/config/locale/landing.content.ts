@@ -335,7 +335,7 @@ export default {
       ],
     },
     pricing: {
-      display: true,
+      display: false,
     },
     horizontalShowcase: {
       display: false,
