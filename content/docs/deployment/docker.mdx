@@ -1,0 +1,18 @@
+---
+title: Docker
+description: Complete guide to deploying your project with Docker
+---
+
+This deployment method requires you to be familiar with basic Docker usage and have production environment variables ready (database and third-party services). The project includes a built-in Dockerfile — just follow these steps to deploy.
+
+```bash title="Build the image"
+docker build -t vibe-any-tanstack .
+```
+
+```bash title="Run the container"
+docker run -p 3000:3000 vibe-any-tanstack
+```
+
+```bash title="Run in detached mode (background)"
+docker run -d -p 3000:3000 --name vibe-any-tanstack vibe-any-tanstack
+```

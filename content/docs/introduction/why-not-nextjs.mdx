@@ -1,0 +1,232 @@
+---
+title: Why TanStack Start
+description: Why we chose TanStack Start over Next.js
+---
+
+Next.js is a mature framework with a well-established ecosystem. We chose TanStack Start mainly because it better fits our needs in terms of rendering strategies and type safety.
+
+<Callout type="info">
+This is not an article criticizing Next.js. Next.js has excellent backward compatibility.
+</Callout>
+
+---
+
+## TanStack Start 2026: More Than an SPA Framework
+
+Many people still think of TanStack Start as a "client-first SPA framework." In 2026, TanStack Start supports full server-side rendering capabilities:
+
+- **Full-document SSR**: Complete server-side rendering
+- **Streaming**: Streaming rendering
+- **Static Prerendering**: Static pre-rendering
+- **ISR (Incremental Static Regeneration)**: Static generation for dynamic content
+- **Selective SSR**: Choose which pages need SSR on demand
+- **SPA Mode**: Pure client-side rendering mode
+- **Server Functions**: Type-safe server function calls
+- **LLM Optimization (LLMO)**: Optimization for AI crawlers
+
+TanStack Start essentially supports all the rendering strategies that Next.js can do. So why did we still choose it?
+
+---
+
+## The Next.js Learning Curve
+
+Let's talk about the learning cost of Next.js. Beginners often just want to ship their product, but App Router introduces quite a few concepts.
+
+### Conceptual Complexity
+
+Next.js App Router introduces these concepts:
+
+- **Server Components vs Client Components**: Components are server components by default, requiring `"use client"` to switch
+- **Serialization Boundary**: You can't pass functions or class instances from Server Components to Client Components
+- **Hydration Mismatch**: Very hard to debug when server and client rendering are inconsistent
+- **`"use server"` Directive**: A string directive turns something into a server component or server function
+
+Just understanding "where does this code execute" is already a headache for beginners.
+
+### Caching Mechanism
+
+Next.js has a complex caching system:
+
+```tsx
+// Will this fetch be cached?
+const data = await fetch('/api/data');
+
+// What about with this?
+const data = await fetch('/api/data', { cache: 'no-store' });
+
+// Or do we need this?
+export const dynamic = 'force-dynamic';
+
+// Or maybe revalidate?
+export const revalidate = 60;
+```
+
+Next.js has multiple layers of caching: Data Cache, Full Route Cache, Router Cache... Even senior developers often get confused by how they interact. v14 cached by default, v15 changed to not caching by default — these changes add to the cognitive burden.
+
+### Two Router Systems
+
+Next.js has both Pages Router and App Router:
+
+- Online tutorials are mixed, beginners don't know which one to learn
+- The two systems differ significantly in concepts and APIs
+- Migrating from Pages Router to App Router requires substantial code changes
+
+### Debugging
+
+Next.js's implicit behavior makes debugging tricky:
+
+- Page not updating? Might be a caching issue, but you don't know which layer
+- Component error? Might be a server/client boundary issue with unclear error messages
+- Performance problem? Not sure if it's SSR, hydration, or client-side rendering
+
+---
+
+## TanStack Start's Characteristics
+
+TanStack Start has a relatively gentler learning curve:
+
+- **No Server Components**: All components are the React components you're familiar with
+- **Explicit Rendering Strategies**: Each route's SSR/SPA/static behavior is clearly defined in code
+- **Familiar Data Fetching**: TanStack Query's `useQuery` pattern
+- **Type System Helps You Check**: Errors are exposed at compile time
+
+TanStack Start also has a learning curve, but its mental model is closer to traditional React development.
+
+---
+
+## Why We Chose It
+
+### 1. You Decide the Rendering Strategy
+
+Next.js is designed as "server-first" — all components are Server Components by default, requiring explicit `"use client"` to switch to client-side.
+
+TanStack Start is different: you decide each page's rendering strategy.
+
+```tsx
+// Pure SPA mode: ideal for dashboards, AI chat, and other highly interactive apps
+export const Route = createFileRoute('/dashboard')({
+  ssr: false,
+  component: Dashboard,
+});
+
+// SSR mode: ideal for pages that need SEO
+export const Route = createFileRoute('/blog/$slug')({
+  loader: async ({ params }) => fetchPost(params.slug),
+  component: BlogPost,
+});
+
+// Static prerendering: ideal for pages with infrequently changing content
+export const Route = createFileRoute('/about')({
+  preload: 'intent',
+  component: About,
+});
+```
+
+You can mix different rendering strategies within the same application without being constrained by the framework's defaults.
+
+### 2. Type-Safe Routing System
+
+TanStack Router has excellent type safety:
+
+```tsx
+// Filename: $threadId.tsx
+export const Route = createFileRoute('/chat/$threadId')({
+  loader: async ({ params }) => {
+    // params.threadId is automatically inferred as string
+    return fetchThread(params.threadId);
+  },
+  component: () => {
+    const { threadId } = Route.useParams();
+    // threadId is guaranteed to exist at compile time
+  }
+});
+```
+
+When you rename files, the dev server automatically updates related code. Misspelled links or type mismatches are caught at compile time.
+
+### 3. Server Functions vs Server Actions
+
+Both allow calling server code from the client, but they differ in design:
+
+```tsx
+// TanStack Server Function: type-safe RPC
+export const updateUser = createServerFn()
+  .validator((data: { name: string; age: number }) => data)
+  .handler(async ({ data }) => {
+    // data type is automatically inferred
+    return db.users.update(data);
+  });
+
+// Client-side call (fully type-safe)
+await updateUser({ name: 'Alice', age: 30 });
+```
+
+Server Functions are more like type-safe RPC, with built-in validators and middleware support. The calling pattern is the same as regular functions.
+
+### 4. Vite Build
+
+TanStack Start is built on Vite, offering a better development experience than the Webpack era:
+
+| Dimension | Next.js + Turbopack | TanStack Start + Vite |
+|------|---------------------|----------------------|
+| Startup Speed | 5-10 seconds for large projects | Milliseconds |
+| HMR Response | Occasional lag | Nearly instant |
+| Plugin Ecosystem | Requires adaptation | Direct use of Vite plugins |
+
+---
+
+## Technical Foundation
+
+TanStack Start is a new framework, but it's built on mature technologies:
+
+- **TanStack Router**: Type-safe routing
+- **TanStack Query**: React data fetching library
+- **Vite**: Fast dev builds
+- **Nitro**: Server infrastructure from the Nuxt team
+
+---
+
+## Challenges
+
+<Callout type="warn" title="The Cost of an Early Framework">
+TanStack Start is a relatively new framework. The API is stable, but edge cases may exist.
+</Callout>
+
+Compared to the years of accumulated documentation and community answers of Next.js, TanStack Start's resources are still evolving. When you encounter issues, you may need to read the source code directly or ask in Discord.
+
+---
+
+## Next.js's Strengths
+
+Next.js is still a great framework:
+
+- **Great backward compatibility**: A Next 10 app can upgrade to Next 16 with minimal changes
+- **Stable**: Years of continuous maintenance
+- **Mature ecosystem**: Deployment, monitoring, and edge computing all have mature solutions
+
+---
+
+## Recommendations
+
+**Stick with Next.js**:
+- Your team is familiar with Next.js and the project runs well
+- You need React Server Components
+- You don't want to deal with a new framework's rough edges
+
+**Consider TanStack Start**:
+- Building interaction-heavy applications (dashboards, AI chat, collaboration tools)
+- You value end-to-end type safety
+- You want more flexible rendering strategies
+- You can tolerate an early framework's documentation and ecosystem gaps
+
+---
+
+## Summary
+
+We chose TanStack Start not because Next.js is bad, but because it better fits our needs:
+
+- Flexible rendering strategies — mix SSR, SPA, and static prerendering in the same app
+- End-to-end type safety
+- Explicit behavior with no hidden magic
+
+Which framework you choose depends on your requirements. Understand your needs and pick the right tool.

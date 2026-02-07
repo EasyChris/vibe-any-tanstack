@@ -1,0 +1,139 @@
+---
+title: Blog
+description: Write blog posts with MDX, supporting categories, tags, and author management
+---
+
+VibeAny includes a complete blog system built on [fumadocs-mdx](https://fumadocs.dev/docs/mdx), making it easy to write and manage blog posts.
+
+## Directory Structure
+
+Blog-related content is stored in the `content` directory:
+
+```bash
+content/
+├── blog/                    # Blog posts
+│   ├── my-first-post.mdx    # English post
+│   └── my-first-post.zh.mdx # Chinese post
+├── authors/                 # Author information
+│   └── vibe-any.mdx
+└── categories/              # Post categories
+    ├── company.mdx
+    └── product.mdx
+```
+
+## Creating a Blog Post
+
+Create a new `.mdx` file in the `content/blog/` directory:
+
+```mdx title="content/blog/hello-world.mdx"
+---
+title: Hello World
+description: My first blog post
+image: /images/blog/hello-world.png  # Cover image (optional)
+date: 2026-02-01T00:00:00Z
+published: true                       # Set to false to hide
+categories: [product]                 # Categories
+author: vibe-any                      # Author
+tags: [nextjs, tutorial]              # Tags
+---
+
+Here is the body content, supporting all MDX syntax...
+```
+
+### Frontmatter Field Reference
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `title` | string | Yes | Post title |
+| `description` | string | No | Post description for SEO and list display |
+| `image` | string | No | Cover image URL |
+| `date` | string | Yes | Publication date, ISO 8601 format |
+| `published` | boolean | Yes | Whether to publish |
+| `categories` | string[] | No | Category ID array |
+| `author` | string | No | Author ID |
+| `tags` | string[] | No | Tag array |
+
+## Multi-language Support
+
+The blog supports multiple languages, distinguished by file suffix:
+
+- `my-post.mdx` — English version (default)
+- `my-post.zh.mdx` — Chinese version
+
+The system automatically loads the corresponding language version based on the current locale.
+
+## Managing Authors
+
+Create author files in the `content/authors/` directory:
+
+```mdx title="content/authors/john.mdx"
+---
+name: John Doe
+avatar: /images/authors/john.png
+twitter: johndoe
+---
+
+Author bio goes here...
+```
+
+Then reference the author in blog posts with `author: john`.
+
+## Managing Categories
+
+Create category files in the `content/categories/` directory:
+
+```mdx title="content/categories/tutorial.mdx"
+---
+title: Tutorial
+description: Technical tutorial articles
+---
+```
+
+Then reference the category in blog posts with `categories: [tutorial]`.
+
+## Accessing the Blog
+
+Blog page routes are:
+
+- List page: `/blog`
+- Detail page: `/blog/[slug]`
+
+Users can filter posts by category and click post cards to read the full article.
+
+## Customizing Styles
+
+The blog pages use the following components, which you can customize in the corresponding files:
+
+- Blog grid: `src/shared/components/blog/blog-grid.tsx`
+- Blog card: `src/shared/components/blog/blog-card.tsx`
+- Post content: `src/shared/components/blog/custom-mdx-content.tsx`
+
+## Developer
+
+If you need to deeply customize the blog system, here are the core configuration files:
+
+### Source Configuration
+
+| File | Description |
+| --- | --- |
+| `source.config.ts` | Defines the blog collection schema and configuration |
+| `src/config/content/blog-source.ts` | Blog data source loading logic and helper functions |
+
+### Style Files
+
+| File | Description |
+| --- | --- |
+| `src/config/style/docs.css` | Blog MDX content base styles (shared with docs styles) |
+| `src/shared/components/blog/*.tsx` | Blog UI component styles |
+
+### Route Files
+
+| File | Description |
+| --- | --- |
+| `src/routes/{-$locale}/_main/_landing/blog/index.tsx` | Blog list page |
+| `src/routes/{-$locale}/_main/_landing/blog/$slug.tsx` | Blog detail page |
+
+### Fumadocs Resources
+
+- [Collections Configuration](https://fumadocs.dev/docs/mdx/collections) — Learn how to define content collections
+- [MDX Components](https://fumadocs.dev/docs/ui/mdx) — Available MDX components

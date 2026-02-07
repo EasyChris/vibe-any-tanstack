@@ -1,0 +1,143 @@
+---
+title: Changelog
+description: Timeline-style changelog built with MDX to document your product's iteration history
+---
+
+VibeAny includes a built-in changelog feature that displays product updates in a timeline format, keeping users informed about new features and improvements.
+
+## Directory Structure
+
+Changelog entries are stored in the `content/changelog/` directory:
+
+```bash
+content/changelog/
+├── initial-release.mdx      # English version
+├── initial-release.zh.mdx   # Chinese version
+├── v1.1.0.mdx
+└── v1.1.0.zh.mdx
+```
+
+## Creating a Changelog Entry
+
+Create a new `.mdx` file in the `content/changelog/` directory:
+
+```mdx title="content/changelog/v1.1.0.mdx"
+---
+title: Dark Mode Added
+date: 2026-02-01
+version: v1.1.0
+published: true
+tags:
+  - Feature
+  - UI
+---
+
+We're excited to announce the release of v1.1.0!
+
+## New Features
+
+- Added dark mode with system theme support
+- Improved mobile responsive layout
+
+## Bug Fixes
+
+- Fixed login page styling issues on Safari
+- Fixed incorrect credit record pagination
+
+## Improvements
+
+- Improved page load speed
+- Optimized SEO metadata
+```
+
+### Frontmatter Field Reference
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `title` | string | Yes | Update title |
+| `date` | string | Yes | Publication date, format `YYYY-MM-DD` |
+| `version` | string | No | Version number, e.g., `v1.0.0` |
+| `published` | boolean | Yes | Whether to publish |
+| `tags` | string[] | No | Tag array for categorization (e.g., Feature, Fix, Improvement) |
+
+## Multi-language Support
+
+The changelog supports multiple languages, distinguished by file suffix:
+
+- `v1.1.0.mdx` — English version (default)
+- `v1.1.0.zh.mdx` — Chinese version
+
+## Display
+
+The changelog page route is `/changelog`, displayed as a timeline of all published updates:
+
+- Sorted by date in descending order, newest updates at the top
+- Displays version number labels
+- Supports MDX rich text content
+- Responsive layout, mobile-friendly
+
+## Writing Guidelines
+
+To make the changelog clear and readable, follow these conventions:
+
+### Use Semantic Categories
+
+```markdown
+## New Features
+- Added xxx feature
+
+## Bug Fixes
+- Fixed xxx issue
+
+## Improvements
+- Optimized xxx performance
+
+## Breaking Changes
+- xxx API has been deprecated, please use yyy instead
+```
+
+### Write for Users
+
+Describe changes in language that users can understand, not technical jargon:
+
+```markdown
+❌ Refactored AuthService dependency injection logic
+✅ Improved login flow, now 50% faster
+```
+
+## Customizing Styles
+
+The changelog page uses the following components, which you can customize in the corresponding files:
+
+- Timeline container: `src/shared/components/changelog/timeline.tsx`
+- Timeline item: `src/shared/components/changelog/timeline-item.tsx`
+- MDX extras: `src/shared/components/changelog/mdx-extras.tsx`
+
+## Developer
+
+If you need to deeply customize the changelog system, here are the core configuration files:
+
+### Source Configuration
+
+| File | Description |
+| --- | --- |
+| `source.config.ts` | Defines the changelog collection schema and configuration |
+| `src/config/content/changelog-source.ts` | Changelog data source loading logic |
+
+### Style Files
+
+| File | Description |
+| --- | --- |
+| `src/config/style/docs.css` | MDX content base styles |
+| `src/shared/components/changelog/*.tsx` | Timeline UI component styles |
+
+### Route Files
+
+| File | Description |
+| --- | --- |
+| `src/routes/{-$locale}/_main/_landing/changelog.tsx` | Changelog page |
+
+### Fumadocs Resources
+
+- [Collections Configuration](https://fumadocs.dev/docs/mdx/collections) — Learn how to define content collections
+- [MDX Components](https://fumadocs.dev/docs/ui/mdx) — Available MDX components

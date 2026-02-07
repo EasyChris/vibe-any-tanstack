@@ -1,0 +1,147 @@
+---
+title: Roadmap
+description: Render a Kanban-style roadmap using JSON configuration and reusable components, with multi-language support
+---
+
+VibeAny includes a built-in product roadmap feature that displays product planning in a Kanban format, keeping users informed about upcoming features and current development progress.
+
+## Directory Structure
+
+Roadmap configuration is stored in the `content/roadmap/` directory:
+
+```bash
+content/roadmap/
+├── config.en.json    # English configuration
+└── config.zh.json    # Chinese configuration
+```
+
+## Configuration Format
+
+The roadmap uses JSON format, structured as follows:
+
+```json title="content/roadmap/config.en.json"
+{
+  "columns": [
+    {
+      "title": "Planned",
+      "icon": "Calendar",
+      "color": "#60A5FA",
+      "items": [
+        {
+          "title": "Feature Name",
+          "description": "Feature description"
+        }
+      ]
+    },
+    {
+      "title": "In Progress",
+      "icon": "Loader",
+      "color": "#F59E0B",
+      "items": []
+    },
+    {
+      "title": "Launched",
+      "icon": "Rocket",
+      "color": "#34D399",
+      "items": []
+    }
+  ]
+}
+```
+
+### Configuration Field Reference
+
+#### Column
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `title` | string | Yes | Column title, e.g., "Planned", "In Progress", "Launched" |
+| `icon` | string | Yes | Lucide icon name |
+| `color` | string | Yes | Column theme color, hex color value |
+| `items` | array | Yes | Array of feature items in this column |
+
+#### Item
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `title` | string | Yes | Feature name |
+| `description` | string | Yes | Feature description |
+
+### Available Icons
+
+Icons use [Lucide Icons](https://lucide.dev/icons/). Common icons include:
+
+- `Calendar` — Calendar, for "Planned"
+- `Loader` — Loading, for "In Progress"
+- `Rocket` — Rocket, for "Launched"
+- `CheckCircle` — Check mark, for "Completed"
+- `Clock` — Clock, for "Waiting"
+- `Star` — Star, for "Featured"
+
+## Multi-language Support
+
+The roadmap supports multiple languages through separate configuration files:
+
+- `config.en.json` — English version
+- `config.zh.json` — Chinese version
+
+The system automatically loads the corresponding configuration file based on the current language.
+
+## Display
+
+The roadmap page route is `/roadmap`, displayed as a three-column Kanban board:
+
+- Responsive layout, automatically switches to single column on mobile
+- Each column displays an icon and color indicator
+- Feature cards show title and description
+
+## Customizing Column Count
+
+The default uses a three-column layout (Planned, In Progress, Launched). You can adjust the number of columns as needed by adding or removing elements in the `columns` array.
+
+```json title="Four-column layout example"
+{
+  "columns": [
+    { "title": "Ideas", "icon": "Lightbulb", "color": "#A78BFA", "items": [] },
+    { "title": "Planned", "icon": "Calendar", "color": "#60A5FA", "items": [] },
+    { "title": "In Progress", "icon": "Loader", "color": "#F59E0B", "items": [] },
+    { "title": "Launched", "icon": "Rocket", "color": "#34D399", "items": [] }
+  ]
+}
+```
+
+## Customizing Styles
+
+The roadmap page uses the following components, which you can customize in the corresponding files:
+
+- Board container: `src/shared/components/roadmap/board.tsx`
+- Column component: `src/shared/components/roadmap/column.tsx`
+- Card component: `src/shared/components/roadmap/item-card.tsx`
+
+## Developer
+
+If you need to deeply customize the roadmap system, here are the core configuration files:
+
+### Source Configuration
+
+| File | Description |
+| --- | --- |
+| `source.config.ts` | Defines the roadmap collection schema (uses JSON metadata) |
+| `src/config/content/roadmap-source.ts` | Roadmap data source loading logic |
+
+### Style Files
+
+| File | Description |
+| --- | --- |
+| `src/shared/components/roadmap/*.tsx` | Kanban UI component styles |
+
+### Route Files
+
+| File | Description |
+| --- | --- |
+| `src/routes/{-$locale}/_main/_landing/roadmap.tsx` | Roadmap page |
+
+### Fumadocs Resources
+
+- [Collections Configuration](https://fumadocs.dev/docs/mdx/collections) — Learn how to define content collections
+- [Metadata Files](https://fumadocs.dev/docs/mdx/collections#meta-files) — Using JSON configuration for metadata

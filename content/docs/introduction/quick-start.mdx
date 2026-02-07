@@ -1,0 +1,98 @@
+---
+title: Quick Start
+description: Get started with VibeAny quickly
+---
+
+VibeAny is a modern AI development boilerplate built with full-stack capabilities including user authentication, AI features, payments, and an admin panel — helping you ship ideas faster.
+
+## Prerequisites
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 1. Node.js
+    Node.js is a runtime environment for executing JavaScript code locally.
+    If not installed, macOS users can install it via brew:
+    ```bash
+    brew install node
+    ```
+
+    Or download the LTS version from the [Node.js official website](https://nodejs.org/).
+
+    After installation, verify by checking the version (v20.19.0 or above is recommended):
+    ```bash
+    node --version
+    ```
+
+  </div>
+  <div className="fd-step">
+    ### 2. Git
+    Git is a version control tool for tracking code history and collaborating.
+
+    macOS users can install [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (Git is included with Xcode).
+
+    Or download from the [Git official website](https://git-scm.com/).
+
+    ```bash
+    git --version
+    ```
+  </div>
+  <div className="fd-step">
+    ### 3. Package Manager
+    Used to install dependencies. We recommend <code>pnpm</code>, but you can also use <code>npm</code>, <code>bun</code>, or <code>yarn</code>.
+
+    ```bash
+    # Install pnpm via npm
+    npm install -g pnpm
+    # Check version
+    pnpm -v
+    ```
+  </div>
+</div>
+
+> Tip: If you'd like a better terminal experience, try [Warp](https://www.warp.dev/) — it supports multiple tabs, themes, command completion, and more.
+
+
+## Get Started (3 Steps)
+
+<div className="fd-steps">
+  <div className="fd-step" >
+    ### 1. Clone the Project
+    <p>Download the repository to your local machine. You can replace <code>vibe-any</code> with any folder name.</p>
+    <p>Don't want to use Git? You can download the ZIP directly:</p>
+    <p>
+      <a href="https://github.com/待修改/main.zip" target="_blank" rel="noreferrer">Download ZIP</a>
+    </p>
+
+    ```bash
+    git clone https://github.com/待修改/vibe-any.git
+    cd vibe-any
+    ```
+  </div>
+  <div className="fd-step" >
+    ### 2. Install Dependencies
+    <p>Choose a package manager and run the install command. Pick one of the following:</p>
+
+    ```bash tab="pnpm"
+    pnpm install
+    ```
+
+    ```bash tab="npm"
+    npm install
+    ```
+
+    ```bash tab="bun"
+    bun install
+    ```
+
+  </div>
+  <div className="fd-step" >
+    ### 3. Set Up Environment Variables
+    <p><code>.env</code> stores the variables needed to run the project (e.g., database, third-party service keys). Copy the example file first, then fill in the values following the comments.</p>
+
+    ```bash
+    cp .env.example .env
+    ```
+  </div>
+</div>
+
+> Tip: Common variables include <code>DATABASE_URL</code>, OAuth (GitHub/Google) configuration, and payment-related keys. See the [Environment Variables](../03-environment) documentation for details.

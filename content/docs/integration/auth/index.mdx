@@ -1,0 +1,203 @@
+---
+title: Authentication
+description: Built-in authentication system powered by better-auth, supporting email/password login, OAuth providers, email verification, and captcha protection
+---
+
+VibeAny uses [better-auth](https://www.better-auth.com/) as its authentication framework, with session data stored in PostgreSQL. Authentication is optional — if `DATABASE_URL` and `BETTER_AUTH_SECRET` are not configured, the app runs in static mode without user login.
+
+## Prerequisites
+
+Before setting up authentication, make sure you have:
+
+1. A PostgreSQL database — see [Database](/docs/integration/database/supabase) for setup instructions
+2. An email service — required for email verification (Resend recommended, see [Environment Variables](/docs/introduction/environment))
+
+## Quick Start
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Set Auth Secret
+    Add to `.env`:
+    ```bash
+    BETTER_AUTH_SECRET=your-secret-key
+    ```
+    You can generate one on the [better-auth website](https://www.better-auth.com/docs/installation#set-environment-variables), or use the button below:
+
+    <SecretGenerator label="Generate Secret" />
+  </div>
+  <div className="fd-step">
+    ### Configure Database
+    Make sure `DATABASE_URL` is set in `.env`:
+    ```bash
+    DATABASE_URL="postgresql://user:password@host:port/database"
+    ```
+  </div>
+  <div className="fd-step">
+    ### Configure Email Service
+    Email verification is enabled by default. Configure an email provider so users can verify their accounts:
+    ```bash
+    EMAIL_PROVIDER=resend
+    EMAIL_FROM="YourApp <noreply@yourdomain.com>"
+    RESEND_API_KEY=re_xxx
+    ```
+    Or configure a custom SMTP server:
+    ```bash
+    EMAIL_PROVIDER=custom
+    EMAIL_FROM="YourApp <noreply@yourdomain.com>"
+    EMAIL_HOST=smtp.example.com
+    EMAIL_ADDRESS=noreply@example.com
+    EMAIL_USER=your-username
+    EMAIL_PASSWORD=your-password
+    ```
+  </div>
+  <div className="fd-step">
+    ### Run Migrations
+    Generate and apply the database schema:
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### Verify
+    Start the dev server and visit the login page. You should see the email/password sign-up form.
+  </div>
+</div>
+
+## Email/Password Authentication
+
+Email/password login is enabled by default. The flow works as follows:
+
+1. User signs up with email and password
+2. A verification email is sent automatically
+3. User clicks the verification link
+4. Account is verified and the user is signed in automatically
+
+<Callout type="info" title="Note">
+Email verification is required — users cannot sign in until they verify their email address.
+</Callout>
+
+## OAuth Providers
+
+VibeAny supports GitHub and Google as OAuth providers. They are automatically enabled when the corresponding environment variables are set.
+
+### GitHub
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create OAuth App
+    Go to [GitHub Developer Settings](https://github.com/settings/developers) → `OAuth Apps` → `New OAuth App`.
+
+    Set the callback URL to:
+    ```
+    https://your-domain.com/api/auth/callback/github
+    ```
+    For local development:
+    ```
+    http://localhost:3377/api/auth/callback/github
+    ```
+  </div>
+  <div className="fd-step">
+    ### Configure Environment Variables
+    Copy the Client ID and Client Secret to `.env`:
+    ```bash
+    GITHUB_CLIENT_ID=your-client-id
+    GITHUB_CLIENT_SECRET=your-client-secret
+    ```
+  </div>
+</div>
+
+### Google
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create OAuth Credentials
+    Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → `Create Credentials` → `OAuth client ID`.
+
+    Select `Web application` as the application type. Add the authorized redirect URI:
+    ```
+    https://your-domain.com/api/auth/callback/google
+    ```
+    For local development:
+    ```
+    http://localhost:3377/api/auth/callback/google
+    ```
+  </div>
+  <div className="fd-step">
+    ### Configure Environment Variables
+    Copy the Client ID and Client Secret to `.env`:
+    ```bash
+    GOOGLE_CLIENT_ID=your-client-id
+    GOOGLE_CLIENT_SECRET=your-client-secret
+    ```
+  </div>
+</div>
+
+<Callout type="info" title="Note">
+OAuth providers are optional. The login page automatically shows the corresponding OAuth buttons only when the environment variables are configured.
+</Callout>
+
+## Captcha Protection
+
+VibeAny supports [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) to protect sign-in, sign-up, and OAuth flows from bots.
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create Turnstile Widget
+    Go to the [Cloudflare Dashboard](https://dash.cloudflare.com/) → `Turnstile` → `Add Widget`. Add your domain and get the Site Key and Secret Key.
+  </div>
+  <div className="fd-step">
+    ### Configure Environment Variables
+    ```bash
+    VITE_TURNSTILE_CAPTCHA_ENABLED=true
+    VITE_TURNSTILE_SITE_KEY=0x4xxx
+    TURNSTILE_SECRET_KEY=0x4xxx
+    ```
+  </div>
+</div>
+
+## Admin Access
+
+Admin users have access to the admin panel for managing users, payments, credits, and configuration.
+
+To grant admin access, add the user's email to the `ADMIN_EMAILS` environment variable:
+
+```bash
+ADMIN_EMAILS=admin@example.com,another-admin@example.com
+```
+
+Multiple emails are separated by commas.
+
+## Configuration Reference
+
+| Environment Variable | Required | Description |
+|---------|------|------|
+| `BETTER_AUTH_SECRET` | Yes | Auth secret key for encryption |
+| `DATABASE_URL` | Yes | PostgreSQL connection URL |
+| `ADMIN_EMAILS` | No | Comma-separated admin email addresses |
+| `GITHUB_CLIENT_ID` | No | GitHub OAuth Client ID |
+| `GITHUB_CLIENT_SECRET` | No | GitHub OAuth Client Secret |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth Client ID |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth Client Secret |
+| `VITE_TURNSTILE_CAPTCHA_ENABLED` | No | Enable Turnstile captcha (`true`/`false`) |
+| `VITE_TURNSTILE_SITE_KEY` | No | Turnstile Site Key |
+| `TURNSTILE_SECRET_KEY` | No | Turnstile Secret Key |
+
+## Database Tables
+
+Authentication creates the following tables automatically:
+
+| Table | Description |
+|------|------|
+| `user` | User profiles (name, email, avatar, etc.) |
+| `session` | Active sessions with tokens and expiration |
+| `account` | Linked auth providers (credentials, GitHub, Google) |
+| `verification` | Email verification tokens |

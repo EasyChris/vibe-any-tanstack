@@ -1,0 +1,203 @@
+---
+title: 身份认证
+description: 基于 better-auth 的内置认证系统，支持邮箱密码登录、OAuth 社交登录、邮箱验证和验证码保护
+---
+
+VibeAny 使用 [better-auth](https://www.better-auth.com/) 作为认证框架，会话数据存储在 PostgreSQL 中。认证是可选的——如果未配置 `DATABASE_URL` 和 `BETTER_AUTH_SECRET`，应用将以静态模式运行，不包含用户登录功能。
+
+## 前置条件
+
+在配置认证之前，请确保已完成：
+
+1. PostgreSQL 数据库 — 参考[数据库配置](/docs/integration/database/supabase)
+2. 邮件服务 — 用于邮箱验证（推荐使用 Resend，参考[环境变量](/docs/introduction/environment)）
+
+## 快速开始
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 设置认证密钥
+    在 `.env` 中添加：
+    ```bash
+    BETTER_AUTH_SECRET=your-secret-key
+    ```
+    可以在 [better-auth 官网](https://www.better-auth.com/docs/installation#set-environment-variables)生成，或使用下方按钮：
+
+    <SecretGenerator label="Generate Secret" />
+  </div>
+  <div className="fd-step">
+    ### 配置数据库
+    确保 `.env` 中已设置 `DATABASE_URL`：
+    ```bash
+    DATABASE_URL="postgresql://user:password@host:port/database"
+    ```
+  </div>
+  <div className="fd-step">
+    ### 配置邮件服务
+    邮箱验证默认开启，需要配置邮件服务以便用户完成账号验证：
+    ```bash
+    EMAIL_PROVIDER=resend
+    EMAIL_FROM="YourApp <noreply@yourdomain.com>"
+    RESEND_API_KEY=re_xxx
+    ```
+    或配置自定义 SMTP 服务器：
+    ```bash
+    EMAIL_PROVIDER=custom
+    EMAIL_FROM="YourApp <noreply@yourdomain.com>"
+    EMAIL_HOST=smtp.example.com
+    EMAIL_ADDRESS=noreply@example.com
+    EMAIL_USER=your-username
+    EMAIL_PASSWORD=your-password
+    ```
+  </div>
+  <div className="fd-step">
+    ### 运行数据库迁移
+    生成并应用数据库表结构：
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### 验证
+    启动开发服务器，访问登录页面，应该能看到邮箱密码注册表单。
+  </div>
+</div>
+
+## 邮箱密码认证
+
+邮箱密码登录默认开启，流程如下：
+
+1. 用户使用邮箱和密码注册
+2. 系统自动发送验证邮件
+3. 用户点击验证链接
+4. 账号验证完成，自动登录
+
+<Callout type="info" title="提示">
+邮箱验证是必需的——用户在完成邮箱验证之前无法登录。
+</Callout>
+
+## OAuth 社交登录
+
+VibeAny 支持 GitHub 和 Google 作为 OAuth 登录方式。配置对应的环境变量后会自动启用。
+
+### GitHub
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 创建 OAuth 应用
+    前往 [GitHub Developer Settings](https://github.com/settings/developers) → `OAuth Apps` → `New OAuth App`。
+
+    回调 URL 填写：
+    ```
+    https://your-domain.com/api/auth/callback/github
+    ```
+    本地开发环境：
+    ```
+    http://localhost:3377/api/auth/callback/github
+    ```
+  </div>
+  <div className="fd-step">
+    ### 配置环境变量
+    将 Client ID 和 Client Secret 复制到 `.env`：
+    ```bash
+    GITHUB_CLIENT_ID=your-client-id
+    GITHUB_CLIENT_SECRET=your-client-secret
+    ```
+  </div>
+</div>
+
+### Google
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 创建 OAuth 凭据
+    前往 [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → `创建凭据` → `OAuth 客户端 ID`。
+
+    应用类型选择 `Web 应用`，添加已授权的重定向 URI：
+    ```
+    https://your-domain.com/api/auth/callback/google
+    ```
+    本地开发环境：
+    ```
+    http://localhost:3377/api/auth/callback/google
+    ```
+  </div>
+  <div className="fd-step">
+    ### 配置环境变量
+    将 Client ID 和 Client Secret 复制到 `.env`：
+    ```bash
+    GOOGLE_CLIENT_ID=your-client-id
+    GOOGLE_CLIENT_SECRET=your-client-secret
+    ```
+  </div>
+</div>
+
+<Callout type="info" title="提示">
+OAuth 登录是可选的。登录页面会根据环境变量是否配置，自动显示或隐藏对应的社交登录按钮。
+</Callout>
+
+## 验证码保护
+
+VibeAny 支持 [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) 来保护登录、注册和 OAuth 流程，防止机器人攻击。
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### 创建 Turnstile 小组件
+    前往 [Cloudflare Dashboard](https://dash.cloudflare.com/) → `Turnstile` → `添加小组件`。添加你的域名，获取 Site Key 和 Secret Key。
+  </div>
+  <div className="fd-step">
+    ### 配置环境变量
+    ```bash
+    VITE_TURNSTILE_CAPTCHA_ENABLED=true
+    VITE_TURNSTILE_SITE_KEY=0x4xxx
+    TURNSTILE_SECRET_KEY=0x4xxx
+    ```
+  </div>
+</div>
+
+## 管理员访问
+
+管理员用户可以访问后台管理面板，管理用户、支付、积分和配置。
+
+将用户的邮箱添加到 `ADMIN_EMAILS` 环境变量即可授予管理员权限：
+
+```bash
+ADMIN_EMAILS=admin@example.com,another-admin@example.com
+```
+
+多个邮箱用英文逗号分隔。
+
+## 配置参考
+
+| 环境变量 | 必填 | 说明 |
+|---------|------|------|
+| `BETTER_AUTH_SECRET` | 是 | 认证加密密钥 |
+| `DATABASE_URL` | 是 | PostgreSQL 连接地址 |
+| `ADMIN_EMAILS` | 否 | 管理员邮箱，多个用逗号分隔 |
+| `GITHUB_CLIENT_ID` | 否 | GitHub OAuth Client ID |
+| `GITHUB_CLIENT_SECRET` | 否 | GitHub OAuth Client Secret |
+| `GOOGLE_CLIENT_ID` | 否 | Google OAuth Client ID |
+| `GOOGLE_CLIENT_SECRET` | 否 | Google OAuth Client Secret |
+| `VITE_TURNSTILE_CAPTCHA_ENABLED` | 否 | 启用 Turnstile 验证码（`true`/`false`） |
+| `VITE_TURNSTILE_SITE_KEY` | 否 | Turnstile Site Key |
+| `TURNSTILE_SECRET_KEY` | 否 | Turnstile Secret Key |
+
+## 数据库表
+
+认证系统会自动创建以下数据库表：
+
+| 表名 | 说明 |
+|------|------|
+| `user` | 用户信息（名称、邮箱、头像等） |
+| `session` | 活跃会话，包含令牌和过期时间 |
+| `account` | 关联的认证方式（邮箱密码、GitHub、Google） |
+| `verification` | 邮箱验证令牌 |

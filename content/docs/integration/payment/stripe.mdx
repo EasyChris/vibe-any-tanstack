@@ -1,0 +1,185 @@
+---
+title: Stripe
+description: Stripe is a leading global online payment platform supporting 100+ payment methods, subscription billing, and fraud protection
+---
+
+## Quick Start
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create a Stripe Account
+    Go to [Stripe](https://stripe.com/) and sign up for an account.
+  </div>
+  <div className="fd-step">
+    ### Get API Keys
+    1. Open the [Stripe Dashboard](https://dashboard.stripe.com/), click `Developers` → `API Keys`
+    ![Stripe API Keys](/docs/integration/payment/stripe-developers.webp)
+    2. Create a key
+    ![Stripe Create API](/docs/integration/payment/stripe-create-key.webp)
+    3. Copy the keys to `.env`
+    ![Stripe Create API](/docs/integration/payment/stripe-api.webp)
+    ```bash
+    VITE_STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+    STRIPE_SECRET_KEY=sk_test_xxx
+    ```
+    You can also enter them in the admin config panel:
+    ![Stripe API Keys](/docs/integration/payment/stripe-backstage-api.webp)
+    <Callout type="warn" title="Warning">
+     `STRIPE_SECRET_KEY` is sensitive information — do not commit it to your code repository.
+    </Callout>
+  </div>
+  <div className="fd-step">
+    ### Configure Webhook
+    ![Stripe Create Webhook](/docs/integration/payment/stripe-webhook.webp)
+    Listen for the following events:
+    - `checkout.session.completed`
+    - `invoice.payment_succeeded`
+    - `invoice.payment_failed`
+    - `customer.subscription.created`
+    - `customer.subscription.updated`
+    - `customer.subscription.deleted`
+    ![Stripe Webhook Events](/docs/integration/payment/stripe-events.webp)
+    Enter your callback URL:
+    ```
+    https://your-domain.com/api/payment/webhook/stripe
+    ```
+    ![Stripe Webhook Path](/docs/integration/payment/stripe-destination.webp)
+
+    Copy the Webhook Secret to `.env`, or configure it in the admin panel:
+    ![Stripe Webhook Secret](/docs/integration/payment/stripe-webhook-prod.webp)
+    ```bash
+    STRIPE_WEBHOOK_SECRET=whsec_xxx
+    ```
+    For local development, use sandbox mode — see <a href="#sandbox">below</a>.
+  </div>
+</div>
+
+
+## Sandbox Mode[#sandbox]
+
+Used for local testing — no real charges are made.
+
+![Stripe Sandbox](/docs/integration/payment/stripe-sandbox.webp)
+
+1. Switch to Test Mode in the Dashboard and get the test environment's `Publishable Key` and `Secret Key`
+2. Download the [Stripe CLI](https://stripe.com/docs/stripe-cli#install) and start local forwarding:
+```bash
+stripe listen --forward-to localhost:3377/api/payment/webhook/stripe
+```
+3. Copy the Webhook Secret from the terminal output to `.env`, or configure it in the admin panel:
+![Stripe Webhook Secret](/docs/integration/payment/stripe-webhook-sandbox.webp)
+```bash
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+```
+
+Once configured, you can test payments locally using test cards: [Stripe Test Cards](https://stripe.com/docs/testing#cards)
+
+
+## Testing Live Payments with a Reverse Proxy
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Visit Ngrok
+    Go to [Ngrok](https://ngrok.com/) and sign up for an account
+  </div>
+  <div className="fd-step">
+    ### Download and Configure Ngrok
+    Follow the [official setup guide](https://ngrok.com/docs/getting-started/setup/install/) to download and configure Ngrok
+  </div>
+  <div className="fd-step">
+    ### Start Ngrok
+    ```bash
+    ngrok http 3377
+    ```
+    Copy the public URL from the terminal output
+    ![Ngrok Public URL](/docs/integration/payment/ngrok.webp)
+    Your callback URL will be:
+    ```
+    https://xxx.app/api/payment/webhook/stripe
+    ```
+    <Callout type="warn" title="Warning">
+    Do not use ngrok in production. The public URL changes each time ngrok restarts — you'll need to update the callback URL. For a static URL, get a fixed domain from ngrok and use `--url=` to specify it.
+    </Callout>
+  </div>
+</div>
+
+## Verify Configuration
+
+Open the homepage, scroll down to the pricing section, and click the purchase button. If it redirects to the Stripe Checkout page, the configuration is successful.
+![Pricing](/docs/integration/payment/pricing.webp)
+
+## Configure Pricing
+
+1. Create a Product in the [Stripe Dashboard](https://dashboard.stripe.com/products) and add a Price
+![Stripe Product](/docs/integration/payment/stripe-product.webp)
+
+2. Copy the Price ID (format `price_xxx`) to `.env`
+![Stripe Price](/docs/integration/payment/stripe-priceid.webp)
+
+3. Copy the Price ID (format `price_xxx`) to `.env`. You can rename the environment variables as needed, but they must match the code:
+```bash
+VITE_STRIPE_PRO_MONTHLY_PRICE_ID=price_xxx
+VITE_STRIPE_PRO_YEARLY_PRICE_ID=price_xxx
+VITE_STRIPE_LIFETIME_PRICE_ID=price_xxx
+```
+3. Modify `src/config/payment-config.ts` — amounts and intervals must match the Stripe Dashboard:
+```ts
+export const paymentConfig: PlanWithPrice[] = [
+  {
+    id: "pro",                    // Plan identifier, used in code
+    planType: "subscription",     // free | subscription | lifetime
+    credit: {
+      amount: 100,                // Credits granted per payment
+      expireDays: 31,             // Credit expiration days
+    },
+    prices: [
+      {
+        priceId: import.meta.env.VITE_STRIPE_PRO_MONTHLY_PRICE_ID!,
+        amount: 990,              // In cents, 990 = $9.90
+        currency,                 // Currency, read from VITE_CURRENCY
+        interval: "month",        // month | year
+        trialPeriodDays: 7,       // Trial days (optional)
+      },
+      {
+        priceId: import.meta.env.VITE_STRIPE_PRO_YEARLY_PRICE_ID!,
+        amount: 9900,
+        currency,
+        interval: "year",
+      },
+    ],
+    display: {
+      isRecommended: true,        // Show "Recommended" label
+      group: "subscription",      // Group, used for UI display
+    },
+  },
+  {
+    id: "lifetime",
+    planType: "lifetime",         // One-time purchase
+    prices: [
+      {
+        priceId: import.meta.env.VITE_STRIPE_LIFETIME_PRICE_ID!,
+        amount: 19900,
+        currency,
+      },
+    ],
+    display: {
+      originalPrice: 29900,       // Original price (strikethrough)
+      group: "one-time",
+    },
+  },
+]
+```
+
+### Field Reference
+
+| Field | Description |
+|------|------|
+| `id` | Plan identifier, used to look up the plan in code |
+| `planType` | `free` / `subscription` / `lifetime` |
+| `credit.amount` | Credits granted when subscription activates |
+| `credit.expireDays` | Credit expiration days, omit for no expiration |
+| `priceId` | Stripe Price ID, copied from Dashboard |
+| `amount` | Price in cents, 990 = $9.90 |
+| `interval` | Billing cycle, `month` or `year` |
+| `trialPeriodDays` | Free trial days |
+| `display.isRecommended` | Whether to show the recommended label |
+| `display.originalPrice` | Original price for strikethrough display |
+| `display.group` | Group identifier for UI categorization |

@@ -1,0 +1,83 @@
+---
+title: Introduction
+description: A production-grade full-stack boilerplate built for modern Vibe Coding — authentication, payments, AI, and i18n out of the box
+---
+
+## Foreword
+Hi, I'm Jayden, a full-stack developer. Over the past months, my partner Evan and I built VibeAny for Vibers — a production-ready full-stack boilerplate. We noticed that many people have to repeatedly write boilerplate code and rebuild infrastructure when vibe coding new products. VibeAny changes that: authentication, payments, AI, internationalization, and more work out of the box, so you can focus on the product itself and go from idea to launch faster.
+
+
+## Why VibeAny
+
+Here's a quick overview of VibeAny's core capabilities.
+
+### Out of the Box
+
+With just 10–20 minutes of configuration, you get all of the following:
+
+- Rich landing page components to help you quickly build enterprise-grade landing pages — responsive and SEO-friendly.
+- No more tedious environment variable configuration — supports dynamic config from the admin panel.
+- Complete authentication system: email/password, Google/GitHub login, email verification.
+- Built-in AI capabilities: text/image/video/audio generation.
+- Payment system: choose from Stripe, Creem, PayPal, WeChat Pay, Alipay, and more — supports subscriptions and one-time payments.
+- Credit system: fast-track monetization.
+- Admin panel: user management out of the box.
+- Analytics: supports Google Analytics, Sentry, Posthog, and more.
+- Multi-language support with type safety (compared to next-intl).
+
+
+### Tech Stack
+
+<TechStack items={[
+  { name: "Tanstack Start", desc: "Full-stack React framework", href: "https://tanstack.com/start" },
+  { name: "React 19", desc: "Latest version", href: "https://react.dev" },
+  { name: "Vite", desc: "Lightning-fast build tool", href: "https://vite.dev" },
+  { name: "TypeScript", desc: "Type safety", href: "https://www.typescriptlang.org" },
+  { name: "Tailwind CSS 4", desc: "Utility-first CSS", href: "https://tailwindcss.com" },
+  { name: "Radix UI", desc: "Accessible component primitives", href: "https://www.radix-ui.com" },
+  { name: "Shadcn/UI", desc: "Reusable component library", href: "https://ui.shadcn.com" },
+  { name: "Drizzle ORM", desc: "Type-safe ORM", href: "https://orm.drizzle.team" },
+  { name: "PostgreSQL", desc: "Relational database", href: "https://www.postgresql.org" },
+  { name: "Better Auth", desc: "Modern auth solution", href: "https://www.better-auth.com" },
+  { name: "Stripe", desc: "Payment integration", href: "https://stripe.com" },
+  { name: "Intlayer", desc: "Internationalization solution", href: "https://intlayer.org" },
+  { name: "Fumadocs", desc: "MDX documentation framework", href: "https://fumadocs.dev" },
+  { name: "Motion", desc: "Animation library", href: "https://motion.dev" },
+  { name: "Zod", desc: "Data validation", href: "https://zod.dev" },
+  { name: "Zustand", desc: "State management", href: "https://zustand.docs.pmnd.rs" },
+  { name: "Biome", desc: "Code formatting & linting", href: "https://biomejs.dev" },
+]} />
+
+## Use Cases
+
+### AI Application Development
+
+<Callout type="warn" title="Pain Point">
+Integrating multiple AI providers (OpenAI, Claude, Gemini, DeepSeek, etc.) requires dealing with different SDKs and API formats; billing management for AI capabilities is complex, making it hard to track user consumption and costs.
+</Callout>
+
+VibeAny uses the Vercel AI SDK to provide a unified abstraction for multi-provider calls, supporting streaming responses and text/image/video/audio generation. The built-in credit system uses a FIFO consumption strategy with daily rewards and expiration management, making it easy to monetize AI capabilities.
+
+### Commercial Products
+
+<Callout type="warn" title="Pain Point">
+Building a SaaS product from scratch requires implementing user authentication, subscription management, payment integration, and an admin panel — this "infrastructure" often takes weeks.
+</Callout>
+
+VibeAny provides complete SaaS infrastructure: a Better Auth-powered authentication system (email/Google/GitHub login), multi-platform payment support (Stripe/Creem/PayPal/WeChat/Alipay), subscription and one-time payment plans, and a user management panel — letting you skip the repetitive work and focus on core product features.
+
+### Global Expansion
+
+<Callout type="warn" title="Pain Point">
+Internationalization setup is tedious; traditional solutions (like next-intl) lack type safety, and translation key typos can only be caught at runtime. Integrating overseas payment channels requires understanding each platform's webhook mechanisms and state management.
+</Callout>
+
+VibeAny uses Intlayer for type-safe internationalization — translation key errors are caught at compile time. The payment system abstracts away the differences between Stripe, Creem, and other platforms, handling webhooks and order status uniformly for smoother global product development.
+
+### Content Websites
+
+<Callout type="warn" title="Pain Point">
+Building a documentation or blog system requires configuring MDX parsing, table of contents generation, search functionality, and multi-language routing — often demanding a lot of glue code.
+</Callout>
+
+VibeAny integrates Fumadocs for an out-of-the-box MDX content system that automatically generates documentation navigation, supports full-text search, and seamlessly works with multi-language routing. Whether it's product docs, a tech blog, or a knowledge base, you can get it online quickly.

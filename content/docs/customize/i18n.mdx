@@ -1,0 +1,161 @@
+---
+title: Customize Internationalization
+description: Configure your application's i18n content and multi-language support
+---
+
+## Internationalization System Overview
+
+VibeAny uses [Intlayer](https://intlayer.org/) as its internationalization solution. Compared to Next.js's `next-intl`, Intlayer's key advantage is full type safety, giving you an excellent development experience.
+
+We recommend installing the [Intlayer VSCode Extension](https://marketplace.visualstudio.com/items?itemName=Intlayer.intlayer-vs-code-extension) for a better development experience.
+
+- Fully type-safe — catches translation key errors at compile time.
+- Instant navigation — click a useIntlayer key to jump directly to the correct content file.
+- Easy access to Intlayer commands — easily build, push, pull, fill, and test content dictionaries.
+- Test dictionaries — test dictionaries for missing translations.
+- Intlayer tab (Activity Bar) — browse and search dictionaries from a dedicated side tab with toolbar and context actions (build, pull, push, fill, refresh, test, create file).
+
+## Language Configuration
+
+The language configuration file is located at `intlayer.config.ts`. Modify the configuration as needed — it is fully type-safe, and you can see all supported languages and the default language.
+
+```ts title="intlayer.config.ts"
+
+import { type IntlayerConfig, Locales } from "intlayer"
+
+const config: IntlayerConfig = {
+  internationalization: {
+    locales: [Locales.ENGLISH, Locales.CHINESE], // Supported languages
+    defaultLocale: Locales.ENGLISH, // Default language
+  },
+}
+```
+
+## Content Configuration Files
+
+All i18n content configuration files are located in the `src/config/locale/` directory:
+
+| File | Purpose |
+| --- | --- |
+| `landing.content.ts` | Landing page content |
+| `pricing.content.ts` | Pricing page content |
+| `auth.content.ts` | Login/Registration page content |
+| `admin.content.ts` | Admin panel content |
+| `user-dashboard.content.ts` | User dashboard content |
+| `404.content.ts` | 404 page content |
+| `error.content.ts` | Error page content |
+| `config.content.ts` | Config page content |
+| `credit-packages.content.ts` | Credit package content |
+| `waitlist.content.ts` | Waitlist page content |
+
+## Defining Multilingual Content
+
+Use the `t()` function to define multilingual text:
+
+```ts title="src/config/locale/landing.content.ts"
+import { type Dictionary, t } from "intlayer"
+
+export default {
+  key: "landing",
+  content: {
+    hero: {
+      title: t({
+        en: "Vibe Any AI Startups in hours, not days",
+        zh: "VibeAny AI 加速想法落地",
+      }),
+      description: t({
+        en: "VibeAny is a TanStack boilerplate for building AI SaaS startups.",
+        zh: "VibeAny 是一个 TanStack Start 模板，用于构建 AI SaaS 创业项目。",
+      }),
+    },
+  },
+} satisfies Dictionary
+```
+
+---
+<Callout type="info" title="Note">
+The following content covers technical details. If you don't need to modify much code, you can skip this section.
+</Callout>
+
+## Using in Components
+
+Use the `useIntlayer` hook to get internationalized content:
+
+```tsx
+import { useIntlayer } from "react-intlayer"
+
+function HeroSection() {
+  const { hero } = useIntlayer("landing")
+
+  return (
+    <div>
+      <h1>{hero.title.value}</h1>
+      <p>{hero.description.value}</p>
+    </div>
+  )
+}
+```
+
+<Callout type="warn" title="Important">
+Always use the `.value` property to get text content, otherwise you'll render an object instead of a string.
+</Callout>
+
+## Adding a New Language
+
+1. Add the new language translation in content files:
+
+```ts
+title: t({
+  en: "Hello",
+  zh: "你好",
+  ja: "こんにちは", // Add Japanese
+}),
+```
+
+2. Add the new language in `intlayer.config.ts`:
+
+## Route Internationalization
+
+VibeAny uses the `LocalizedLink` component for internationalized routing:
+
+```tsx
+import { LocalizedLink } from "@/shared/components/locale/localized-link"
+
+// Automatically adds locale prefix based on current language
+<LocalizedLink to="/docs">Documentation</LocalizedLink>
+```
+
+For programmatic navigation, use `useLocalizedNavigate`:
+
+```tsx
+import { useLocalizedNavigate } from "@/shared/hooks/use-localized-navigate"
+
+function MyComponent() {
+  const navigate = useLocalizedNavigate()
+
+  const handleClick = () => {
+    navigate("/dashboard")
+  }
+}
+```
+
+<Callout type="error" title="Prohibited">
+Do not use TanStack Router's `Link` component directly — it cannot correctly handle internationalized route prefixes.
+</Callout>
+
+
+## Date and Number Formatting
+
+For localized date and number formatting, you can use the browser's native APIs:
+
+```tsx
+const date = new Date()
+const formattedDate = date.toLocaleDateString(locale, {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+})
+
+const number = 1234567.89
+const formattedNumber = number.toLocaleString(locale)
+```

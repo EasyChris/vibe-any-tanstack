@@ -1,0 +1,152 @@
+---
+title: PayPal
+description: PayPal covers 200+ countries and regions, supporting PayPal, Venmo, credit cards, and more, with over 400 million active users
+---
+
+<Callout type="warn" title="Under Development">
+  The PayPal adapter is currently under development and not yet available. You can complete the configuration below so it's ready to use once the adapter is released.
+</Callout>
+
+## Quick Start
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create a PayPal Developer Account
+    Go to [PayPal Developer](https://developer.paypal.com/dashboard/) and sign up, then log in to the Dashboard.
+  </div>
+  <div className="fd-step">
+    ### Create a REST API App
+    1. Open the [Apps & Credentials](https://developer.paypal.com/dashboard/applications/live) page and click `Create App`
+    2. Enter the app name, select `Merchant` type, and click Create
+    3. Copy the `Client ID` and `Client Secret` to `.env`
+    ![PayPal Client ID and Client Secret](/docs/integration/payment/paypal-api-key.webp)
+    ```bash
+    PAYPAL_CLIENT_ID=your_client_id
+    PAYPAL_CLIENT_SECRET=your_client_secret
+    ```
+    You can also enter them in the admin config panel.
+    <Callout type="warn" title="Warning">
+     `PAYPAL_CLIENT_SECRET` is sensitive information — do not commit it to your code repository.
+    </Callout>
+  </div>
+  <div className="fd-step">
+    ### Configure Webhook
+    1. On the `Apps & Credentials` page, go to `Applications`
+    ![PayPal Applications](/docs/integration/payment/paypal-application.webp)
+    2. Scroll down to the `Webhooks` tab and click `Add Webhook`
+    2. Enter the callback URL:
+    ```
+    https://your-domain.com/api/payment/webhook/paypal
+    ```
+    3. Select the events to listen for:
+    - `CHECKOUT.ORDER.APPROVED`
+    - `CHECKOUT.ORDER.COMPLETED`
+    - `BILLING.SUBSCRIPTION.ACTIVATED`
+    - `BILLING.SUBSCRIPTION.CANCELLED`
+    - `BILLING.SUBSCRIPTION.PAYMENT.FAILED`
+    - `PAYMENT.SALE.COMPLETED`
+    - `PAYMENT.CAPTURE.REFUNDED`
+    - `PAYMENT.SALE.REFUNDED`
+    4. After creation, copy the Webhook ID to `.env`, or configure it in the admin panel:
+    ![PayPal Webhook ID](/docs/integration/payment/paypal-copy-webhook.webp)
+    ```bash
+    PAYPAL_WEBHOOK_ID=your_webhook_id
+    ```
+  </div>
+</div>
+
+
+## Sandbox Mode
+
+PayPal provides an independent Sandbox environment for testing — no real charges are made.
+
+1. On the [PayPal Dashboard](https://developer.paypal.com/dashboard/) page, switch to the `Sandbox` tab
+![PayPal Sandbox](/docs/integration/payment/paypal-sandbox.webp)
+
+2. PayPal automatically provides test accounts. View them on the [Sandbox Accounts](https://developer.paypal.com/dashboard/accounts) page. The test buyer account can be used to simulate payments.
+
+![PayPal Sandbox Accounts](/docs/integration/payment/paypal-test-account.webp)
+<Callout type="info" title="Tip">
+The Sandbox Webhook requires a publicly accessible callback URL. For local development, use a reverse proxy tool like Ngrok. See the [reverse proxy section in the Stripe documentation](/docs/integration/payment/stripe#testing-live-payments-with-a-reverse-proxy) for setup instructions.
+</Callout>
+
+
+## Verify Configuration
+
+Open the homepage, scroll down to the pricing section, and click the purchase button. If it redirects to the PayPal payment page, the configuration is successful.
+
+
+## Configure Pricing
+
+PayPal subscriptions require creating a Product and Plan in the dashboard first.
+
+1. Open [PayPal Subscriptions](https://developer.paypal.com/dashboard/subscriptionPlans) and create a Product
+2. Create a Plan under the Product, setting the price and billing cycle
+3. Copy the Plan ID (format `P-xxx`) to `.env`. You can rename the environment variables as needed, but they must match the code:
+```bash
+VITE_PAYPAL_PRO_MONTHLY_PRICE_ID=P-xxx
+VITE_PAYPAL_PRO_YEARLY_PRICE_ID=P-xxx
+VITE_PAYPAL_LIFETIME_PRICE_ID=P-xxx
+```
+4. Modify `src/config/payment-config.ts` — amounts and intervals must match the PayPal dashboard:
+```ts
+export const paymentConfig: PlanWithPrice[] = [
+  {
+    id: "pro",
+    planType: "subscription",
+    credit: {
+      amount: 100,
+      expireDays: 31,
+    },
+    prices: [
+      {
+        priceId: import.meta.env.VITE_PAYPAL_PRO_MONTHLY_PRICE_ID!,
+        amount: 990,              // In cents, 990 = $9.90
+        currency,
+        interval: "month",
+        trialPeriodDays: 7,
+      },
+      {
+        priceId: import.meta.env.VITE_PAYPAL_PRO_YEARLY_PRICE_ID!,
+        amount: 9900,
+        currency,
+        interval: "year",
+      },
+    ],
+    display: {
+      isRecommended: true,
+      group: "subscription",
+    },
+  },
+  {
+    id: "lifetime",
+    planType: "lifetime",
+    prices: [
+      {
+        priceId: import.meta.env.VITE_PAYPAL_LIFETIME_PRICE_ID!,
+        amount: 19900,
+        currency,
+      },
+    ],
+    display: {
+      originalPrice: 29900,
+      group: "one-time",
+    },
+  },
+]
+```
+
+### Field Reference
+
+| Field | Description |
+|------|------|
+| `id` | Plan identifier, used to look up the plan in code |
+| `planType` | `free` / `subscription` / `lifetime` |
+| `credit.amount` | Credits granted when subscription activates |
+| `credit.expireDays` | Credit expiration days, omit for no expiration |
+| `priceId` | PayPal Plan ID, copied from Dashboard |
+| `amount` | Price in cents, 990 = $9.90 |
+| `interval` | Billing cycle, `month` or `year` |
+| `trialPeriodDays` | Free trial days |
+| `display.isRecommended` | Whether to show the recommended label |
+| `display.originalPrice` | Original price for strikethrough display |
+| `display.group` | Group identifier for UI categorization |

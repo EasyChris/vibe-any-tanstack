@@ -1,0 +1,116 @@
+---
+title: Developer
+description: Database development guide
+---
+
+This guide covers the project's database architecture and development conventions. The project uses [Drizzle ORM](https://orm.drizzle.team/) as the database tool.
+
+## Database Architecture
+
+All schema files are located in the `src/db/` directory:
+
+| File | Description |
+| --- | --- |
+| `auth.schema.ts` | Users, sessions, accounts, verification codes |
+| `subscription.schema.ts` | Subscription management |
+| `payment.schema.ts` | Payment records |
+| `order.schema.ts` | Order management |
+| `credit.schema.ts` | Credit system |
+| `rbac.schema.ts` | Access control (roles, permissions) |
+| `config.schema.ts` | System configuration |
+
+## Using the Database
+
+Import the `db` instance and schema from `@/db`:
+
+```ts
+import { db, user } from "@/db"
+import { eq } from "drizzle-orm"
+
+// Query
+const users = await db.select().from(user)
+
+// Conditional query
+const result = await db.select().from(user).where(eq(user.id, "xxx"))
+
+// Insert
+await db.insert(user).values({ id: "xxx", name: "test", email: "test@example.com" })
+
+// Update
+await db.update(user).set({ name: "new name" }).where(eq(user.id, "xxx"))
+
+// Delete
+await db.delete(user).where(eq(user.id, "xxx"))
+```
+
+## Type Inference
+
+Database table types should be inferred from the schema in `src/shared/types/`, not manually defined:
+
+```ts
+import type { user } from "@/db/auth.schema"
+
+// Infer complete type from table
+export type User = typeof user.$inferSelect
+
+// Infer type from enum
+import type { paymentStatusEnum } from "@/db/payment.schema"
+export type PaymentStatus = (typeof paymentStatusEnum.enumValues)[number]
+```
+
+## Common Commands
+
+```bash
+# Generate migration files
+pnpm db:generate
+
+# Run migrations
+pnpm db:migrate
+
+# Push schema changes (development)
+pnpm db:push
+
+# Pull schema from database
+pnpm db:pull
+
+# Open Drizzle Studio
+pnpm db:studio
+```
+
+## Adding a New Table
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create Schema File
+    Create a new schema file in the `src/db/` directory:
+    ```ts title="src/db/example.schema.ts"
+    import { pgTable, text, timestamp } from "drizzle-orm/pg-core"
+
+    export const example = pgTable("example", {
+      id: text("id").primaryKey(),
+      name: text("name").notNull(),
+      createdAt: timestamp("created_at").defaultNow().notNull(),
+    })
+    ```
+  </div>
+  <div className="fd-step">
+    ### Export Schema
+    Export it in `src/db/index.ts`:
+    ```ts
+    export * from "./example.schema"
+    import * as exampleSchema from "./example.schema"
+
+    const schema = {
+      // ... other schemas
+      ...exampleSchema,
+    }
+    ```
+  </div>
+  <div className="fd-step">
+    ### Generate Migration
+    Run the command to generate the migration file:
+    ```bash
+    pnpm db:generate
+    ```
+  </div>
+</div>

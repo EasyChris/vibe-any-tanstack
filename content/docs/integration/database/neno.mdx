@@ -1,0 +1,61 @@
+---
+title: Neon
+description: Serverless PostgreSQL database with pay-per-use pricing and auto-scaling
+---
+
+[Neon](https://neon.tech/) is a Serverless PostgreSQL service. The database automatically sleeps when idle and charges based on actual usage. The free tier provides 0.5 GB storage per project, 100 CU-hours of compute time, and up to 10 projects.
+
+## Quick Start
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create a Project
+    Visit the [Neon Console](https://console.neon.tech/) and click `New Project` to create a project. Select the region closest to you.
+    ![Neon Create Project](/docs/integration/database/neno-create.webp)
+  </div>
+  <div className="fd-step">
+    ### Get the Connection String
+    After the project is created, go to the Dashboard and click `Connection string` to copy the connection address.
+    ![Neon Connection String](/docs/integration/database/neno-connect.webp)
+
+    Select `Pooled connection` and copy the string starting with `postgresql://`.
+    ![Neon Pooled Connection](/docs/integration/database/neno-env.webp)
+  </div>
+  <div className="fd-step">
+    ### Configure Environment Variables
+    Paste the connection string into your `.env` file:
+    ```bash
+    DATABASE_URL="postgresql://username:password@ep-xxx.region.aws.neon.tech/neondb?sslmode=require"
+    ```
+  </div>
+  <div className="fd-step">
+    ### Run Migrations
+    Run the following commands to generate and apply database migrations:
+
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### Manage Database
+    Use Drizzle Studio to view and edit data:
+    ```bash tab="pnpm"
+    pnpm db:studio
+    ```
+    ```bash tab="npm"
+    npm run db:studio
+    ```
+    ```bash tab="bun"
+    bun db:studio
+    ```
+  </div>
+</div>

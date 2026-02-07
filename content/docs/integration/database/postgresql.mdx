@@ -1,0 +1,104 @@
+---
+title: PostgreSQL
+description: Run PostgreSQL database locally or in the cloud using Docker
+---
+
+For local development, we recommend running PostgreSQL with Docker. No cloud service registration needed — your data stays completely local with fast startup.
+
+## Prerequisites
+
+Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [OrbStack](https://orbstack.dev/) (recommended for macOS) installed.
+
+## Quick Start
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Start PostgreSQL
+    Run the following command to start a PostgreSQL container:
+    ```bash
+    docker run -d \
+      --name postgres-dev \
+      -e POSTGRES_USER=postgres \
+      -e POSTGRES_PASSWORD=postgres \
+      -e POSTGRES_DB=dev \
+      -p 5432:5432 \
+      postgres:17
+    ```
+    <Callout type="info" title="Note">
+    The first run will automatically download the PostgreSQL image, which may take a few minutes.
+    </Callout>
+  </div>
+  <div className="fd-step">
+    ### Configure Environment Variables
+    Add the connection string to your `.env` file:
+    ```bash
+    DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dev"
+    ```
+  </div>
+  <div className="fd-step">
+    ### Run Migrations
+    Run the following commands to generate and apply database migrations:
+
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### Manage Database
+    Use Drizzle Studio to view and edit data:
+    ```bash tab="pnpm"
+    pnpm db:studio
+    ```
+    ```bash tab="npm"
+    npm run db:studio
+    ```
+    ```bash tab="bun"
+    bun db:studio
+    ```
+  </div>
+</div>
+
+## Common Commands
+
+```bash
+# Stop the container
+docker stop postgres-dev
+
+# Start an existing container
+docker start postgres-dev
+
+# Remove the container (data will be lost)
+docker rm -f postgres-dev
+
+# View container logs
+docker logs postgres-dev
+
+# Enter psql command line
+docker exec -it postgres-dev psql -U postgres -d dev
+```
+
+## Data Persistence
+
+By default, removing the container will lose data. To persist data, mount a volume:
+
+```bash
+docker run -d \
+  --name postgres-dev \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=dev \
+  -p 5432:5432 \
+  -v postgres-data:/var/lib/postgresql/data \
+  postgres:17
+```
+
+The `postgres-data` volume stores database files locally, so data persists even if the container is removed.

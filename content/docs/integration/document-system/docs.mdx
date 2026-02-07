@@ -1,0 +1,296 @@
+---
+title: Documentation Site
+description: Documentation system built with Fumadocs, supporting MDX, multi-language, and full-text search
+---
+
+VibeAny uses [Fumadocs](https://fumadocs.dev/) to build its documentation site — a modern documentation framework designed for Next.js that provides an excellent developer and user experience.
+
+## Why Fumadocs
+
+- **MDX-based** — Use React components inside Markdown
+- **Multi-language Support** — Built-in internationalization for easy multi-language documentation management
+- **Full-text Search** — Built-in search with no extra configuration needed
+- **Auto Navigation** — Automatically generates sidebar from file structure
+- **Code Highlighting** — Built-in Shiki syntax highlighting
+- **TypeScript First** — Complete type support
+
+## Directory Structure
+
+Documentation content is stored in the `content/docs/` directory:
+
+```bash
+content/docs/
+├── meta.json              # English navigation config
+├── meta.zh.json           # Chinese navigation config
+├── index.mdx              # Docs homepage (English)
+├── index.zh.mdx           # Docs homepage (Chinese)
+├── introduction/          # Chapter directory
+│   ├── meta.json          # Chapter navigation
+│   ├── quick-start.mdx
+│   └── quick-start.zh.mdx
+└── customize/
+    ├── meta.json
+    └── ...
+```
+
+## Creating a Documentation Page
+
+### 1. Create an MDX File
+
+Create a `.mdx` file in the `content/docs/` directory:
+
+```mdx title="content/docs/my-page.mdx"
+---
+title: Page Title
+description: Page description for SEO
+---
+
+## First Section
+
+Here is the documentation content, supporting all Markdown syntax...
+
+### Code Example
+
+\`\`\`tsx title="example.tsx"
+export function Hello() {
+  return <div>Hello World</div>
+}
+\`\`\`
+```
+
+### 2. Frontmatter Fields
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `title` | string | Yes | Page title |
+| `description` | string | No | Page description for SEO |
+| `icon` | string | No | Sidebar icon |
+
+### 3. Multi-language Files
+
+Language versions are distinguished by file suffix:
+
+- `quick-start.mdx` — English version (default)
+- `quick-start.zh.mdx` — Chinese version
+
+## Configuring Navigation
+
+Use `meta.json` files to configure sidebar navigation:
+
+```json title="content/docs/meta.json"
+{
+  "title": "Documentation",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "...introduction",
+    "---Guides---",
+    "...customize",
+    "...deployment"
+  ]
+}
+```
+
+### Navigation Syntax
+
+| Syntax | Description | Example |
+| --- | --- | --- |
+| `"page-name"` | Single page | `"quick-start"` |
+| `"...folder"` | Expand all pages in a folder | `"...introduction"` |
+| `"---Title---"` | Separator title | `"---Getting Started---"` |
+| `"[text](url)"` | External link | `"[GitHub](https://github.com)"` |
+
+### Multi-language Navigation
+
+Create `meta.zh.json` to override Chinese navigation titles:
+
+```json title="content/docs/meta.zh.json"
+{
+  "title": "文档",
+  "root": true,
+  "pages": [
+    "---入门指南---",
+    "index",
+    "...introduction",
+    "---进阶指南---",
+    "...customize",
+    "...deployment"
+  ]
+}
+```
+
+## Creating Chapters
+
+To better organize documentation, you can create chapter directories:
+
+```bash
+# 1. Create chapter directory
+mkdir content/docs/my-section
+
+# 2. Create chapter navigation config
+```
+
+```json title="content/docs/my-section/meta.json"
+{
+  "title": "My Section",
+  "pages": ["overview", "getting-started", "advanced"]
+}
+```
+
+```json title="content/docs/my-section/meta.zh.json"
+{
+  "title": "我的章节",
+  "pages": ["overview", "getting-started", "advanced"]
+}
+```
+
+## Using MDX Components
+
+Fumadocs provides rich built-in components that you can use directly in MDX:
+
+### Steps Component
+
+```mdx
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Step 1
+    Perform some operation...
+  </div>
+  <div className="fd-step">
+    ### Step 2
+    Perform the next operation...
+  </div>
+</div>
+```
+
+### Code Block Tabs
+
+````mdx
+```bash tab="pnpm"
+pnpm install
+```
+
+```bash tab="npm"
+npm install
+```
+
+```bash tab="yarn"
+yarn
+```
+````
+
+### Callouts
+
+```mdx
+> This is a regular tip
+
+<Callout type="info">
+  This is an info callout
+</Callout>
+
+<Callout type="warning">
+  This is a warning callout
+</Callout>
+```
+
+## Custom MDX Components
+
+You can add custom components in `src/shared/components/docs/mdx-components.tsx`:
+
+```tsx title="src/shared/components/docs/mdx-components.tsx"
+import { type MDXComponents } from "mdx/types"
+
+export function getMDXComponents(): MDXComponents {
+  return {
+    // Custom components
+    MyComponent: (props) => <div {...props} />,
+
+    // Override default components
+    img: (props) => <ImageZoom {...props} />,
+  }
+}
+```
+
+Then use them directly in MDX:
+
+```mdx
+<MyComponent>
+  Custom content
+</MyComponent>
+```
+
+## Accessing Documentation
+
+Documentation page routes are:
+
+- Homepage: `/docs`
+- Chapter pages: `/docs/[...slug]`
+
+For example: `/docs/introduction/quick-start`
+
+## Documentation Search
+
+Fumadocs has built-in full-text search. Users can search documentation content via the top search bar or the `Ctrl/Cmd + K` shortcut.
+
+## Customizing Theme
+
+Documentation site styles can be customized in the following files:
+
+- Theme variables: `src/config/style/docs.css`
+- Layout component: `src/routes/{-$locale}/docs/route.tsx`
+- MDX components: `src/shared/components/docs/mdx-components.tsx`
+
+## Developer
+
+If you need to deeply customize the documentation system, here are the core configuration files:
+
+### Source Configuration
+
+| File | Description |
+| --- | --- |
+| `source.config.ts` | Defines the docs collection schema and configuration |
+| `src/config/content/source.ts` | Documentation data source loading logic, configures baseUrl and i18n |
+
+### Style Files
+
+| File | Description |
+| --- | --- |
+| `src/config/style/docs.css` | Documentation page theme styles and CSS variables |
+| `src/shared/components/docs/mdx-components.tsx` | Custom MDX components |
+
+### Route Files
+
+| File | Description |
+| --- | --- |
+| `src/routes/{-$locale}/docs/route.tsx` | Documentation layout component |
+| `src/routes/{-$locale}/docs/$.tsx` | Documentation dynamic route |
+
+### Configuration Example
+
+Modify `source.config.ts` to add custom frontmatter fields:
+
+```ts title="source.config.ts"
+import { defineDocs } from "fumadocs-mdx/config"
+import { z } from "zod"
+
+export const docs = defineDocs({
+  dir: "content/docs",
+  docs: {
+    schema: {
+      // Add custom fields
+      author: z.string().optional(),
+      updated: z.date().optional(),
+    },
+  },
+})
+```
+
+### Fumadocs Resources
+
+- [Quick Start](https://fumadocs.dev/docs/ui/quick-start) — Fumadocs UI introduction
+- [Page Configurations](https://fumadocs.dev/docs/ui/page-configurations) — Page and navigation config
+- [MDX Components](https://fumadocs.dev/docs/ui/mdx) — Built-in MDX components
+- [Search Config](https://fumadocs.dev/docs/ui/search) — Full-text search setup
+- [Theme Customization](https://fumadocs.dev/docs/ui/theme) — Theme and style customization
+- [MDX Official Docs](https://mdxjs.com/) — Learn MDX syntax

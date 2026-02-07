@@ -1,0 +1,133 @@
+---
+title: Credit System
+description: Control AI feature usage through credits, supporting sign-up bonuses, daily rewards, subscription grants, and standalone purchases
+---
+
+Credits are the consumption tokens for users to call AI features (text generation, image generation, speech synthesis, video generation, etc.). Each call deducts the corresponding credits, and features become unavailable when the balance is insufficient.
+
+## Enable Credits
+
+Add to `.env`:
+
+```bash
+VITE_CREDIT_ENABLE=true
+```
+
+Or enable it in the admin config panel.
+
+## Credit Sources
+
+Users can obtain credits through the following methods:
+
+| Source | Description |
+|------|------|
+| Sign-up Bonus | Automatically granted when a new user registers, with configurable amount and expiration days |
+| Daily Reward | Automatically claimed after daily login, balance accumulates |
+| Subscription Grant | Granted when a subscription plan activates or renews, configured in `payment-config.ts` |
+| Credit Package Purchase | Users buy individually in the credit store, managed in the admin panel |
+| Admin Grant | Manually add credits to specific users from the admin panel |
+
+## Sign-up Bonus
+
+```bash
+VITE_CREDIT_SIGNUP_BONUS_ENABLED=true
+VITE_CREDIT_SIGNUP_BONUS_AMOUNT=100
+VITE_CREDIT_SIGNUP_BONUS_EXPIRE_DAYS=30
+```
+
+New users automatically receive 100 credits upon registration, expiring after 30 days. If `EXPIRE_DAYS` is not set, credits never expire.
+
+## Daily Reward
+
+```bash
+VITE_CREDIT_DAILY_ENABLED=true
+VITE_CREDIT_DAILY_AMOUNT=10
+```
+
+Users can claim 10 credits per day. The system automatically checks whether credits have been claimed when the user visits.
+
+## Credit Packages
+
+Credit packages allow users to purchase credits on demand. Create and edit them in the admin panel.
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Define Translations
+    Add multilingual copy for credit packages in `src/config/locale/credit-packages.content.ts`:
+    ```ts
+    credit_100: {
+      name: t({ en: "100 Credits", zh: "100 积分" }),
+      description: t({ en: "Perfect for temporary testing", zh: "适合临时测试" }),
+    },
+    ```
+    The key name is custom (e.g., `credit_100`) — you'll use this key when creating the credit package in the admin panel.
+  </div>
+  <div className="fd-step">
+    ### Create Credit Package
+    Log in with an admin account, open the "Credit Package Management" page in the admin panel, and click Add. Enter the translation key defined in the previous step. After validation, fill in the credit amount, price, Price ID, and other information.
+
+    The Price ID must first be created as a Price on the payment platform (e.g., Stripe), then copied here.
+  </div>
+  <div className="fd-step">
+    ### Activate
+    Toggle the Active switch on, and the credit package will appear in the user's credit store.
+
+    ![Credit Package Management](/docs/integration/credit/credit-package.webp)
+  </div>
+</div>
+
+<Callout type="warn" title="Note">
+  Credit packages depend on the payment system. Please complete [Stripe](/docs/integration/payment/stripe) or other payment channel configuration first.
+</Callout>
+
+### Allow Free Users to Purchase
+
+By default, only subscribed users can purchase credit packages. To allow free users to purchase as well:
+
+```bash
+VITE_CREDIT_ALLOW_FREE_USER_PURCHASE=true
+```
+
+## Credits in Subscription Plans
+
+Subscription plans can be configured to automatically grant credits with each payment. Set this in `src/config/payment-config.ts`:
+
+```ts
+{
+  id: "pro",
+  planType: "subscription",
+  credit: {
+    amount: 100,       // Grant 100 credits per payment
+    expireDays: 31,    // Expire after 31 days
+  },
+  // ...prices
+}
+```
+
+Subscribed users receive new credits with each renewal, with expiration aligned to the billing cycle.
+
+## Consumption Rules
+
+Credits are consumed in the following priority order:
+
+1. Daily reward credits (consumed first)
+2. Credits with expiration dates (from nearest to farthest expiration)
+3. Permanent credits (consumed last)
+
+When the balance is insufficient, the system displays an insufficient credits prompt and guides the user to purchase credit packages.
+
+## Configuration Reference
+
+All credit-related environment variables can also be modified in the admin config panel.
+
+![Credit Configuration](/docs/integration/credit/backstage.webp)
+
+| Environment Variable | Type | Default | Description |
+|---------|------|-------|------|
+| `VITE_CREDIT_ENABLE` | boolean | `false` | Enable credit system |
+| `VITE_CREDIT_ALLOW_FREE_USER_PURCHASE` | boolean | `false` | Allow free users to purchase credit packages |
+| `VITE_CREDIT_SIGNUP_BONUS_ENABLED` | boolean | `false` | Enable sign-up bonus |
+| `VITE_CREDIT_SIGNUP_BONUS_AMOUNT` | number | `0` | Sign-up bonus amount |
+| `VITE_CREDIT_SIGNUP_BONUS_EXPIRE_DAYS` | number | `30` | Sign-up bonus expiration days |
+| `VITE_CREDIT_DAILY_ENABLED` | boolean | `false` | Enable daily reward |
+| `VITE_CREDIT_DAILY_AMOUNT` | number | `0` | Daily reward amount |

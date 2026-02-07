@@ -1,0 +1,78 @@
+---
+title: Supabase
+description: Open-source Firebase alternative with PostgreSQL database, auth, storage, and real-time subscriptions
+---
+
+[Supabase](https://supabase.com/) is built on PostgreSQL and provides authentication, file storage, Edge Functions, and more beyond the database. The free tier offers 500 MB database storage, 1 GB file storage, and up to 2 active projects (paused after 1 week of inactivity).
+
+## Quick Start
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create a Project
+    Open the [Supabase Dashboard](https://supabase.com/dashboard) and click `New Project`.
+    <Callout type="warn" title="Tip">
+    Remember the database password you set — you'll need it later when connecting.
+    </Callout>
+    ![Supabase Create Project](/docs/integration/database/supabase-create.webp)
+  </div>
+  <div className="fd-step">
+    ### Get the Connection String
+    After the project is created, click the `Connect` button at the top.
+    ![Supabase Project Link](/docs/integration/database/supabase-connect.webp)
+
+    Select `ORMs` → `Drizzle`, and copy the connection string in `.env` format. Replace `[YOUR-PASSWORD]` with the password you set.
+    ![Supabase Project Link](/docs/integration/database/supabase-env.webp)
+  </div>
+  <div className="fd-step">
+    ### Configure Environment Variables
+    Paste the connection string into your `.env` file:
+    ```bash
+    DATABASE_URL="postgresql://postgres.xxx:password@aws-0-region.pooler.supabase.com:6543/postgres"
+    ```
+  </div>
+  <div className="fd-step">
+    ### Run Migrations
+    Run the following commands to generate and apply database migrations:
+
+    ```bash tab="pnpm"
+    pnpm db:generate
+    pnpm db:migrate
+    ```
+    ```bash tab="npm"
+    npm run db:generate
+    npm run db:migrate
+    ```
+    ```bash tab="bun"
+    bun db:generate
+    bun db:migrate
+    ```
+  </div>
+  <div className="fd-step">
+    ### Manage Database
+    Use Drizzle Studio to view and edit data:
+    ```bash tab="pnpm"
+    pnpm db:studio
+    ```
+    ```bash tab="npm"
+    npm run db:studio
+    ```
+    ```bash tab="bun"
+    bun db:studio
+    ```
+  </div>
+</div>
+
+## Using a Separate Schema
+
+Supabase uses the `public` schema by default, which contains Supabase's own system tables (auth, storage, etc.). Creating a separate schema keeps your application data isolated from system data for easier management.
+
+Create a new schema in the Table Editor page:
+
+![Supabase Schema](/docs/integration/database/supabase-schema-create.webp)
+
+Then specify the schema in the connection string:
+
+```bash
+DATABASE_URL="postgresql://postgres.xxx:password@aws-0-region.pooler.supabase.com:6543/postgres?schema=your-schema-name"
+```

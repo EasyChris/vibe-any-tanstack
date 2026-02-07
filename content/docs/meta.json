@@ -4,9 +4,7 @@
     "...introduction",
     "customize",
     "deployment",
-    "------Integration------",
-    "...integration",
-    "------Blocks------",
-    "...blocks"
+    "---Integration---",
+    "...integration"
   ]
 }

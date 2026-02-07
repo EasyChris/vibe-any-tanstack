@@ -1,0 +1,236 @@
+---
+title: Customize Landing Page
+description: Configure the display content for product introduction, pricing plans, FAQ, and other modules
+---
+
+## Landing Page Configuration
+
+All landing page content is configured in `src/config/locale/landing.content.ts`, with multi-language support.
+
+### Module Display Control
+
+Each module has a `display` field to control visibility (except Hero, which is always shown):
+
+```ts
+banner: { display: true, ... },
+powerBy: { display: true, ... },
+threeBenefits: { display: true, ... },
+introduction: { display: true, items: [...] },
+features: { display: true, ... },
+pricing: { display: true },
+horizontalShowcase: { display: true, ... },
+userTestimonials: { display: true, ... },
+mediaCoverage: { display: true, ... },
+faq: { display: true, ... },
+cta: { display: true, ... },
+header: { display: true, ... },
+footer: { display: true, ... },
+```
+
+### Banner
+
+```ts
+banner: {
+  display: true,
+  text: t({
+    en: "Open Sourced in 2026: Production-grade AI SaaS template available!",
+    zh: "2026 年开源：生产级 AI SaaS 模板现已发布！",
+  }),
+  button: {
+    text: t({ en: "View on GitHub", zh: "在 GitHub 上查看" }),
+    href: github,
+  },
+},
+```
+
+| Config Item | Description |
+| --- | --- |
+| `display` | Whether to show the Banner |
+| `text` | Banner text content |
+| `button.text` | Button text |
+| `button.href` | Button link |
+
+### Hero Section
+
+```ts
+hero: {
+  title: t({
+    en: "Vibe Any AI Startups in hours, not days",
+    zh: "VibeAny AI 加速想法落地",
+  }),
+  description: t({
+    en: "VibeAny is a TanStack boilerplate...",
+    zh: "VibeAny 是一个 TanStack Start 模板...",
+  }),
+  announcement: {
+    show: true,
+    text: t({ en: "...", zh: "..." }),
+    href: github,
+  },
+  buttons: {
+    start: { text: t({ en: "Get Started", zh: "开始" }), url: "/chat" },
+    docs: { text: t({ en: "Learn More", zh: "了解更多" }), url: "/docs" },
+  },
+  image: {
+    enabled: false,
+    src: "/landing/hero/home.png",
+    width: 2700,
+    height: 1440,
+  },
+},
+```
+
+### Three Key Benefits
+
+```ts
+threeBenefits: {
+  display: true,
+  title: t({ en: "Three Key Benefits", zh: "三大核心优势" }),
+  description: t({ en: "Discover why...", zh: "了解为什么..." }),
+  items: [
+    {
+      title: t({ en: "Lightning Fast Startup", zh: "极速启动" }),
+      description: t({ en: "...", zh: "..." }),
+      icon: "Zap",
+    },
+    // ...more items
+  ],
+},
+```
+
+<Callout type="info" title="Icons">
+The `icon` field uses Lucide React icon names, such as `Zap`, `Shield`, `Code`, etc.
+</Callout>
+
+### Feature Introduction
+
+The `introduction` section configures multiple feature introduction blocks with images:
+
+```ts
+introduction: {
+  display: true,
+  items: [
+    {
+      type: "image",
+      title: t({ en: "Zero-Config Authentication", zh: "零配置认证系统" }),
+      description: t({ en: "...", zh: "..." }),
+      image: "/landing/introduction/auth.webp",
+      imagePosition: "left", // "left" | "right"
+      features: [
+        {
+          title: t({ en: "One-Click Social Login", zh: "一键社交登录" }),
+          description: t({ en: "...", zh: "..." }),
+        },
+        // ...
+      ],
+    },
+  ],
+},
+```
+
+### User Testimonials
+
+```ts
+userTestimonials: {
+  display: true,
+  title: t({ en: "What Our Users Say", zh: "用户评价" }),
+  testimonials: [
+    {
+      text: t({ en: "...", zh: "..." }),
+      image: "/avatars/user1.avif",
+      name: "Sarah Chen",
+      role: t({ en: "CTO, TechStart", zh: "TechStart 首席技术官" }),
+    },
+    // ...
+  ],
+},
+```
+
+### FAQ
+
+```ts
+faq: {
+  display: true,
+  title: t({ en: "Frequently Asked Questions", zh: "常见问题" }),
+  description: t({ en: "...", zh: "..." }),
+  items: [
+    {
+      question: t({ en: "What is VibeAny?", zh: "什么是 VibeAny？" }),
+      answer: t({ en: "...", zh: "..." }),
+    },
+  ],
+},
+```
+
+### Header Navigation
+
+```ts
+header: {
+  display: true,
+  items: [
+    { label: t({ en: "Documentation", zh: "文档" }), href: "/docs" },
+    { label: t({ en: "Chat", zh: "聊天" }), href: "/chat" },
+    {
+      label: t({ en: "More Features", zh: "更多功能" }),
+      children: [
+        { label: t({ en: "Blog", zh: "博客" }), href: "/blog" },
+        { label: t({ en: "Roadmap", zh: "路线图" }), href: "/roadmap" },
+      ],
+    },
+  ],
+},
+```
+
+### Footer
+
+```ts
+footer: {
+  display: true,
+  companyName: "VibeAny",
+  scrollToTop: t({ en: "Back to Top", zh: "返回顶部" }),
+  sections: [
+    {
+      title: t({ en: "About", zh: "关于" }),
+      links: [
+        { label: t({ en: "About Us", zh: "关于我们" }), href: "/about" },
+        // ...
+      ],
+    },
+  ],
+},
+```
+
+## Pricing Configuration
+
+The pricing module display is controlled in `landing.content.ts`:
+
+```ts
+pricing: {
+  display: true,
+},
+```
+
+Pricing page content is configured in `src/config/locale/pricing.content.ts`.
+
+Package prices and subscription logic are configured in `src/config/website-config.ts`. See the [Payment System](/docs/integration/payment) section for details.
+
+## Privacy Policy & Terms of Service
+
+Legal page content is stored in the `content/legal/` directory, written in MDX format:
+
+| File | Page | Route |
+| --- | --- | --- |
+| `content/legal/privacy-policy.mdx` | Privacy Policy (English) | `/legal/privacy-policy` |
+| `content/legal/privacy-policy.zh.mdx` | Privacy Policy (Chinese) | `/zh/legal/privacy-policy` |
+| `content/legal/terms-of-service.mdx` | Terms of Service (English) | `/legal/terms-of-service` |
+| `content/legal/terms-of-service.zh.mdx` | Terms of Service (Chinese) | `/zh/legal/terms-of-service` |
+
+## Other Page Configurations
+
+| File Path | Page |
+| --- | --- |
+| `src/config/locale/auth.content.ts` | Login/Registration |
+| `src/config/locale/user-dashboard.content.ts` | User Dashboard |
+| `src/config/locale/admin.content.ts` | Admin Panel |
+| `src/config/locale/404.content.ts` | 404 Page |
+| `src/config/locale/error.content.ts` | Error Page |

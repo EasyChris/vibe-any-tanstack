@@ -1,0 +1,161 @@
+---
+title: Creem
+description: Creem is a payment platform for SaaS and digital products that automatically handles global tax compliance as a Merchant of Record, supporting subscriptions and License Key management
+---
+
+## Quick Start
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create a Creem Account
+    Go to [Creem](https://creem.io/) and sign up for an account.
+  </div>
+  <div className="fd-step">
+    ### Get API Keys
+    1. Log in to the [Creem Dashboard](https://www.creem.io/dashboard/developers) and go to `API Keys`
+    ![Creem Dashboard API Keys](/docs/integration/payment/creem-api-keys.webp)
+    2. Copy the `X API Key` to `.env`
+    ```bash
+    CREEM_X_API_KEY=creem_xxx
+    ```
+    You can also enter it in the admin config panel:
+    ![Creem API Admin Config](/docs/integration/payment/creem-backstage-api.webp)
+    <Callout type="warn" title="Warning">
+     `CREEM_X_API_KEY` is sensitive information — do not commit it to your code repository.
+    </Callout>
+  </div>
+  <div className="fd-step">
+    ### Configure Webhook
+    Add an endpoint on the Dashboard's [Webhooks](https://www.creem.io/dashboard/developers/webhooks) page:
+    ![Creem Webhook Config](/docs/integration/payment/creem-webhook.webp)
+    Listen for the following events:
+    - `checkout.completed`
+    - `subscription.active`
+    - `subscription.canceled`
+    - `subscription.paid`
+
+    You can select all events, but VibeAny only processes the ones listed above.
+    Enter the callback URL:
+    ```
+    https://your-domain.com/api/payment/webhook/creem
+    ```
+    ![Creem Webhook Path](/docs/integration/payment/creem-copy-webhook.webp)
+
+    Copy the Webhook Secret to `.env`:
+    ```bash
+    CREEM_WEBHOOK_SECRET=whsec_xxx
+    ```
+  </div>
+</div>
+
+## Test Mode
+
+Creem provides a test environment — no real charges are made when enabled.
+
+Enable test mode in Creem:
+![Creem Test Mode](/docs/integration/payment/creem-test-mode.webp)
+
+Set in `.env`, or configure in the admin panel:
+```bash
+CREEM_TEST_MODE=true
+```
+
+In test mode, you can use Creem's test cards for payment testing. See [Creem Test Documentation](https://docs.creem.io/getting-started/test-mode) for test card numbers.
+
+## Testing Live Payments with a Reverse Proxy
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Visit Ngrok
+    Go to [Ngrok](https://ngrok.com/) and sign up for an account
+  </div>
+  <div className="fd-step">
+    ### Download and Configure Ngrok
+    Follow the [official setup guide](https://ngrok.com/docs/getting-started/setup/install/) to download and configure
+  </div>
+  <div className="fd-step">
+    ### Start Ngrok
+    ```bash
+    ngrok http 3377
+    ```
+    Copy the public URL from the terminal output
+    ![Ngrok Public URL](/docs/integration/payment/ngrok.webp)
+    Your callback URL will be:
+    ```
+    https://xxx.app/api/payment/webhook/creem
+    ```
+    <Callout type="warn" title="Warning">
+    The ngrok public URL changes each restart — you'll need to update the Webhook URL in the Creem Dashboard accordingly. For a static domain, get one from ngrok and use `--url=` to specify it.
+    </Callout>
+  </div>
+</div>
+
+## Verify Configuration
+
+Open the homepage, scroll down to the pricing section, and click the purchase button. If it redirects to the Creem Checkout page, the configuration is successful.
+![Pricing](/docs/integration/payment/pricing.webp)
+
+## Configure Pricing
+
+1. Create a Product in the [Creem Dashboard](https://creem.io/dashboard)
+![Creem Product ID](/docs/integration/payment/creem-product-id.webp)
+
+2. Copy the Product ID to `.env`:
+```bash
+VITE_CREEM_PRO_MONTHLY_PRODUCT_ID=prod_xxx
+VITE_CREEM_LIFETIME_PRODUCT_ID=prod_xxx
+```
+
+3. Modify `src/config/payment-config.ts` — amounts and intervals must match the Creem Dashboard:
+```ts
+export const paymentConfig: PlanWithPrice[] = [
+  {
+    id: "pro",
+    planType: "subscription",
+    credit: {
+      amount: 100,
+      expireDays: 31,
+    },
+    prices: [
+      {
+        priceId: import.meta.env.VITE_CREEM_PRO_MONTHLY_PRODUCT_ID!,
+        amount: 990,              // In cents, 990 = $9.90
+        currency,
+        interval: "month",
+      },
+    ],
+    display: {
+      isRecommended: true,
+      group: "subscription",
+    },
+  },
+  {
+    id: "lifetime",
+    planType: "lifetime",
+    prices: [
+      {
+        priceId: import.meta.env.VITE_CREEM_LIFETIME_PRODUCT_ID!,
+        amount: 19900,
+        currency,
+      },
+    ],
+    display: {
+      group: "one-time",
+    },
+  },
+]
+```
+
+### Field Reference
+
+| Field | Description |
+|------|------|
+| `id` | Plan identifier, used to look up the plan in code |
+| `planType` | `free` / `subscription` / `lifetime` |
+| `credit.amount` | Credits granted when subscription activates |
+| `credit.expireDays` | Credit expiration days, omit for no expiration |
+| `priceId` | Creem Product ID, copied from Dashboard |
+| `amount` | Price in cents, 990 = $9.90 |
+| `interval` | Billing cycle, `month` or `year` |
+| `display.isRecommended` | Whether to show the recommended label |
+| `display.group` | Group identifier for UI categorization |

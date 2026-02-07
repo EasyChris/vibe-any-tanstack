@@ -1,0 +1,537 @@
+---
+title: MDX Syntax Reference
+description: Fumadocs MDX extended syntax reference, including callouts, tabs, cards, and other built-in components with code block enhancements
+---
+
+This page summarizes the MDX extended syntax provided by Fumadocs (excluding standard Markdown), with source code and rendered output side by side.
+
+## Callout
+
+Supports `type` attribute for type and `title` attribute for title.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+```mdx
+<Callout>Default callout, no type specified.</Callout>
+
+<Callout type="info" title="Info">
+  This is an info callout.
+</Callout>
+
+<Callout type="warn" title="Warning">
+  This is a warning callout.
+</Callout>
+
+<Callout type="error" title="Error">
+  This is an error callout.
+</Callout>
+```
+
+</Tab>
+<Tab value="Result">
+
+<Callout>Default callout, no type specified.</Callout>
+
+<Callout type="info" title="Info">
+  This is an info callout.
+</Callout>
+
+<Callout type="warn" title="Warning">
+  This is a warning callout.
+</Callout>
+
+<Callout type="error" title="Error">
+  This is an error callout.
+</Callout>
+
+</Tab>
+</Tabs>
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `type` | `"info" \| "warn" \| "error"` | Callout type, default style if not specified |
+| `title` | `string` | Title text (optional) |
+
+## Code Block Enhancements
+
+Fumadocs provides multiple code block enhancements based on [Shiki](https://shiki.style/).
+
+### Title
+
+Add `title="filename"` after the code block language to display a title bar.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+````text
+```ts title="config.ts"
+export const config = {
+  theme: "dark",
+}
+```
+````
+
+</Tab>
+<Tab value="Result">
+
+```ts title="config.ts"
+export const config = {
+  theme: "dark",
+}
+```
+
+</Tab>
+</Tabs>
+
+### Line Highlighting
+
+Add `// [!code highlight]` at the end of a line to highlight it.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+````text
+```ts
+const a = 1
+const b = 2 // [!code highlight]
+const c = 3
+```
+````
+
+</Tab>
+<Tab value="Result">
+
+```ts
+const a = 1
+const b = 2 // [!code highlight]
+const c = 3
+```
+
+</Tab>
+</Tabs>
+
+### Word Highlighting
+
+Add `// [!code word:keyword]` on the first line of a code block to highlight all matching words.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+````text
+```ts
+// [!code word:config]
+const config = {
+  theme: "dark",
+}
+export default config
+```
+````
+
+</Tab>
+<Tab value="Result">
+
+```ts
+// [!code word:config]
+const config = {
+  theme: "dark",
+}
+export default config
+```
+
+</Tab>
+</Tabs>
+
+### Code Diff
+
+Use `// [!code ++]` and `// [!code --]` to mark added and removed lines.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+````text
+```ts
+export default {
+  theme: "light", // [!code --]
+  theme: "dark",  // [!code ++]
+}
+```
+````
+
+</Tab>
+<Tab value="Result">
+
+```ts
+export default {
+  theme: "light", // [!code --]
+  theme: "dark",  // [!code ++]
+}
+```
+
+</Tab>
+</Tabs>
+
+## Code Tabs
+
+Add the `tab` attribute to consecutive code blocks to automatically merge them into a tab group.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+````text
+```bash tab="pnpm"
+pnpm install fumadocs-ui
+```
+
+```bash tab="npm"
+npm install fumadocs-ui
+```
+
+```bash tab="yarn"
+yarn add fumadocs-ui
+```
+````
+
+</Tab>
+<Tab value="Result">
+
+```bash tab="pnpm"
+pnpm install fumadocs-ui
+```
+
+```bash tab="npm"
+npm install fumadocs-ui
+```
+
+```bash tab="yarn"
+yarn add fumadocs-ui
+```
+
+</Tab>
+</Tabs>
+
+## Tabs
+
+`Tabs` and `Tab` components create general-purpose tabs, not limited to code blocks — they can contain any content.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+```mdx
+<Tabs items={["React", "Vue"]}>
+<Tab value="React">
+
+React uses JSX syntax to write components.
+
+</Tab>
+<Tab value="Vue">
+
+Vue uses template syntax to write components.
+
+</Tab>
+</Tabs>
+```
+
+</Tab>
+<Tab value="Result">
+
+<Tabs items={["React", "Vue"]}>
+<Tab value="React">
+
+React uses JSX syntax to write components.
+
+</Tab>
+<Tab value="Vue">
+
+Vue uses template syntax to write components.
+
+</Tab>
+</Tabs>
+
+</Tab>
+</Tabs>
+
+<Callout type="info">
+  `Tabs` and `Tab` are registered in the default MDX components — no manual import needed.
+</Callout>
+
+## Cards
+
+`Cards` and `Card` create card link collections, supporting `href`, `icon`, and `title` attributes.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+```mdx
+<Cards>
+  <Card title="Quick Start" href="/docs">
+    Get your project set up in 5 minutes
+  </Card>
+  <Card title="API Reference" href="/docs/api">
+    View the complete API documentation
+  </Card>
+  <Card title="Title Only Card">
+    href is optional — cards can also be without links.
+  </Card>
+</Cards>
+```
+
+</Tab>
+<Tab value="Result">
+
+<Cards>
+  <Card title="Quick Start" href="/docs">
+    Get your project set up in 5 minutes
+  </Card>
+  <Card title="API Reference" href="/docs/api">
+    View the complete API documentation
+  </Card>
+  <Card title="Title Only Card">
+    href is optional — cards can also be without links.
+  </Card>
+</Cards>
+
+</Tab>
+</Tabs>
+
+## Steps
+
+Use `Steps` and `Step` components to create ordered step guides.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+```mdx
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Steps>
+<Step>
+
+### Install Dependencies
+
+Run the package manager install command.
+
+</Step>
+<Step>
+
+### Configure Project
+
+Edit the configuration file and set the required options.
+
+</Step>
+<Step>
+
+### Start Development
+
+Run the dev server and start building.
+
+</Step>
+</Steps>
+```
+
+</Tab>
+<Tab value="Result">
+
+<Steps>
+<Step>
+
+### Install Dependencies
+
+Run the package manager install command.
+
+</Step>
+<Step>
+
+### Configure Project
+
+Edit the configuration file and set the required options.
+
+</Step>
+<Step>
+
+### Start Development
+
+Run the dev server and start building.
+
+</Step>
+</Steps>
+
+</Tab>
+</Tabs>
+
+<Callout type="info" title="Alternative Syntax">
+
+You can also use CSS class names without importing components:
+
+```mdx
+<div className="fd-steps">
+<div className="fd-step">
+
+### Step Title
+
+Step content...
+
+</div>
+</div>
+```
+
+</Callout>
+
+## Accordion
+
+Use `Accordions` and `Accordion` components to create collapsible content panels.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+```mdx
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+<Accordions type="single">
+  <Accordion title="What is Fumadocs?">
+    Fumadocs is a modern documentation framework based on Next.js,
+    providing MDX support, full-text search, multi-language, and more.
+  </Accordion>
+  <Accordion title="How to install?">
+    Install fumadocs-ui and fumadocs-core via your package manager
+    to get started.
+  </Accordion>
+</Accordions>
+```
+
+</Tab>
+<Tab value="Result">
+
+<Accordions type="single">
+  <Accordion title="What is Fumadocs?">
+    Fumadocs is a modern documentation framework based on Next.js, providing MDX support, full-text search, multi-language, and more.
+  </Accordion>
+  <Accordion title="How to install?">
+    Install fumadocs-ui and fumadocs-core via your package manager to get started.
+  </Accordion>
+</Accordions>
+
+</Tab>
+</Tabs>
+
+| Attribute | Description |
+| --- | --- |
+| `type="single"` | Only one panel can be expanded at a time |
+| `type="multiple"` | Multiple panels can be expanded simultaneously |
+
+## Files
+
+Use `Files`, `Folder`, `File` components to display file directory structures.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+```mdx
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+<Files>
+  <Folder name="src" defaultOpen>
+    <Folder name="components" defaultOpen>
+      <File name="button.tsx" />
+      <File name="dialog.tsx" />
+    </Folder>
+    <File name="index.ts" />
+  </Folder>
+  <File name="package.json" />
+  <File name="tsconfig.json" />
+</Files>
+```
+
+</Tab>
+<Tab value="Result">
+
+<Files>
+  <Folder name="src" defaultOpen>
+    <Folder name="components" defaultOpen>
+      <File name="button.tsx" />
+      <File name="dialog.tsx" />
+    </Folder>
+    <File name="index.ts" />
+  </Folder>
+  <File name="package.json" />
+  <File name="tsconfig.json" />
+</Files>
+
+</Tab>
+</Tabs>
+
+| Attribute | Description |
+| --- | --- |
+| `name` | File or folder name |
+| `defaultOpen` | Folder expanded by default (`Folder` only) |
+
+## TypeTable
+
+Use the `TypeTable` component to display API property documentation, ideal for documenting component Props.
+
+<Tabs items={["Code", "Result"]}>
+<Tab value="Code">
+
+```mdx
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Component name',
+      type: 'string',
+      default: '"Button"',
+    },
+    disabled: {
+      description: 'Whether disabled',
+      type: 'boolean',
+      default: 'false',
+    },
+    size: {
+      description: 'Component size',
+      type: '"sm" | "md" | "lg"',
+      default: '"md"',
+    },
+  }}
+/>
+```
+
+</Tab>
+<Tab value="Result">
+
+<TypeTable
+  type={{
+    name: {
+      description: 'Component name',
+      type: 'string',
+      default: '"Button"',
+    },
+    disabled: {
+      description: 'Whether disabled',
+      type: 'boolean',
+      default: 'false',
+    },
+    size: {
+      description: 'Component size',
+      type: '"sm" | "md" | "lg"',
+      default: '"md"',
+    },
+  }}
+/>
+
+</Tab>
+</Tabs>
+
+## Image Zoom
+
+The project has `ImageZoom` configured in MDX components, so all images inserted via Markdown syntax automatically support click-to-zoom:
+
+```mdx
+![Image description](/path/to/image.png)
+```
+
+## References
+
+- [Fumadocs Markdown Docs](https://fumadocs.dev/docs/ui/markdown) — Official Markdown / MDX syntax reference
+- [Fumadocs Component Docs](https://fumadocs.dev/docs/ui/components) — All built-in UI components
+- [Shiki Docs](https://shiki.style/) — Code highlighting engine

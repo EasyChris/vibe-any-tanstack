@@ -1,0 +1,55 @@
+---
+title: Customize Theme
+description: Customize your application's colors, styles, and visual appearance
+---
+
+VibeAny uses Shadcn UI to build its theming system, supporting light/dark mode switching. The theme configuration file is located at `src/config/style/theme.css`. You can modify these variables to build your own theme.
+
+```ts title="src/config/style/theme.css"
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  ...
+}
+
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.141 0.005 285.823);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.141 0.005 285.823);
+  --popover-foreground: oklch(0.985 0 0);
+  ...
+}
+```
+
+Here are some tools to help you quickly build your own theme.
+## Shadcn
+- Use the official [Shadcn Create](https://ui.shadcn.com/create) tool
+- Use the [Shadcn Themes](https://ui.shadcn.com/themes) tool to quickly generate theme colors and copy them to `src/config/style/theme.css`.
+
+![Shadcn Theme](/docs/customize/shadcn.webp)
+
+## Tweakcn
+- Use the [Tweakcn](https://tweakcn.com/editor/theme) tool to quickly generate theme colors and copy them to `src/config/style/theme.css`.
+
+![Tweakcn Theme](/docs/customize/tweakcn.webp)
+
+## Themux
+- Use the [Themux](https://themux.vercel.app/shadcn-themes) tool to quickly generate theme colors and copy them to `src/config/style/theme.css`.
+
+![Themux Theme](/docs/customize/themux.webp)
+
+## UI Pub
+- Use the [UI Pub](https://ui.pub/shadcn-themes) tool to quickly generate theme colors and copy them to `src/config/style/theme.css`.
+
+![UI Pub Theme](/docs/customize/ui-pub.webp)
+
+## Shadcn Studio
+- Use the [Shadcn Studio](https://shadcnstudio.com/theme-generator) tool to quickly generate theme colors and copy them to `src/config/style/theme.css`.
+
+![Shadcn Studio Theme](/docs/customize/studio.webp)

@@ -1,0 +1,37 @@
+---
+title: Vercel
+description: Complete guide to deploying your project on the Vercel platform
+---
+
+## Deployment Process
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Push Code
+    Push the `main` branch to your remote repository (GitHub/GitLab/Bitbucket).
+    ```bash
+    git remote set-url origin git@github.com:your-username/your-repo.git
+    ```
+    ```bash
+    git add .
+    git commit -m "feat: deploy to vercel"
+    git push origin main
+    ```
+  </div>
+  <div className="fd-step">
+    ### Connect to Vercel
+    Open [Vercel](https://vercel.com/new), click `Import`, and select your repository to complete the import.
+    ![](/docs/deploy/vercel-import.webp)
+  </div>
+  <div className="fd-step">
+    ### Configure Environment Variables
+    Import your `.env` file — Vercel will parse it automatically.
+    ![Vercel Environment Variables](/docs/deploy/vercel-env.webp)
+  </div>
+  <div className="fd-step">
+    ### Deploy
+    Click "Deploy" and wait for the build to complete.
+  </div>
+</div>
+
+## Custom Domain
