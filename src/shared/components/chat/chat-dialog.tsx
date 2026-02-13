@@ -159,7 +159,6 @@ export function ChatDialog({ className }: ChatDialogProps) {
   const [searchQuery, setSearchQuery] = useState("")
 
   const brandGroups = useMemo(() => buildBrandGroups(models), [])
-  console.log(brandGroups, "brandGroups")
 
   const currentBrand = activeBrand ?? brandGroups[0]?.brand ?? "openai"
 
