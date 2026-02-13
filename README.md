@@ -6,8 +6,8 @@
   <a href="./README.zh-CN.md">中文</a> | <a href="./README.md">English</a>
 </p>
 <p align="center">
-  Full-stack starter for building AI-powered web apps with TanStack Start.<br />
-  Ships with authentication, database, landing page, blog, docs, i18n, admin panel, and more — ready to deploy in minutes.
+  Production-grade full-stack boilerplate for modern Vibe Coding.<br />
+  Authentication, payments, AI, i18n, and more — out of the box. Go from idea to launch in hours, not days.
 </p>
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/github/license/jiahao-jayden/vibe-any-tanstack" alt="License" /></a>
@@ -29,22 +29,67 @@
   </a>
 </p>
 
+## Why VibeAny
+
+We noticed that many people have to repeatedly write boilerplate code and rebuild infrastructure when vibe coding new products. VibeAny changes that — with just 10–20 minutes of configuration, you get:
+
+- Complete **authentication** system with email/password, Google/GitHub OAuth, magic links
+- Multi-provider **AI chat** with 100+ models (OpenAI, Claude, Gemini, DeepSeek, Grok, and more)
+- **Payment** integration with Stripe, Creem, PayPal, WeChat Pay, Alipay — subscriptions & one-time
+- **Credit system** for AI monetization with daily rewards, sign-up bonuses, and FIFO consumption
+- Enterprise-grade **landing page** components — responsive and SEO-friendly
+- **Admin panel** with user management, dynamic config, role management
+- **Blog & Docs** powered by MDX and Fumadocs, with full-text search
+- Type-safe **i18n** with Intlayer — translation errors caught at compile time
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><b>🔐 Authentication</b></td>
+    <td align="center"><b>🤖 AI Chat (100+ models)</b></td>
+  </tr>
+  <tr>
+    <td><img src="./public/landing/introduction/auth.webp" alt="Authentication" width="400" /></td>
+    <td><img src="./public/landing/introduction/ai-chat.webp" alt="AI Chat" width="400" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>💳 Payment & Pricing</b></td>
+    <td align="center"><b>⚙️ Dynamic Config</b></td>
+  </tr>
+  <tr>
+    <td><img src="./public/landing/introduction/payment.webp" alt="Payment" width="400" /></td>
+    <td><img src="./public/landing/introduction/dynamic-config.webp" alt="Admin Config" width="400" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>📝 Blog & Roadmap</b></td>
+    <td align="center"><b>📚 Documentation</b></td>
+  </tr>
+  <tr>
+    <td><img src="./public/landing/introduction/blog-roadmap.webp" alt="Blog & Roadmap" width="400" /></td>
+    <td><img src="./public/landing/introduction/doc.webp" alt="Documentation" width="400" /></td>
+  </tr>
+</table>
+
 ## Features
 
-- **TanStack Start** — File-based routing, SSR, server functions
-- **Authentication** — Email/password, Google, GitHub OAuth, magic links (Better Auth)
-- **Database** — PostgreSQL with Drizzle ORM, type-safe schema and migrations
-- **RBAC** — Role-based access control with permission inheritance
-- **Landing Page** — Hero, features, benefits, testimonials, FAQ, CTA sections
-- **Blog & Docs** — MDX-powered blog and Fumadocs documentation, multilingual
-- **Changelog & Roadmap** — Product changelog timeline and visual roadmap board
-- **Admin Panel** — User management, system configuration, role management
-- **Internationalization** — English and Chinese out of the box (Intlayer)
-- **Email** — Verification and magic link emails via Resend or custom SMTP
-- **File Storage** — S3-compatible upload (Cloudflare R2, AWS S3, MinIO)
-- **AI Chat** — Chat interface with Vercel AI SDK, supports 100+ models
-- **UI** — Tailwind CSS v4, shadcn/ui, Radix primitives, Lucide icons
-- **Theme** — Light / dark / system with one-click toggle
+| Category | What You Get |
+|----------|-------------|
+| **Framework** | TanStack Start + React 19 + Vite — file-based routing, SSR, server functions |
+| **Auth** | Email/password, Google, GitHub OAuth, magic links, email verification (Better Auth) |
+| **RBAC** | Role-based access control with permission inheritance |
+| **AI** | Vercel AI SDK with 12 providers, 100+ models, streaming responses |
+| **Payments** | Stripe, Creem, PayPal, WeChat Pay, Alipay — subscriptions & one-time payments |
+| **Credits** | Token-based AI billing with FIFO consumption, daily rewards, sign-up bonuses |
+| **Landing Page** | Hero, features, benefits, testimonials, FAQ, CTA — all configurable |
+| **Blog & Docs** | MDX-powered blog + Fumadocs documentation, multilingual |
+| **Changelog & Roadmap** | Product changelog timeline and visual roadmap board |
+| **Admin Panel** | User management, system configuration, role management |
+| **i18n** | Type-safe internationalization with Intlayer (English + Chinese out of the box) |
+| **Email** | Verification and magic link emails via Resend or custom SMTP |
+| **Storage** | S3-compatible upload (Cloudflare R2, AWS S3, MinIO) |
+| **UI** | Tailwind CSS v4, shadcn/ui, Radix primitives, Lucide icons |
+| **Theme** | Light / dark / system with one-click toggle |
 
 ## Architecture
 
@@ -81,6 +126,7 @@ graph TB
         AI[AI Providers]
         Email[Resend / SMTP]
         OAuth[GitHub / Google OAuth]
+        Pay[Stripe / PayPal / ...]
     end
 
     Client --> Router
@@ -97,6 +143,7 @@ graph TB
     Services --> S3
     Services --> AI
     Services --> Email
+    Services --> Pay
     Router --> MDX
     Router --> Docs
 ```
@@ -105,17 +152,20 @@ graph TB
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | TanStack Start + React 19 + Vite |
-| Routing | TanStack Router (file-based) |
-| Data Fetching | TanStack Query |
-| Database | PostgreSQL + Drizzle ORM |
-| Auth | Better Auth |
-| Styling | Tailwind CSS v4 + shadcn/ui |
-| i18n | Intlayer |
-| Content | Fumadocs (docs) + MDX (blog) |
-| Email | Resend / Nodemailer |
-| Validation | Zod |
-| Linting | Biome |
+| Framework | [TanStack Start](https://tanstack.com/start) + [React 19](https://react.dev) + [Vite](https://vite.dev) |
+| Routing | [TanStack Router](https://tanstack.com/router) (file-based) |
+| Data Fetching | [TanStack Query](https://tanstack.com/query) |
+| Database | [PostgreSQL](https://www.postgresql.org) + [Drizzle ORM](https://orm.drizzle.team) |
+| Auth | [Better Auth](https://www.better-auth.com) |
+| Payments | [Stripe](https://stripe.com) / Creem / PayPal / WeChat / Alipay |
+| AI | [Vercel AI SDK](https://sdk.vercel.ai) (12 providers, 100+ models) |
+| Styling | [Tailwind CSS v4](https://tailwindcss.com) + [shadcn/ui](https://ui.shadcn.com) |
+| i18n | [Intlayer](https://intlayer.org) |
+| Content | [Fumadocs](https://fumadocs.dev) (docs) + MDX (blog) |
+| Validation | [Zod](https://zod.dev) |
+| State | [Zustand](https://zustand.docs.pmnd.rs) |
+| Animation | [Motion](https://motion.dev) |
+| Linting | [Biome](https://biomejs.dev) |
 
 ## Quick Start
 
@@ -155,6 +205,8 @@ pnpm dev
 
 Open [http://localhost:3377](http://localhost:3377).
 
+> For full setup instructions including AI, payments, and email, see the [Documentation](https://vibeany.dev/docs).
+
 ## Project Structure
 
 ```
@@ -183,41 +235,16 @@ src/
     └── types/        # TypeScript types
 ```
 
-## Configuration
-
-All features are opt-in through environment variables:
-
-| Feature | Required Variables |
-|---------|-------------------|
-| Database | `DATABASE_URL` |
-| Auth | `DATABASE_URL` + `BETTER_AUTH_SECRET` |
-| GitHub OAuth | `GITHUB_CLIENT_ID` + `GITHUB_CLIENT_SECRET` |
-| Google OAuth | `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` |
-| Email | `EMAIL_PROVIDER` + `EMAIL_FROM` + provider keys |
-| Storage | `STORAGE_*` variables |
-| Captcha | `VITE_TURNSTILE_*` + `TURNSTILE_SECRET_KEY` |
-
-See [`.env.example`](.env.example) for the full list.
-
-## Scripts
-
-```bash
-pnpm dev          # Start dev server on port 3377
-pnpm build        # Production build
-pnpm preview      # Preview production build
-pnpm db:generate  # Generate Drizzle migrations
-pnpm db:push      # Push schema to database
-pnpm db:migrate   # Run migrations
-pnpm db:studio    # Open Drizzle Studio
-pnpm rbac         # Manage RBAC roles and permissions
-pnpm lint         # Lint with Biome
-pnpm format       # Format with Biome
-pnpm test         # Run tests with Vitest
-```
-
 ## Deployment
 
-Build and run:
+### Docker
+
+```bash
+docker build -t vibe-any .
+docker run -d -p 3000:3000 vibe-any
+```
+
+### Node.js
 
 ```bash
 pnpm build
@@ -228,7 +255,13 @@ Works with any Node.js hosting — Vercel, Railway, Fly.io, VPS, Docker, etc.
 
 ## Contributing
 
-Contributions are welcome. Please open an issue first to discuss what you'd like to change.
+Contributions are welcome! Please read the [Contributing Guide](CONTRIBUTING.md) before submitting a PR.
+
+## Community
+
+- [Discord](https://discord.gg/FQ2TAHh6) — Chat with the team and other developers
+- [GitHub Issues](https://github.com/jiahao-jayden/vibe-any-tanstack/issues) — Report bugs or request features
+- [Documentation](https://vibeany.dev/docs) — Full setup and usage guide
 
 ## License
 
