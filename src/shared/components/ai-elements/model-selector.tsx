@@ -176,6 +176,7 @@ export const ModelSelectorLogo = ({
   className,
   ...props
 }: ModelSelectorLogoProps) => (
+  console.log(provider, "provider"),
   <img
     {...props}
     alt={`${provider} logo`}

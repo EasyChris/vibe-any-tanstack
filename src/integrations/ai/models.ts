@@ -261,6 +261,18 @@ export const models: AIModelMeta[] = [
 
   // ==================== Anthropic ====================
   {
+    id: "anthropic/claude-opus-4-6",
+    label: "Claude Opus 4.6",
+    provider: "anthropic",
+    providerModelId: "claude-opus-4-6",
+    description: "Claude Opus 4.6 with extended thinking",
+    capabilities: { vision: true, reasoning: true, pdf: true },
+    tier: "pro",
+    maxOutputTokens: 16384,
+    creditCost: 10,
+    isNew: true,
+  },
+  {
     id: "anthropic/claude-haiku-4-5",
     label: "Claude Haiku 4.5",
     provider: "anthropic",

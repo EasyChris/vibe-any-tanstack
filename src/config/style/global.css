@@ -110,6 +110,9 @@ code {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  .no-scrollbar [data-slot="scroll-area-scrollbar"] {
+    display: none !important;
+  }
   /* Optimize sidebar overall spacing and font - compact design */
   aside[data-fd-sidebar] {
     font-size: 13px;
