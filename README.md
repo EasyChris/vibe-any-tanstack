@@ -13,6 +13,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/jiahao-jayden/vibe-any-tanstack" alt="License" /></a>
   <a href="https://github.com/jiahao-jayden/vibe-any-tanstack/stargazers"><img src="https://img.shields.io/github/stars/jiahao-jayden/vibe-any-tanstack" alt="Stars" /></a>
   <a href="https://github.com/jiahao-jayden/vibe-any-tanstack/issues"><img src="https://img.shields.io/github/issues/jiahao-jayden/vibe-any-tanstack" alt="Issues" /></a>
+  <a href="https://discord.gg/FQ2TAHh6"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white" alt="Discord" /></a>
 </p>
 <p align="center">
   <a href="https://youtu.be/0DqfKBenvkQ">
