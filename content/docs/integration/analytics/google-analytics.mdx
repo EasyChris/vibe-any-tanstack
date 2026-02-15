@@ -1,0 +1,61 @@
+---
+title: Google Analytics
+description: Add Google Analytics to track page views and user behavior
+---
+
+Vibe Any has built-in support for [Google Analytics](https://analytics.google.com/). When configured, the gtag script is automatically injected into every page.
+
+## Setup
+
+<div className="fd-steps">
+  <div className="fd-step">
+    ### Create a Google Analytics Property
+
+    Go to [Google Analytics](https://analytics.google.com/) and create a new property. After setup, you'll get a **Measurement ID** in the format `G-XXXXXXXXXX`.
+  </div>
+  <div className="fd-step">
+    ### Set Environment Variable
+
+    Add your Measurement ID to `.env.local`:
+
+    ```bash
+    VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+    ```
+  </div>
+  <div className="fd-step">
+    ### Deploy
+
+    That's it. The analytics script is automatically loaded when `VITE_GA_MEASUREMENT_ID` is set. No code changes needed.
+  </div>
+</div>
+
+## How It Works
+
+The integration is in `src/routes/__root.tsx`. When the environment variable is present, two script tags are injected into `<head>`:
+
+1. The Google gtag.js loader
+2. The initialization script that configures your Measurement ID
+
+```tsx
+{import.meta.env.VITE_GA_MEASUREMENT_ID && (
+  <>
+    <script
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.VITE_GA_MEASUREMENT_ID}`}
+    />
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${import.meta.env.VITE_GA_MEASUREMENT_ID}');`,
+      }}
+    />
+  </>
+)}
+```
+
+If `VITE_GA_MEASUREMENT_ID` is not set, no analytics script is loaded — zero overhead.
+
+## Verify
+
+After deployment, open your site and check the **Realtime** report in Google Analytics to confirm data is flowing.
+
+You can also open browser DevTools → Network tab and look for requests to `googletagmanager.com`.
