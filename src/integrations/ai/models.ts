@@ -1302,4 +1302,19 @@ export const models: AIModelMeta[] = [
     maxOutputTokens: 8192,
     creditCost: 1,
   },
+
+  // Volcengine
+  {
+    id: "volcengine/doubao-seed-2-0-pro-260215",
+    label: "Doubao Seed 2.0 Pro 260215",
+    provider: "volcengine",
+    providerModelId: "doubao-seed-2-0-pro-260215",
+    description: "Volcengine's advanced reasoning LLM",
+    capabilities: { vision: true, reasoning: true, pdf: false },
+    tier: "pro",
+    maxOutputTokens: 128000,
+    creditCost: 4,
+    isNew: true,
+    parameters: { temperature: 0.6, topP: 0.95 },
+  },
 ]

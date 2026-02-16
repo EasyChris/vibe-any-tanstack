@@ -395,6 +395,13 @@ export const configSchema = defineConfig({
     labelKey: "aiBasetenApiKey",
     descriptionKey: "aiBasetenApiKey",
   },
+  ai_volcengine_api_key: {
+    type: "string",
+    default: "",
+    env: "VOLCENGINE_API_KEY",
+    labelKey: "aiVolcengineApiKey",
+    descriptionKey: "aiVolcengineApiKey",
+  },
 })
 
 export const configGroups = [
@@ -563,6 +570,11 @@ export const aiConfigGroups = [
         id: "ai-baseten",
         labelKey: "aiBaseten",
         keys: ["ai_baseten_api_key"],
+      }),
+      defineSubGroup({
+        id: "ai-volcengine",
+        labelKey: "aiVolcengine",
+        keys: ["ai_volcengine_api_key"],
       }),
     ],
   }),

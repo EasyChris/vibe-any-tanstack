@@ -13,6 +13,7 @@ export type AIProviderKey =
   | "novita"
   | "siliconflow"
   | "baseten"
+  | "volcengine"
 
 export interface ModelParameters {
   temperature?: number

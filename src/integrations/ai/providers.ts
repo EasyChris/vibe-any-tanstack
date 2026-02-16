@@ -79,6 +79,14 @@ function createProviderInstances(configs: AIProviderConfigs) {
       })
     : null
 
+  const volcengine = configs.volcengine?.apiKey
+    ? createOpenAICompatible({
+        name: "volcengine",
+        baseURL: "https://ark.cn-beijing.volces.com/api/v3",
+        apiKey: configs.volcengine.apiKey,
+      })
+    : null
+
   return {
     openai,
     anthropic,
@@ -92,6 +100,7 @@ function createProviderInstances(configs: AIProviderConfigs) {
     novita,
     siliconflow,
     baseten,
+    volcengine,
   }
 }
 
@@ -370,6 +379,13 @@ export function createAIProvider(configs: AIProviderConfigs) {
       ...(p.siliconflow && {
         "siliconflow/deepseek-v3": p.siliconflow.chatModel("deepseek-ai/DeepSeek-V3"),
         "siliconflow/qwen-2.5-72b": p.siliconflow.chatModel("Qwen/Qwen2.5-72B-Instruct"),
+      }),
+
+      // Volcengine
+      ...(p.volcengine && {
+        "volcengine/doubao-seed-2-0-pro-260215": p.volcengine.chatModel(
+          "doubao-seed-2-0-pro-260215"
+        ),
       }),
     },
     fallbackProvider: customProvider({

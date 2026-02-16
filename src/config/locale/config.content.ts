@@ -297,6 +297,13 @@ export default {
       label: t({ zh: "Baseten API Key", en: "Baseten API Key" }),
       description: t({ zh: "用于 Baseten 推理的 API Key", en: "API Key for Baseten inference" }),
     },
+    aiVolcengineApiKey: {
+      label: t({ zh: "火山引擎 API Key", en: "Volcengine API Key" }),
+      description: t({
+        zh: "用于火山引擎模型的 API Key",
+        en: "API Key for Volcengine models",
+      }),
+    },
     groups: {
       ai: {
         title: t({ zh: "AI 提供商", en: "AI Providers" }),
@@ -385,6 +392,9 @@ export default {
       },
       aiBaseten: {
         title: t({ zh: "Baseten", en: "Baseten" }),
+      },
+      aiVolcengine: {
+        title: t({ zh: "火山引擎", en: "Volcengine" }),
       },
     },
   },

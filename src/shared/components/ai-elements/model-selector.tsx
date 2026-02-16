@@ -171,13 +171,30 @@ export type ModelSelectorLogoProps = Omit<
     | (string & {});
 };
 
+export const modelSelectorLobeIconMap: Record<string, string> = {
+  "volcengine": "volcengine-color",
+}
+
 export const ModelSelectorLogo = ({
   provider,
   className,
   ...props
-}: ModelSelectorLogoProps) => (
-  console.log(provider, "provider"),
-  <img
+}: ModelSelectorLogoProps) => {
+  const logo = modelSelectorLobeIconMap[provider]
+
+  return (
+   logo ? (
+      <img
+      {...props}
+      alt={`${provider} logo`}
+      className={cn("size-3 dark:invert", className)}
+      height={12}
+      src={`https://unpkg.com/@lobehub/icons-static-svg@1.79.0/icons/${logo}.svg`}
+      width={12}
+    />
+    )
+   : (
+    <img
     {...props}
     alt={`${provider} logo`}
     className={cn("size-3 dark:invert", className)}
@@ -185,7 +202,8 @@ export const ModelSelectorLogo = ({
     src={`https://models.dev/logos/${provider}.svg`}
     width={12}
   />
-);
+   )
+)}
 
 export type ModelSelectorLogoGroupProps = ComponentProps<"div">;
 

@@ -1,5 +1,6 @@
 export const siteConfig = {
-  title: "VibeAny - AI SaaS Starter | Chat, Subscriptions & AI Models",
+  title: "VibeAny",
+  titleSuffix: "AI SaaS Starter | Chat, Subscriptions & AI Models",
   author: "Jayden & Lingjue",
   description:
     "VibeAny - AI SaaS starter kit with chat, subscriptions, credits, and admin. Built with TanStack Start, Stripe, and 100+ AI models.",
