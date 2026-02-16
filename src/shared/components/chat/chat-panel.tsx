@@ -1,6 +1,7 @@
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport } from "ai"
 import { MessageSquareIcon } from "lucide-react"
-import { nanoid } from "nanoid"
-import { useCallback, useState } from "react"
+import { useRef, useState } from "react"
 import { useIntlayer } from "react-intlayer"
 import {
   Conversation,
@@ -22,51 +23,57 @@ import {
 import { ModelPicker } from "@/shared/components/chat/model-picker"
 import { cn } from "@/shared/lib/utils"
 
-export type ChatMessage = {
-  id: string
-  role: "user" | "assistant"
-  content: string
-}
-
 export type ChatPanelProps = {
   className?: string
 }
 
 const DEFAULT_MODEL = "openai/gpt-4o-mini"
 
+function getMessageText(parts: Array<{ type: string; text?: string }>): string {
+  return parts
+    .filter((p) => p.type === "text" && p.text)
+    .map((p) => p.text)
+    .join("")
+}
+
 export function ChatPanel({ className }: ChatPanelProps) {
   const { chat } = useIntlayer("ai")
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [status, setStatus] = useState<"ready" | "submitted" | "streaming">("ready")
   const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL)
-
-  const handleSubmit = useCallback(
-    async (message: PromptInputMessage, _event: React.FormEvent<HTMLFormElement>) => {
-      const hasText = Boolean(message.text?.trim())
-      const hasFiles = Boolean(message.files?.length)
-      if (!hasText && !hasFiles) return
-
-      const userMessage: ChatMessage = {
-        id: nanoid(),
-        role: "user",
-        content: message.text || (hasFiles ? `[${message.files!.length} file(s) attached]` : ""),
-      }
-      setMessages((prev) => [...prev, userMessage])
-      setStatus("submitted")
-
-      await new Promise((r) => setTimeout(r, 300))
-      setStatus("streaming")
-
-      const assistantMessage: ChatMessage = {
-        id: nanoid(),
-        role: "assistant",
-        content: `You said: "${userMessage.content}"`,
-      }
-      setMessages((prev) => [...prev, assistantMessage])
-      setStatus("ready")
-    },
-    []
+  const modelRef = useRef(selectedModel)
+  modelRef.current = selectedModel
+  console.log("modelRef.current", modelRef.current)
+  const [transport] = useState(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat/",
+        body: () => ({ model: modelRef.current }),
+      })
   )
+
+  const { messages, sendMessage, status, stop } = useChat({ transport })
+
+  const handleSubmit = async (message: PromptInputMessage) => {
+    const hasText = Boolean(message.text?.trim())
+    const hasFiles = Boolean(message.files?.length)
+    if (!hasText && !hasFiles) return
+
+    if (hasFiles && message.files!.length > 0) {
+      sendMessage({
+        role: "user",
+        parts: [
+          ...(hasText ? [{ type: "text" as const, text: message.text }] : []),
+          ...message.files!.map((f) => ({
+            type: "file" as const,
+            url: f.url,
+            mediaType: f.mediaType,
+            filename: f.filename,
+          })),
+        ],
+      })
+    } else {
+      sendMessage({ text: message.text })
+    }
+  }
 
   return (
     <div
@@ -88,7 +95,7 @@ export function ChatPanel({ className }: ChatPanelProps) {
                   key={msg.id}
                 >
                   <MessageContent>
-                    <MessageResponse>{msg.content}</MessageResponse>
+                    <MessageResponse>{getMessageText(msg.parts)}</MessageResponse>
                   </MessageContent>
                 </Message>
               ))
@@ -111,7 +118,10 @@ export function ChatPanel({ className }: ChatPanelProps) {
                   onModelSelect={setSelectedModel}
                 />
               </PromptInputTools>
-              <PromptInputSubmit status={status} />
+              <PromptInputSubmit
+                status={status}
+                onStop={stop}
+              />
             </PromptInputFooter>
           </PromptInput>
         </PromptInputProvider>

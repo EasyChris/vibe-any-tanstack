@@ -18,6 +18,7 @@ import { Route as Char123LocaleChar125DocsRouteRouteImport } from './routes/{-$l
 import { Route as Char123LocaleChar125MainRouteRouteImport } from './routes/{-$locale}/_main/route'
 import { Route as ApiAdminRouteRouteImport } from './routes/api/admin/route'
 import { Route as Char123LocaleChar125LoginIndexRouteImport } from './routes/{-$locale}/login/index'
+import { Route as ApiChatIndexRouteImport } from './routes/api/chat/index'
 import { Route as Char123LocaleChar125DocsSplatRouteImport } from './routes/{-$locale}/docs/$'
 import { Route as ApiPaymentCreditCheckoutRouteImport } from './routes/api/payment/credit-checkout'
 import { Route as ApiPaymentCheckoutRouteImport } from './routes/api/payment/checkout'
@@ -103,6 +104,11 @@ const Char123LocaleChar125LoginIndexRoute =
     path: '/login/',
     getParentRoute: () => Char123LocaleChar125RouteRoute,
   } as any)
+const ApiChatIndexRoute = ApiChatIndexRouteImport.update({
+  id: '/api/chat/',
+  path: '/api/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char123LocaleChar125DocsSplatRoute =
   Char123LocaleChar125DocsSplatRouteImport.update({
     id: '/$',
@@ -320,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
+  '/api/chat/': typeof ApiChatIndexRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/subscription/cancel': typeof ApiPaymentSubscriptionCancelRoute
@@ -363,6 +370,7 @@ export interface FileRoutesByTo {
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
+  '/api/chat': typeof ApiChatIndexRoute
   '/{-$locale}/login': typeof Char123LocaleChar125LoginIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/subscription/cancel': typeof ApiPaymentSubscriptionCancelRoute
@@ -408,6 +416,7 @@ export interface FileRoutesById {
   '/api/payment/checkout': typeof ApiPaymentCheckoutRoute
   '/api/payment/credit-checkout': typeof ApiPaymentCreditCheckoutRoute
   '/{-$locale}/docs/$': typeof Char123LocaleChar125DocsSplatRoute
+  '/api/chat/': typeof ApiChatIndexRoute
   '/{-$locale}/login/': typeof Char123LocaleChar125LoginIndexRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRouteWithChildren
   '/api/payment/subscription/cancel': typeof ApiPaymentSubscriptionCancelRoute
@@ -454,6 +463,7 @@ export interface FileRouteTypes {
     | '/api/payment/checkout'
     | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
+    | '/api/chat/'
     | '/{-$locale}/login/'
     | '/api/admin/users/$id'
     | '/api/payment/subscription/cancel'
@@ -497,6 +507,7 @@ export interface FileRouteTypes {
     | '/api/payment/checkout'
     | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
+    | '/api/chat'
     | '/{-$locale}/login'
     | '/api/admin/users/$id'
     | '/api/payment/subscription/cancel'
@@ -541,6 +552,7 @@ export interface FileRouteTypes {
     | '/api/payment/checkout'
     | '/api/payment/credit-checkout'
     | '/{-$locale}/docs/$'
+    | '/api/chat/'
     | '/{-$locale}/login/'
     | '/api/admin/users/$id'
     | '/api/payment/subscription/cancel'
@@ -576,6 +588,7 @@ export interface RootRouteChildren {
   ApiFileUploadRoute: typeof ApiFileUploadRoute
   ApiPaymentCheckoutRoute: typeof ApiPaymentCheckoutRoute
   ApiPaymentCreditCheckoutRoute: typeof ApiPaymentCreditCheckoutRoute
+  ApiChatIndexRoute: typeof ApiChatIndexRoute
   ApiPaymentSubscriptionCancelRoute: typeof ApiPaymentSubscriptionCancelRoute
   ApiPaymentWebhookProviderRoute: typeof ApiPaymentWebhookProviderRoute
 }
@@ -644,6 +657,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/{-$locale}/login/'
       preLoaderRoute: typeof Char123LocaleChar125LoginIndexRouteImport
       parentRoute: typeof Char123LocaleChar125RouteRoute
+    }
+    '/api/chat/': {
+      id: '/api/chat/'
+      path: '/api/chat'
+      fullPath: '/api/chat/'
+      preLoaderRoute: typeof ApiChatIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/{-$locale}/docs/$': {
       id: '/{-$locale}/docs/$'
@@ -1077,6 +1097,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiFileUploadRoute: ApiFileUploadRoute,
   ApiPaymentCheckoutRoute: ApiPaymentCheckoutRoute,
   ApiPaymentCreditCheckoutRoute: ApiPaymentCreditCheckoutRoute,
+  ApiChatIndexRoute: ApiChatIndexRoute,
   ApiPaymentSubscriptionCancelRoute: ApiPaymentSubscriptionCancelRoute,
   ApiPaymentWebhookProviderRoute: ApiPaymentWebhookProviderRoute,
 }
